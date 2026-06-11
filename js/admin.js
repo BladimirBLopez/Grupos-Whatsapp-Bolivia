@@ -6,7 +6,7 @@
 const ADMIN_CONFIG = {
   usuario: "admin",
   password: "Bolivia2024",
-  sessionHours: 24  // Duración de la sesión en horas
+  sessionHours: 24
 };
 
 let isAdminLogged = false;
@@ -32,8 +32,6 @@ function logoutAdmin() {
   localStorage.removeItem("adminLogged");
   localStorage.removeItem("adminExpires");
   actualizarUIAdmin(false);
-  // Opcional: recargar la página para resetear
-  // window.location.reload();
 }
 
 function checkAdminSession() {
@@ -64,7 +62,6 @@ function actualizarUIAdmin(isLogged) {
     if (adminLoginBtn) adminLoginBtn.style.display = "none";
     if (adminLogoutBtn) adminLogoutBtn.style.display = "inline-flex";
     
-    // Mostrar notificación de bienvenida (solo la primera vez)
     if (!sessionStorage.getItem("adminWelcomed")) {
       mostrarToast("✅ Has iniciado sesión como administrador", "#25D366");
       sessionStorage.setItem("adminWelcomed", "true");
@@ -84,10 +81,8 @@ function mostrarLoginModal() {
   const modal = document.getElementById("loginModal");
   if (modal) {
     modal.style.display = "flex";
-    // Limpiar campos
     document.getElementById("loginUser").value = "";
     document.getElementById("loginPass").value = "";
-    // Enfocar el primer campo
     setTimeout(() => document.getElementById("loginUser").focus(), 100);
   }
 }
@@ -106,7 +101,6 @@ function mostrarAgregarGrupoModal() {
   const modal = document.getElementById("subirModal");
   if (modal) {
     modal.style.display = "flex";
-    // Limpiar campos
     document.getElementById("modalGroupName").value = "";
     document.getElementById("modalGroupDesc").value = "";
     document.getElementById("modalGroupLink").value = "";
@@ -150,7 +144,7 @@ function mostrarToast(mensaje, color = "#25D366") {
   }, 3000);
 }
 
-// Añadir animaciones si no existen
+// Añadir animaciones
 if (!document.querySelector("#toastAnimations")) {
   const style = document.createElement("style");
   style.id = "toastAnimations";
@@ -172,10 +166,8 @@ if (!document.querySelector("#toastAnimations")) {
 // ============================================
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Verificar sesión al cargar
   checkAdminSession();
   
-  // Botones de admin
   const adminLoginBtn = document.getElementById("adminLoginBtn");
   const adminLogoutBtn = document.getElementById("adminLogoutBtn");
   const subirBtn = document.getElementById("subirGrupoBtn");
@@ -224,7 +216,6 @@ document.addEventListener("DOMContentLoaded", () => {
     modalClose.addEventListener("click", cerrarAgregarModal);
   }
   
-  // Cerrar modales al hacer clic fuera
   window.addEventListener("click", (e) => {
     const loginModal = document.getElementById("loginModal");
     const subirModal = document.getElementById("subirModal");
@@ -232,7 +223,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target === subirModal) cerrarAgregarModal();
   });
   
-  // Atajo de teclado: Ctrl + Shift + L (abrir login)
+  // Atajo de teclado: Ctrl + Shift + L
   document.addEventListener("keydown", (e) => {
     if (e.ctrlKey && e.shiftKey && e.key === 'L') {
       e.preventDefault();
@@ -244,16 +235,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
   
-  // Si viene con ?admin en URL, mostrar login
   if (window.location.search.includes("admin")) {
     mostrarLoginModal();
   }
 });
 
-// Exportar funciones para usar desde main.js
 window.adminFunctions = {
   agregarGrupo: function(grupo) {
-    // Esta función será llamada desde main.js
     if (isAdminLogged && window.gruposData) {
       window.gruposData.push(grupo);
       if (window.actualizarContadores) window.actualizarContadores();

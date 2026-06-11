@@ -3,7 +3,6 @@
 // ============================================================
 
 let gruposData = [
-  // Grupo 1 - Santa Cruz
   {
     id: 1,
     nombre: "🇳🇬🅒🅞🅜🅟🅡Á 🅨 🅥🅔🅝🅣🅐.🅢🅒🅩🇳🇬",
@@ -16,15 +15,13 @@ let gruposData = [
   }
 ];
 
-// ============================================================
-// VARIABLES DE ESTADO
-// ============================================================
 let currentPlatform = "whatsapp";
 let currentCity = "todos";
 
 // ============================================================
 // FUNCIONES AUXILIARES
 // ============================================================
+
 function normalizarCiudad(ciudad) {
   if (!ciudad) return "otro";
   const c = ciudad.toLowerCase().trim();
@@ -61,6 +58,7 @@ function escapeHtml(str) {
 // ============================================================
 // CONTAR GRUPOS POR CIUDAD
 // ============================================================
+
 function actualizarContadores() {
   const gruposWhatsApp = gruposData.filter(g => g.plataforma === "whatsapp");
   
@@ -91,6 +89,7 @@ function actualizarContadores() {
 // ============================================================
 // FILTRAR GRUPOS
 // ============================================================
+
 function getGruposFiltrados() {
   let filtrados = gruposData.filter(grupo => grupo.plataforma === currentPlatform);
   
@@ -104,6 +103,7 @@ function getGruposFiltrados() {
 // ============================================================
 // RENDERIZAR GRUPOS
 // ============================================================
+
 function renderGrupos() {
   const filtrados = getGruposFiltrados();
   const gruposContainer = document.getElementById("gruposContainer");
@@ -156,6 +156,7 @@ function renderGrupos() {
 // ============================================================
 // CAMBIAR FILTROS
 // ============================================================
+
 function setActivePlatform(platform) {
   currentPlatform = platform;
   document.querySelectorAll(".filter-chip").forEach(chip => {
@@ -184,13 +185,13 @@ function setActiveCity(city) {
 }
 
 // ============================================================
-// AGREGAR GRUPO (desde admin.js)
+// AGREGAR GRUPO
 // ============================================================
+
 function setupAgregarGrupo() {
   const modalConfirm = document.getElementById("modalConfirmBtn");
   if (!modalConfirm) return;
   
-  // Remover event listener anterior si existe
   const newBtn = modalConfirm.cloneNode(true);
   modalConfirm.parentNode.replaceChild(newBtn, modalConfirm);
   
@@ -232,18 +233,15 @@ function setupAgregarGrupo() {
       setActivePlatform("whatsapp");
     }
     
-    // Limpiar modal
     document.getElementById("modalGroupName").value = "";
     document.getElementById("modalGroupDesc").value = "";
     document.getElementById("modalGroupLink").value = "";
     document.getElementById("modalCity").value = "";
     document.getElementById("modalMembers").value = "1";
     
-    // Cerrar modal
     const modal = document.getElementById("subirModal");
     if (modal) modal.style.display = "none";
     
-    // Mostrar notificación
     if (window.mostrarToast) {
       window.mostrarToast(`✅ Grupo "${nombre}" agregado`, "#25D366");
     } else {
@@ -253,8 +251,9 @@ function setupAgregarGrupo() {
 }
 
 // ============================================================
-// EXPORTAR FUNCIONES PARA ADMIN
+// EXPORTAR
 // ============================================================
+
 window.gruposData = gruposData;
 window.actualizarContadores = actualizarContadores;
 window.renderGrupos = renderGrupos;
@@ -262,8 +261,8 @@ window.renderGrupos = renderGrupos;
 // ============================================================
 // INICIALIZAR
 // ============================================================
+
 document.addEventListener("DOMContentLoaded", () => {
-  // Filtros de plataforma
   document.querySelectorAll(".filter-chip").forEach(chip => {
     chip.addEventListener("click", () => {
       const platform = chip.getAttribute("data-platform");
@@ -271,7 +270,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
   
-  // Filtros de ciudad
   document.querySelectorAll(".city-chip").forEach(chip => {
     chip.addEventListener("click", () => {
       const city = chip.getAttribute("data-city");
@@ -279,27 +277,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
   
-  // Botón Home
   document.getElementById("homeBtn")?.addEventListener("click", () => {
     setActivePlatform("whatsapp");
     setActiveCity("todos");
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
   
-  // Botón Canal
-  document.getElementById("canalBtn")?.addEventListener("click", () => {
-    alert("🔔 Canal de difusión: próximamente tendremos canal oficial con tips para compra venta Bolivia.");
-  });
-  
-  // Botón ES
-  document.getElementById("esBtn")?.addEventListener("click", () => {
-    alert("🌎 Idioma: Español");
-  });
-  
-  // Configurar agregar grupo
   setupAgregarGrupo();
-  
-  // Inicializar
   actualizarContadores();
   setActivePlatform("whatsapp");
   setActiveCity("todos");
