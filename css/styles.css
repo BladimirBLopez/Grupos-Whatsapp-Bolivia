@@ -1,0 +1,515 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #f4f7fc;
+  font-family: 'Inter', sans-serif;
+  color: #1a2c3e;
+  line-height: 1.4;
+}
+
+/* Contenedor principal */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.5rem 1.8rem 3rem;
+}
+
+/* HEADER / NAVBAR */
+.navbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid rgba(37, 211, 102, 0.2);
+}
+
+.logo-area h1 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.9rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #075E54, #25D366);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  letter-spacing: -0.3px;
+}
+
+.logo-area p {
+  font-size: 0.8rem;
+  color: #5b6f82;
+  font-weight: 500;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.nav-btn {
+  background: white;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 40px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Inter', sans-serif;
+  color: #1f2f3e;
+  border: 1px solid #e2edf2;
+}
+
+.nav-btn i {
+  font-size: 1rem;
+}
+
+.nav-btn.primary {
+  background: #25D366;
+  border-color: #25D366;
+  color: white;
+}
+
+.nav-btn.primary i {
+  color: white;
+}
+
+.lang-btn {
+  background: white;
+  border: 1px solid #cbdde6;
+}
+
+/* filtros redes sociales */
+.social-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-bottom: 2rem;
+  background: white;
+  padding: 0.8rem 1.2rem;
+  border-radius: 60px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+  border: 1px solid #eef3f8;
+  justify-content: center;
+}
+
+.filter-chip {
+  background: #f0f4f8;
+  border-radius: 40px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 500;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+  color: #2c3f4f;
+}
+
+.filter-chip i {
+  font-size: 1rem;
+}
+
+.filter-chip.active {
+  background: #25D366;
+  color: white;
+  border-color: #25D366;
+  box-shadow: 0 6px 12px rgba(37,211,102,0.2);
+}
+
+.filter-chip.active i {
+  color: white;
+}
+
+/* grid de grupos */
+.grupos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  gap: 1.8rem;
+  margin-top: 0.8rem;
+}
+
+/* tarjeta de grupo */
+.grupo-card {
+  background: white;
+  border-radius: 28px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 12px 24px -12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5f0f5;
+  cursor: pointer;
+}
+
+.grupo-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 32px -16px rgba(0, 0, 0, 0.12);
+}
+
+.card-header {
+  padding: 1.2rem 1.2rem 0.6rem 1.2rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.card-header h3 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  font-family: 'Poppins', sans-serif;
+  letter-spacing: -0.2px;
+  color: #0b2b26;
+  word-break: break-word;
+}
+
+.badge-whatsapp {
+  background: #e9f9ef;
+  color: #075E54;
+  border-radius: 30px;
+  padding: 4px 10px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.badge-whatsapp i {
+  font-size: 0.8rem;
+}
+
+.descripcion {
+  padding: 0.2rem 1.2rem 0.8rem;
+  color: #4d6272;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  border-bottom: 1px solid #eff6fa;
+}
+
+.ubicacion {
+  padding: 0.6rem 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #2c7a5e;
+  background: #fafefc;
+}
+
+.ubicacion i {
+  color: #25D366;
+  width: 18px;
+}
+
+.stats {
+  display: flex;
+  gap: 1.5rem;
+  padding: 0.6rem 1.2rem 1rem;
+  border-top: 1px solid #eff6fa;
+  background: #ffffff;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #3c5a6f;
+}
+
+.stat-item i {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+}
+
+.join-btn {
+  display: block;
+  background: #25D366;
+  margin: 0 1rem 1.2rem 1rem;
+  text-align: center;
+  padding: 0.7rem;
+  border-radius: 100px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: white;
+  transition: 0.2s;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+}
+
+.join-btn:hover {
+  background: #20b859;
+  transform: scale(0.98);
+}
+
+/* Banner Bolivia */
+.bolivia-banner {
+  background: linear-gradient(105deg, #fff5e8 0%, #f0faf5 100%);
+  border-radius: 28px;
+  padding: 1rem 1.8rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  border-left: 5px solid #25D366;
+}
+
+.bolivia-banner span {
+  font-weight: 600;
+  background: #1e2f3e;
+  color: white;
+  padding: 0.25rem 1rem;
+  border-radius: 40px;
+  font-size: 0.8rem;
+}
+
+.footer-note {
+  text-align: center;
+  margin-top: 3rem;
+  color: #6c8da3;
+  font-size: 0.8rem;
+  border-top: 1px solid #deecf2;
+  padding-top: 2rem;
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  max-width: 450px;
+  width: 90%;
+  border-radius: 32px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.modal-content h3 {
+  margin: 1rem 0 0.5rem;
+}
+
+.modal-content p {
+  margin-bottom: 1rem;
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 60px;
+  border: 1px solid #ddd;
+  margin-bottom: 12px;
+  font-family: 'Inter', sans-serif;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.modal-buttons button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 40px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+}
+
+.modal-buttons button:first-child {
+  background: #25D366;
+  color: white;
+}
+
+.modal-buttons button:last-child {
+  background: #eef2f5;
+}
+
+.empty-message {
+  text-align: center;
+  padding: 3rem;
+  background: white;
+  border-radius: 2rem;
+  color: #6c86a0;
+}
+
+@media (max-width: 700px) {
+  .container {
+    padding: 1rem;
+  }
+  .grupos-grid {
+    grid-template-columns: 1fr;
+  }
+  .social-filters {
+    border-radius: 30px;
+    justify-content: flex-start;
+    overflow-x: auto;
+  }
+  .card-header {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .badge-whatsapp {
+    align-self: flex-start;
+  }
+}
+/* ============================================ */
+/* NUEVO: FILTRO POR CIUDAD / DEPARTAMENTO      */
+/* ============================================ */
+
+.city-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-bottom: 2rem;
+  background: white;
+  padding: 0.8rem 1.2rem;
+  border-radius: 60px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  border: 1px solid #eef3f8;
+  justify-content: center;
+}
+
+.city-chip {
+  background: #f0f4f8;
+  border-radius: 40px;
+  padding: 0.45rem 1.1rem;
+  font-weight: 500;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+  color: #2c3f4f;
+}
+
+.city-chip i {
+  font-size: 0.9rem;
+}
+
+.city-chip.active {
+  background: #1e2f3e;
+  color: white;
+  border-color: #1e2f3e;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.city-chip:hover:not(.active) {
+  background: #e4eaf1;
+  transform: translateY(-1px);
+}
+
+/* Responsive para city filters */
+@media (max-width: 700px) {
+  .city-filters {
+    border-radius: 24px;
+    justify-content: flex-start;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding: 0.8rem 1rem;
+    gap: 0.6rem;
+  }
+  .city-chip {
+    white-space: nowrap;
+  }
+}
+/* ============================================ */
+/* ESTILOS PARA FILTRO DE CIUDADES (ya lo tenías) */
+/* ============================================ */
+
+.city-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-bottom: 2rem;
+  background: white;
+  padding: 0.8rem 1.2rem;
+  border-radius: 60px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  border: 1px solid #eef3f8;
+  justify-content: center;
+}
+
+.city-chip {
+  background: #f0f4f8;
+  border-radius: 40px;
+  padding: 0.45rem 1.1rem;
+  font-weight: 500;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+  color: #2c3f4f;
+}
+
+.city-chip.active {
+  background: #1e2f3e;
+  color: white;
+  border-color: #1e2f3e;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.city-chip:hover:not(.active) {
+  background: #e4eaf1;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 700px) {
+  .city-filters {
+    border-radius: 24px;
+    justify-content: flex-start;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding: 0.8rem 1rem;
+    gap: 0.6rem;
+  }
+  .city-chip {
+    white-space: nowrap;
+  }
+}
+
+/* Estado ADMIN - botón de logout */
+#adminLogoutBtn {
+  background: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+
+#adminLogoutBtn:hover {
+  background: #c82333;
+}
