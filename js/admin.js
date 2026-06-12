@@ -5,7 +5,7 @@
 // 🔐 CONFIGURACIÓN - ¡CAMBIA ESTOS DATOS POR LOS TUYOS!
 const ADMIN_CONFIG = {
   usuario: "admin",
-  password: "Bolivia2024",
+  password: "12345",
   sessionHours: 24
 };
 

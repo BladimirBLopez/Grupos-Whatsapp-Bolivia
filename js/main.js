@@ -6,25 +6,13 @@ let gruposData = [
   {
     id: 1,
     nombre: "🇳🇬🅒🅞🅜🅟🅡Á 🅨 🅥🅔🅝🅣🅐.🅢🅒🅩🇳🇬",
-    descripcion: "Grupo de compra y venta en Santa Cruz, Bolivia. Comparte productos, servicios y ofertas. ¡Bienvenidos!",
+    descripcion: "Grupo de compra y venta en Santa Cruz, Bolivia. Comparte productos, servicios y ofertas.",
     ubicacion: "Santa Cruz",
     miembros: 27,
     activos: 24,
     link: "https://chat.whatsapp.com/KVTyedioIByCZBt6ZHfCVr",
     plataforma: "whatsapp"
   }
-  // 👇 Agrega más grupos aquí, separados por coma
-  // Ejemplo:
-  // {
-  //   id: 2,
-  //   nombre: "Compra y Venta La Paz",
-  //   descripcion: "Grupo para comprar y vender en La Paz",
-  //   ubicacion: "La Paz",
-  //   miembros: 45,
-  //   activos: 38,
-  //   link: "https://chat.whatsapp.com/xxxxx",
-  //   plataforma: "whatsapp"
-  // }
 ];
 
 let currentPlatform = "whatsapp";
@@ -53,7 +41,7 @@ function unirseAlGrupo(link) {
   if (link && (link.includes("chat.whatsapp.com") || link.includes("wa.me"))) {
     window.open(link, "_blank");
   } else {
-    alert("🔗 Enlace de invitación: " + link);
+    alert("Enlace de invitación: " + link);
   }
 }
 
@@ -79,22 +67,50 @@ function actualizarContadores() {
     return gruposWhatsApp.filter(g => normalizarCiudad(g.ubicacion) === ciudad).length;
   };
   
-  const elementos = {
-    totalCount: contar("todos"),
-    santaCruzCount: contar("Santa Cruz"),
-    laPazCount: contar("La Paz"),
-    cochabambaCount: contar("Cochabamba"),
-    sucreCount: contar("Sucre"),
-    tarijaCount: contar("Tarija"),
-    potosiCount: contar("Potosí"),
-    oruroCount: contar("Oruro"),
-    beniCount: contar("Beni"),
-    pandoCount: contar("Pando")
+  // Actualizar contadores en el modal
+  const modalContadores = {
+    modalTotalCount: contar("todos"),
+    modalSantaCruzCount: contar("Santa Cruz"),
+    modalLaPazCount: contar("La Paz"),
+    modalCochabambaCount: contar("Cochabamba"),
+    modalSucreCount: contar("Sucre"),
+    modalTarijaCount: contar("Tarija"),
+    modalPotosiCount: contar("Potosí"),
+    modalOruroCount: contar("Oruro"),
+    modalBeniCount: contar("Beni"),
+    modalPandoCount: contar("Pando")
   };
   
-  for (const [id, value] of Object.entries(elementos)) {
+  for (const [id, value] of Object.entries(modalContadores)) {
     const el = document.getElementById(id);
     if (el) el.innerText = value;
+  }
+  
+  // Actualizar badge del botón selector
+  const selectedCityCount = document.getElementById("selectedCityCount");
+  if (selectedCityCount) {
+    if (currentCity === "todos") {
+      selectedCityCount.innerText = `(${contar("todos")})`;
+    } else {
+      selectedCityCount.innerText = `(${contar(currentCity)})`;
+    }
+  }
+  
+  // Actualizar nombre de ciudad seleccionada
+  const selectedCityName = document.getElementById("selectedCityName");
+  if (selectedCityName) {
+    if (currentCity === "todos") {
+      selectedCityName.innerText = "Todos los departamentos";
+    } else {
+      selectedCityName.innerText = currentCity;
+    }
+  }
+  
+  // Actualizar contador de resultados
+  const resultCount = document.getElementById("resultCount");
+  if (resultCount) {
+    const filtrados = getGruposFiltrados();
+    resultCount.innerText = filtrados.length;
   }
 }
 
@@ -126,7 +142,7 @@ function renderGrupos() {
     gruposContainer.innerHTML = `<div class="empty-message">
       <i class="fab fa-whatsapp"></i> 
       No hay grupos de ${currentPlatform} en ${currentCity === "todos" ? "Bolivia" : currentCity} aún.<br>
-      ${window.adminFunctions?.isLogged() ? 'Usa el botón "Subir grupo" para agregar uno.' : '¡Vuelve pronto para nuevos grupos!'}
+      ${window.adminFunctions?.isLogged() ? 'Usa el botón "Agregar" para añadir uno.' : '¡Vuelve pronto para nuevos grupos!'}
     </div>`;
     return;
   }
@@ -185,15 +201,76 @@ function setActivePlatform(platform) {
 
 function setActiveCity(city) {
   currentCity = city;
-  document.querySelectorAll(".city-chip").forEach(chip => {
-    const chipCity = chip.getAttribute("data-city");
-    if (chipCity === city) {
-      chip.classList.add("active");
+  actualizarContadores();
+  renderGrupos();
+  
+  // Cerrar modal si está abierto
+  const cityModal = document.getElementById("cityModal");
+  if (cityModal) cityModal.style.display = "none";
+}
+
+// ============================================================
+// MODAL DE CIUDADES
+// ============================================================
+
+function initCityModal() {
+  const openBtn = document.getElementById("openCityModalBtn");
+  const closeBtn = document.getElementById("closeCityModalBtn");
+  const cityModal = document.getElementById("cityModal");
+  const searchInput = document.getElementById("citySearchInput");
+  const cityItems = document.querySelectorAll(".city-item");
+  
+  // Abrir modal
+  if (openBtn) {
+    openBtn.addEventListener("click", () => {
+      cityModal.style.display = "flex";
+      document.body.style.overflow = "hidden";
+      // Limpiar búsqueda
+      if (searchInput) searchInput.value = "";
+      filterCityList("");
+    });
+  }
+  
+  // Cerrar modal
+  const closeModal = () => {
+    cityModal.style.display = "none";
+    document.body.style.overflow = "";
+  };
+  
+  if (closeBtn) closeBtn.addEventListener("click", closeModal);
+  
+  // Cerrar al hacer clic fuera
+  cityModal.addEventListener("click", (e) => {
+    if (e.target === cityModal) closeModal();
+  });
+  
+  // Seleccionar ciudad
+  cityItems.forEach(item => {
+    item.addEventListener("click", () => {
+      const city = item.getAttribute("data-city");
+      if (city) setActiveCity(city);
+      closeModal();
+    });
+  });
+  
+  // Búsqueda en tiempo real
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+      filterCityList(e.target.value.toLowerCase());
+    });
+  }
+}
+
+function filterCityList(searchTerm) {
+  const cityItems = document.querySelectorAll(".city-item");
+  cityItems.forEach(item => {
+    const cityName = item.querySelector(".city-info span")?.innerText.toLowerCase() || "";
+    if (searchTerm === "" || cityName.includes(searchTerm)) {
+      item.style.display = "flex";
     } else {
-      chip.classList.remove("active");
+      item.style.display = "none";
     }
   });
-  renderGrupos();
 }
 
 // ============================================================
@@ -215,12 +292,12 @@ function setupAgregarGrupo() {
     const miembros = parseInt(document.getElementById("modalMembers")?.value) || 1;
     
     if (!nombre || !link || !ciudad) {
-      alert("⚠️ Por favor completa: nombre, enlace y ciudad");
+      alert("Completa: nombre, enlace y ciudad");
       return;
     }
     
     if (!link.includes("chat.whatsapp.com") && !link.includes("wa.me")) {
-      alert("⚠️ Ingresa un enlace válido de invitación de WhatsApp");
+      alert("Ingresa un enlace válido de invitación de WhatsApp");
       return;
     }
     
@@ -257,7 +334,7 @@ function setupAgregarGrupo() {
     if (window.mostrarToast) {
       window.mostrarToast(`✅ Grupo "${nombre}" agregado en ${ciudad}`, "#25D366");
     } else {
-      alert(`✅ Grupo "${nombre}" agregado correctamente en ${ciudad}`);
+      alert(`✅ Grupo "${nombre}" agregado correctamente`);
     }
   });
 }
@@ -275,6 +352,7 @@ window.renderGrupos = renderGrupos;
 // ============================================================
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Filtros de plataforma
   document.querySelectorAll(".filter-chip").forEach(chip => {
     chip.addEventListener("click", () => {
       const platform = chip.getAttribute("data-platform");
@@ -282,20 +360,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
   
-  document.querySelectorAll(".city-chip").forEach(chip => {
-    chip.addEventListener("click", () => {
-      const city = chip.getAttribute("data-city");
-      if (city) setActiveCity(city);
-    });
-  });
-  
+  // Botón Home
   document.getElementById("homeBtn")?.addEventListener("click", () => {
     setActivePlatform("whatsapp");
     setActiveCity("todos");
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
   
+  // Inicializar modal de ciudades
+  initCityModal();
+  
+  // Configurar agregar grupo
   setupAgregarGrupo();
+  
+  // Inicializar
   actualizarContadores();
   setActivePlatform("whatsapp");
   setActiveCity("todos");

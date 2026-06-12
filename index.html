@@ -2,12 +2,11 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
   
-  <!-- METADATOS SEO -->
-  <title>Qigrupos Bolivia | Grupos de WhatsApp de Compra y Venta</title>
-  <meta name="description" content="Encuentra los mejores grupos de WhatsApp de compra y venta en Bolivia. Únete a grupos por ciudad: Santa Cruz, La Paz, Cochabamba y más. ¡Compra y vende fácilmente!">
-  <meta name="keywords" content="grupos whatsapp bolivia, compra y venta bolivia, whatsapp grupos santa cruz, grupos la paz, vender en bolivia, grupos whatsapp cochabamba">
+  <title>Qigrupos Bolivia | Grupos WhatsApp Compra y Venta</title>
+  <meta name="description" content="Encuentra los mejores grupos de WhatsApp de compra y venta en Bolivia. Únete a grupos por ciudad: Santa Cruz, La Paz, Cochabamba y más.">
+  <meta name="keywords" content="grupos whatsapp bolivia, compra y venta bolivia">
   <meta name="author" content="Qigrupos Bolivia">
   <meta name="robots" content="index, follow">
   
@@ -17,7 +16,7 @@
   <meta property="og:type" content="website">
   <meta property="og:locale" content="es_ES">
   
-  <!-- Favicon con emoji -->
+  <!-- Favicon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇧🇴</text></svg>">
   
   <!-- Font Awesome -->
@@ -34,17 +33,17 @@
   <div class="navbar">
     <div class="logo-area">
       <h1><i class="fab fa-whatsapp" style="color:#25D366;"></i> Qigrupos <span style="color:#2c3e4e;">Bolivia</span></h1>
-      <p>Compra & Venta | Grupos exclusivos de Bolivia</p>
+      <p>Compra & Venta | Grupos exclusivos</p>
     </div>
     <div class="nav-links">
       <button class="nav-btn" id="homeBtn"><i class="fas fa-home"></i> Home</button>
-      <button class="nav-btn primary" id="subirGrupoBtn" style="display: none;"><i class="fas fa-upload"></i> Subir grupo</button>
+      <button class="nav-btn primary" id="subirGrupoBtn" style="display: none;"><i class="fas fa-plus"></i> Agregar</button>
       <button class="nav-btn" id="adminLoginBtn"><i class="fas fa-user-shield"></i> Admin</button>
-      <button class="nav-btn" id="adminLogoutBtn" style="display: none; background:#dc3545; color:white;"><i class="fas fa-sign-out-alt"></i> Salir</button>
+      <button class="nav-btn" id="adminLogoutBtn" style="display: none;"><i class="fas fa-sign-out-alt"></i> Salir</button>
     </div>
   </div>
 
-  <!-- Filtro de plataforma -->
+  <!-- Filtros redes sociales -->
   <div class="social-filters" id="socialFilters">
     <div class="filter-chip active" data-platform="whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</div>
     <div class="filter-chip" data-platform="telegram"><i class="fab fa-telegram"></i> Telegram</div>
@@ -53,45 +52,137 @@
     <div class="filter-chip" data-platform="facebook"><i class="fab fa-facebook"></i> Facebook</div>
   </div>
 
-  <!-- Filtro por ciudad -->
-  <div class="city-filters" id="cityFilters">
-    <div class="city-chip active" data-city="todos">📌 Todos (<span id="totalCount">0</span>)</div>
-    <div class="city-chip" data-city="Santa Cruz">🟢 Santa Cruz (<span id="santaCruzCount">0</span>)</div>
-    <div class="city-chip" data-city="La Paz">🔵 La Paz (<span id="laPazCount">0</span>)</div>
-    <div class="city-chip" data-city="Cochabamba">🟠 Cochabamba (<span id="cochabambaCount">0</span>)</div>
-    <div class="city-chip" data-city="Sucre">⚪ Sucre (<span id="sucreCount">0</span>)</div>
-    <div class="city-chip" data-city="Tarija">🟣 Tarija (<span id="tarijaCount">0</span>)</div>
-    <div class="city-chip" data-city="Potosí">🟤 Potosí (<span id="potosiCount">0</span>)</div>
-    <div class="city-chip" data-city="Oruro">🟡 Oruro (<span id="oruroCount">0</span>)</div>
-    <div class="city-chip" data-city="Beni">🌳 Beni (<span id="beniCount">0</span>)</div>
-    <div class="city-chip" data-city="Pando">🐟 Pando (<span id="pandoCount">0</span>)</div>
+  <!-- BOTÓN SELECTOR DE CIUDAD (MODAL) -->
+  <div class="city-selector-btn" id="openCityModalBtn">
+    <div class="city-selected">
+      <i class="fas fa-map-marker-alt"></i>
+      <span id="selectedCityName">Todos los departamentos</span>
+      <span class="city-badge" id="selectedCityCount">(0)</span>
+    </div>
+    <i class="fas fa-chevron-down"></i>
   </div>
 
   <!-- Banner Bolivia -->
   <div class="bolivia-banner">
-    <div><strong><i class="fas fa-map-marker-alt" style="color:#25D366;"></i> 🇧🇴 Grupos de compra y venta en Bolivia</strong> — Filtra por tu ciudad</div>
-    <span>➕ Compra y venta segura</span>
+    <div><strong>🇧🇴 Grupos compra y venta Bolivia</strong></div>
+    <span>➕ Seguro</span>
   </div>
 
-  <!-- Grid de grupos -->
+  <!-- Contador de resultados -->
+  <div class="results-counter">
+    <i class="fas fa-users"></i> <span id="resultCount">0</span> grupos encontrados
+  </div>
+
+  <!-- Grid grupos -->
   <div id="gruposContainer" class="grupos-grid"></div>
   
   <div class="footer-note">
-    <i class="fab fa-whatsapp"></i> Grupos verificados de compra y venta Bolivia — Únete y publica tus productos
+    <i class="fab fa-whatsapp"></i> Grupos verificados de compra y venta Bolivia
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- MODAL DE CIUDADES (NUEVO)                    -->
+<!-- ============================================ -->
+<div id="cityModal" class="modal-city">
+  <div class="modal-city-content">
+    <div class="modal-city-header">
+      <h3><i class="fas fa-map-marker-alt"></i> Seleccionar ciudad</h3>
+      <button class="close-city-modal" id="closeCityModalBtn">&times;</button>
+    </div>
+    
+    <!-- Buscador -->
+    <div class="city-search">
+      <i class="fas fa-search"></i>
+      <input type="text" id="citySearchInput" placeholder="Buscar ciudad...">
+    </div>
+    
+    <!-- Lista de ciudades -->
+    <div class="city-list" id="cityList">
+      <div class="city-item active" data-city="todos">
+        <div class="city-info">
+          <i class="fas fa-globe-americas"></i>
+          <span>Todos los departamentos</span>
+        </div>
+        <span class="city-count" id="modalTotalCount">0</span>
+      </div>
+      <div class="city-item" data-city="Santa Cruz">
+        <div class="city-info">
+          <i class="fas fa-tree"></i>
+          <span>Santa Cruz</span>
+        </div>
+        <span class="city-count" id="modalSantaCruzCount">0</span>
+      </div>
+      <div class="city-item" data-city="La Paz">
+        <div class="city-info">
+          <i class="fas fa-mountain"></i>
+          <span>La Paz</span>
+        </div>
+        <span class="city-count" id="modalLaPazCount">0</span>
+      </div>
+      <div class="city-item" data-city="Cochabamba">
+        <div class="city-info">
+          <i class="fas fa-cloud-sun"></i>
+          <span>Cochabamba</span>
+        </div>
+        <span class="city-count" id="modalCochabambaCount">0</span>
+      </div>
+      <div class="city-item" data-city="Sucre">
+        <div class="city-info">
+          <i class="fas fa-landmark"></i>
+          <span>Sucre</span>
+        </div>
+        <span class="city-count" id="modalSucreCount">0</span>
+      </div>
+      <div class="city-item" data-city="Tarija">
+        <div class="city-info">
+          <i class="fas fa-wine-bottle"></i>
+          <span>Tarija</span>
+        </div>
+        <span class="city-count" id="modalTarijaCount">0</span>
+      </div>
+      <div class="city-item" data-city="Potosí">
+        <div class="city-info">
+          <i class="fas fa-gem"></i>
+          <span>Potosí</span>
+        </div>
+        <span class="city-count" id="modalPotosiCount">0</span>
+      </div>
+      <div class="city-item" data-city="Oruro">
+        <div class="city-info">
+          <i class="fas fa-church"></i>
+          <span>Oruro</span>
+        </div>
+        <span class="city-count" id="modalOruroCount">0</span>
+      </div>
+      <div class="city-item" data-city="Beni">
+        <div class="city-info">
+          <i class="fas fa-water"></i>
+          <span>Beni</span>
+        </div>
+        <span class="city-count" id="modalBeniCount">0</span>
+      </div>
+      <div class="city-item" data-city="Pando">
+        <div class="city-info">
+          <i class="fas fa-fish"></i>
+          <span>Pando</span>
+        </div>
+        <span class="city-count" id="modalPandoCount">0</span>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- Modal Agregar grupo -->
 <div id="subirModal" class="modal">
   <div class="modal-content">
-    <i class="fab fa-whatsapp" style="font-size:3rem; color:#25D366;"></i>
-    <h3>➕ Agregar nuevo grupo</h3>
-    <p>Completa los datos del grupo de WhatsApp</p>
-    <input type="text" placeholder="Nombre del grupo" id="modalGroupName">
-    <input type="text" placeholder="Descripción del grupo" id="modalGroupDesc">
-    <input type="text" placeholder="Enlace de invitación WhatsApp" id="modalGroupLink">
+    <i class="fab fa-whatsapp" style="font-size:2.5rem; color:#25D366;"></i>
+    <h3>Agregar grupo</h3>
+    <input type="text" placeholder="Nombre" id="modalGroupName">
+    <input type="text" placeholder="Descripción" id="modalGroupDesc">
+    <input type="text" placeholder="Enlace WhatsApp" id="modalGroupLink">
     <select id="modalCity">
-      <option value="">Selecciona una ciudad</option>
+      <option value="">Selecciona ciudad</option>
       <option value="Santa Cruz">Santa Cruz</option>
       <option value="La Paz">La Paz</option>
       <option value="Cochabamba">Cochabamba</option>
@@ -102,9 +193,9 @@
       <option value="Beni">Beni</option>
       <option value="Pando">Pando</option>
     </select>
-    <input type="number" placeholder="Número de miembros" id="modalMembers" value="1">
+    <input type="number" placeholder="Miembros" id="modalMembers" value="1">
     <div class="modal-buttons">
-      <button id="modalConfirmBtn">Agregar grupo</button>
+      <button id="modalConfirmBtn">Agregar</button>
       <button id="modalCloseBtn">Cancelar</button>
     </div>
   </div>
@@ -112,14 +203,13 @@
 
 <!-- Modal Login -->
 <div id="loginModal" class="modal" style="display: none;">
-  <div class="modal-content" style="max-width: 350px;">
-    <i class="fas fa-lock" style="font-size:3rem; color:#1e2f3e;"></i>
-    <h3>🔐 Acceso Administrador</h3>
-    <p>Ingresa tus credenciales</p>
-    <input type="text" id="loginUser" placeholder="Usuario" autocomplete="off">
-    <input type="password" id="loginPass" placeholder="Contraseña" autocomplete="off">
+  <div class="modal-content" style="max-width: 300px;">
+    <i class="fas fa-lock" style="font-size:2rem; color:#1e2f3e;"></i>
+    <h3>Admin</h3>
+    <input type="text" id="loginUser" placeholder="Usuario">
+    <input type="password" id="loginPass" placeholder="Contraseña">
     <div class="modal-buttons">
-      <button id="loginBtn" style="background:#1e2f3e;">Ingresar</button>
+      <button id="loginBtn">Ingresar</button>
       <button id="closeLoginBtn">Cancelar</button>
     </div>
   </div>
