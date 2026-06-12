@@ -44,7 +44,7 @@ async function cargarGruposDesdeStorage() {
 
 async function guardarGruposEnStorage() {
   try {
-    await fetch(JSONBIN_CONFIG.url(), {
+    const res = await fetch(JSONBIN_CONFIG.url(), {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -52,9 +52,12 @@ async function guardarGruposEnStorage() {
       },
       body: JSON.stringify({ grupos: gruposData })
     });
+    if (!res.ok) throw new Error("Error al guardar");
     window.gruposData = gruposData;
+    return true;
   } catch (e) {
     console.error("Error guardando grupos:", e);
+    return false;
   }
 }
 
@@ -107,15 +110,18 @@ async function agregarGrupoDesdeAdmin(nombre, descripcion, link, ciudad, miembro
   };
 
   gruposData.push(newGroup);
-  await guardarGruposEnStorage();
-  actualizarContadores();
-
-  if (currentPlatform === "whatsapp") {
-    renderGrupos();
-  } else {
-    setActivePlatform("whatsapp");
+  const guardado = await guardarGruposEnStorage();
+  
+  if (guardado) {
+    actualizarContadores();
+    if (currentPlatform === "whatsapp") {
+      renderGrupos();
+    } else {
+      setActivePlatform("whatsapp");
+    }
   }
-  return true;
+  
+  return guardado;
 }
 
 function actualizarContadores() {
@@ -125,7 +131,7 @@ function actualizarContadores() {
     return gruposWhatsApp.filter(g => normalizarCiudad(g.ubicacion) === ciudad).length;
   };
 
-  const modalContadores = {
+  const ids = {
     modalTotalCount: contar("todos"),
     modalSantaCruzCount: contar("Santa Cruz"),
     modalLaPazCount: contar("La Paz"),
@@ -138,7 +144,7 @@ function actualizarContadores() {
     modalPandoCount: contar("Pando")
   };
 
-  for (const [id, value] of Object.entries(modalContadores)) {
+  for (const [id, value] of Object.entries(ids)) {
     const el = document.getElementById(id);
     if (el) el.innerText = value;
   }
@@ -154,9 +160,9 @@ function actualizarContadores() {
 }
 
 function getGruposFiltrados() {
-  let filtrados = gruposData.filter(grupo => grupo.plataforma === currentPlatform);
+  let filtrados = gruposData.filter(g => g.plataforma === currentPlatform);
   if (currentCity !== "todos") {
-    filtrados = filtrados.filter(grupo => normalizarCiudad(grupo.ubicacion) === currentCity);
+    filtrados = filtrados.filter(g => normalizarCiudad(g.ubicacion) === currentCity);
   }
   return filtrados;
 }
@@ -198,7 +204,6 @@ function renderGrupos() {
   });
 
   gruposContainer.innerHTML = html;
-
   document.querySelectorAll(".join-btn").forEach(btn => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
