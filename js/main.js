@@ -2,7 +2,6 @@
 // BASE DE DATOS DE GRUPOS - CON LOCALSTORAGE
 // ============================================================
 
-// Cargar grupos desde localStorage o usar datos por defecto
 let gruposData = [];
 
 function cargarGruposDesdeStorage() {
@@ -10,7 +9,6 @@ function cargarGruposDesdeStorage() {
   if (guardados) {
     gruposData = JSON.parse(guardados);
   } else {
-    // Datos iniciales por defecto
     gruposData = [
       {
         id: 1,
@@ -25,7 +23,6 @@ function cargarGruposDesdeStorage() {
     ];
     guardarGruposEnStorage();
   }
-  // Sincronizar con window para admin.js
   window.gruposData = gruposData;
 }
 
@@ -75,6 +72,36 @@ function escapeHtml(str) {
 }
 
 // ============================================================
+// AGREGAR GRUPO DESDE ADMIN
+// ============================================================
+
+function agregarGrupoDesdeAdmin(nombre, descripcion, link, ciudad, miembros) {
+  const newId = gruposData.length + 1;
+  const newGroup = {
+    id: newId,
+    nombre: nombre,
+    descripcion: descripcion || "Grupo de compra y venta en Bolivia",
+    ubicacion: ciudad,
+    miembros: parseInt(miembros) || 1,
+    activos: Math.floor((parseInt(miembros) || 1) * 0.85),
+    link: link,
+    plataforma: "whatsapp"
+  };
+  
+  gruposData.push(newGroup);
+  guardarGruposEnStorage();
+  actualizarContadores();
+  
+  if (currentPlatform === "whatsapp") {
+    renderGrupos();
+  } else {
+    setActivePlatform("whatsapp");
+  }
+  
+  return true;
+}
+
+// ============================================================
 // CONTAR GRUPOS POR CIUDAD
 // ============================================================
 
@@ -86,7 +113,6 @@ function actualizarContadores() {
     return gruposWhatsApp.filter(g => normalizarCiudad(g.ubicacion) === ciudad).length;
   };
   
-  // Actualizar contadores en el modal
   const modalContadores = {
     modalTotalCount: contar("todos"),
     modalSantaCruzCount: contar("Santa Cruz"),
@@ -105,7 +131,6 @@ function actualizarContadores() {
     if (el) el.innerText = value;
   }
   
-  // Actualizar badge del botón selector
   const selectedCityCount = document.getElementById("selectedCityCount");
   if (selectedCityCount) {
     if (currentCity === "todos") {
@@ -115,7 +140,6 @@ function actualizarContadores() {
     }
   }
   
-  // Actualizar nombre de ciudad seleccionada
   const selectedCityName = document.getElementById("selectedCityName");
   if (selectedCityName) {
     if (currentCity === "todos") {
@@ -125,7 +149,6 @@ function actualizarContadores() {
     }
   }
   
-  // Actualizar contador de resultados
   const resultCount = document.getElementById("resultCount");
   if (resultCount) {
     const filtrados = getGruposFiltrados();
@@ -139,11 +162,9 @@ function actualizarContadores() {
 
 function getGruposFiltrados() {
   let filtrados = gruposData.filter(grupo => grupo.plataforma === currentPlatform);
-  
   if (currentCity !== "todos") {
     filtrados = filtrados.filter(grupo => normalizarCiudad(grupo.ubicacion) === currentCity);
   }
-  
   return filtrados;
 }
 
@@ -154,7 +175,6 @@ function getGruposFiltrados() {
 function renderGrupos() {
   const filtrados = getGruposFiltrados();
   const gruposContainer = document.getElementById("gruposContainer");
-  
   if (!gruposContainer) return;
   
   if (filtrados.length === 0) {
@@ -174,9 +194,7 @@ function renderGrupos() {
           <h3>${escapeHtml(grupo.nombre)}</h3>
           <div class="badge-whatsapp"><i class="fab fa-whatsapp"></i> WA</div>
         </div>
-        <div class="descripcion">
-          ${escapeHtml(grupo.descripcion)}
-        </div>
+        <div class="descripcion">${escapeHtml(grupo.descripcion)}</div>
         <div class="ubicacion">
           <i class="fas fa-map-pin"></i> ${escapeHtml(grupo.ubicacion)}
           <span style="margin-left: auto; font-size:0.65rem; background:#eaf7f0; padding:2px 8px; border-radius:20px;">🇧🇴</span>
@@ -223,7 +241,6 @@ function setActiveCity(city) {
   actualizarContadores();
   renderGrupos();
   
-  // Cerrar modal si está abierto
   const cityModal = document.getElementById("cityModal");
   if (cityModal) cityModal.style.display = "none";
 }
@@ -238,7 +255,6 @@ function initCityModal() {
   const cityModal = document.getElementById("cityModal");
   const searchInput = document.getElementById("citySearchInput");
   
-  // Abrir modal
   if (openBtn) {
     openBtn.addEventListener("click", () => {
       cityModal.style.display = "flex";
@@ -248,7 +264,6 @@ function initCityModal() {
     });
   }
   
-  // Cerrar modal
   const closeModal = () => {
     cityModal.style.display = "none";
     document.body.style.overflow = "";
@@ -256,12 +271,10 @@ function initCityModal() {
   
   if (closeBtn) closeBtn.addEventListener("click", closeModal);
   
-  // Cerrar al hacer clic fuera
   cityModal.addEventListener("click", (e) => {
     if (e.target === cityModal) closeModal();
   });
   
-  // Seleccionar ciudad
   document.querySelectorAll(".city-item").forEach(item => {
     item.addEventListener("click", () => {
       const city = item.getAttribute("data-city");
@@ -270,7 +283,6 @@ function initCityModal() {
     });
   });
   
-  // Búsqueda en tiempo real
   if (searchInput) {
     searchInput.addEventListener("input", (e) => {
       filterCityList(e.target.value.toLowerCase());
@@ -290,82 +302,12 @@ function filterCityList(searchTerm) {
 }
 
 // ============================================================
-// AGREGAR GRUPO (CON LOCALSTORAGE)
-// ============================================================
-
-function setupAgregarGrupo() {
-  const modalConfirm = document.getElementById("modalConfirmBtn");
-  if (!modalConfirm) return;
-  
-  const newBtn = modalConfirm.cloneNode(true);
-  modalConfirm.parentNode.replaceChild(newBtn, modalConfirm);
-  
-  newBtn.addEventListener("click", () => {
-    const nombre = document.getElementById("modalGroupName")?.value.trim();
-    const descripcion = document.getElementById("modalGroupDesc")?.value.trim();
-    const link = document.getElementById("modalGroupLink")?.value.trim();
-    const ciudad = document.getElementById("modalCity")?.value;
-    const miembros = parseInt(document.getElementById("modalMembers")?.value) || 1;
-    
-    if (!nombre || !link || !ciudad) {
-      alert("Completa todos los campos");
-      return;
-    }
-    
-    if (!link.includes("chat.whatsapp.com") && !link.includes("wa.me")) {
-      alert("Enlace válido de WhatsApp");
-      return;
-    }
-    
-    const newId = gruposData.length + 1;
-    const newGroup = {
-      id: newId,
-      nombre: nombre,
-      descripcion: descripcion || "Grupo de compra y venta en Bolivia",
-      ubicacion: ciudad,
-      miembros: miembros,
-      activos: Math.floor(miembros * 0.85),
-      link: link,
-      plataforma: "whatsapp"
-    };
-    
-    gruposData.push(newGroup);
-    guardarGruposEnStorage();
-    
-    actualizarContadores();
-    
-    if (currentPlatform === "whatsapp") {
-      renderGrupos();
-    } else {
-      setActivePlatform("whatsapp");
-    }
-    
-    document.getElementById("modalGroupName").value = "";
-    document.getElementById("modalGroupDesc").value = "";
-    document.getElementById("modalGroupLink").value = "";
-    document.getElementById("modalCity").value = "";
-    document.getElementById("modalMembers").value = "1";
-    
-    const modal = document.getElementById("subirModal");
-    if (modal) modal.style.display = "none";
-    
-    if (window.mostrarToast) {
-      window.mostrarToast(`✅ Grupo "${nombre}" agregado`, "#25D366");
-    } else {
-      alert("Grupo agregado correctamente");
-    }
-  });
-}
-
-// ============================================================
 // INICIALIZAR
 // ============================================================
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Cargar grupos guardados
   cargarGruposDesdeStorage();
   
-  // Filtros de plataforma
   document.querySelectorAll(".filter-chip").forEach(chip => {
     chip.addEventListener("click", () => {
       const platform = chip.getAttribute("data-platform");
@@ -373,26 +315,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
   
-  // Botón Home
   document.getElementById("homeBtn")?.addEventListener("click", () => {
     setActivePlatform("whatsapp");
     setActiveCity("todos");
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
   
-  // Inicializar modal de ciudades
   initCityModal();
-  
-  // Configurar agregar grupo
-  setupAgregarGrupo();
-  
-  // Inicializar
   actualizarContadores();
   setActivePlatform("whatsapp");
   setActiveCity("todos");
 });
 
-// Sincronizar con window para admin.js
-window.gruposData = gruposData;
+// Exportar funciones para admin.js
+window.agregarGrupoDesdeAdmin = agregarGrupoDesdeAdmin;
 window.actualizarContadores = actualizarContadores;
 window.renderGrupos = renderGrupos;
+window.gruposData = gruposData;

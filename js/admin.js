@@ -5,7 +5,7 @@
 // 🔐 CONFIGURACIÓN - ¡CAMBIA ESTOS DATOS POR LOS TUYOS!
 const ADMIN_CONFIG = {
   usuario: "admin",
-  password: "12345",
+  password: "Bolivia2024",
   sessionHours: 24
 };
 
@@ -115,11 +115,47 @@ function cerrarAgregarModal() {
 }
 
 // ============================================
+// AGREGAR GRUPO - LLAMA A LA FUNCIÓN DE MAIN.JS
+// ============================================
+
+function agregarGrupo() {
+  const nombre = document.getElementById("modalGroupName")?.value.trim();
+  const descripcion = document.getElementById("modalGroupDesc")?.value.trim();
+  const link = document.getElementById("modalGroupLink")?.value.trim();
+  const ciudad = document.getElementById("modalCity")?.value;
+  const miembros = document.getElementById("modalMembers")?.value;
+  
+  if (!nombre || !link || !ciudad) {
+    mostrarToast("⚠️ Completa: nombre, enlace y ciudad", "#dc3545");
+    return;
+  }
+  
+  if (!link.includes("chat.whatsapp.com") && !link.includes("wa.me")) {
+    mostrarToast("⚠️ Enlace válido de WhatsApp", "#dc3545");
+    return;
+  }
+  
+  // Llamar a la función de main.js
+  if (window.agregarGrupoDesdeAdmin) {
+    window.agregarGrupoDesdeAdmin(nombre, descripcion, link, ciudad, miembros);
+    mostrarToast(`✅ Grupo "${nombre}" agregado`, "#25D366");
+    cerrarAgregarModal();
+  } else {
+    mostrarToast("❌ Error: función no disponible", "#dc3545");
+  }
+}
+
+// ============================================
 // TOAST NOTIFICACIONES
 // ============================================
 
 function mostrarToast(mensaje, color = "#25D366") {
+  // Eliminar toast anterior si existe
+  const oldToast = document.querySelector(".toast-message");
+  if (oldToast) oldToast.remove();
+  
   const toast = document.createElement("div");
+  toast.className = "toast-message";
   toast.textContent = mensaje;
   toast.style.cssText = `
     position: fixed;
@@ -142,23 +178,6 @@ function mostrarToast(mensaje, color = "#25D366") {
     toast.style.animation = "fadeOutDown 0.3s ease";
     setTimeout(() => toast.remove(), 300);
   }, 3000);
-}
-
-// Añadir animaciones
-if (!document.querySelector("#toastAnimations")) {
-  const style = document.createElement("style");
-  style.id = "toastAnimations";
-  style.textContent = `
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateX(-50%) translateY(20px); }
-      to { opacity: 1; transform: translateX(-50%) translateY(0); }
-    }
-    @keyframes fadeOutDown {
-      from { opacity: 1; transform: translateX(-50%) translateY(0); }
-      to { opacity: 0; transform: translateX(-50%) translateY(20px); }
-    }
-  `;
-  document.head.appendChild(style);
 }
 
 // ============================================
@@ -212,6 +231,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalConfirm = document.getElementById("modalConfirmBtn");
   const modalClose = document.getElementById("modalCloseBtn");
   
+  if (modalConfirm) {
+    modalConfirm.addEventListener("click", agregarGrupo);
+  }
+  
   if (modalClose) {
     modalClose.addEventListener("click", cerrarAgregarModal);
   }
@@ -240,17 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+// Exportar funciones
 window.adminFunctions = {
-  agregarGrupo: function(grupo) {
-    if (isAdminLogged && window.gruposData) {
-      window.gruposData.push(grupo);
-      if (window.actualizarContadores) window.actualizarContadores();
-      if (window.renderGrupos) window.renderGrupos();
-      cerrarAgregarModal();
-      mostrarToast("✅ Grupo agregado correctamente", "#25D366");
-      return true;
-    }
-    return false;
-  },
   isLogged: () => isAdminLogged
 };
