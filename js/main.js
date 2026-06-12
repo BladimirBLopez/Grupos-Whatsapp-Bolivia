@@ -1,42 +1,65 @@
 // ============================================================
-// BASE DE DATOS DE GRUPOS - CON LOCALSTORAGE
+// CONFIGURACIÓN JSONBIN.IO
 // ============================================================
+
+const JSONBIN_CONFIG = {
+  binId: "6a2c83a1da38895dfeb7b5f0",
+  apiKey: "$2a$10$hnUNwhd.U/cmnfflqWjWUe6umo9IEsrCZlua/0JGhHiXN5vtZfqNq",
+  url: function() {
+    return `https://api.jsonbin.io/v3/b/${this.binId}`;
+  }
+};
 
 let gruposData = [];
 
-function cargarGruposDesdeStorage() {
-  const guardados = localStorage.getItem("qigrupos_grupos");
-  if (guardados) {
-    gruposData = JSON.parse(guardados);
-  } else {
-    gruposData = [
-      {
-        id: 1,
-        nombre: "🇳🇬🅒🅞🅜🅟🅡Á 🅨 🅥🅔🅝🅣🅐.🅢🅒🅩🇳🇬",
-        descripcion: "Grupo de compra y venta en Santa Cruz, Bolivia. Comparte productos, servicios y ofertas.",
-        ubicacion: "Santa Cruz",
-        miembros: 27,
-        activos: 24,
-        link: "https://chat.whatsapp.com/KVTyedioIByCZBt6ZHfCVr",
-        plataforma: "whatsapp"
-      }
-    ];
-    guardarGruposEnStorage();
+async function cargarGruposDesdeStorage() {
+  try {
+    const res = await fetch(JSONBIN_CONFIG.url(), {
+      headers: { "X-Master-Key": JSONBIN_CONFIG.apiKey }
+    });
+    const data = await res.json();
+    gruposData = data.record.grupos || [];
+
+    if (gruposData.length === 0) {
+      gruposData = [
+        {
+          id: 1,
+          nombre: "🇳🇬🅒🅞🅜🅟🅡Á 🅨 🅥🅔🅝🅣🅐.🅢🅒🅩🇳🇬",
+          descripcion: "Grupo de compra y venta en Santa Cruz, Bolivia.",
+          ubicacion: "Santa Cruz",
+          miembros: 27,
+          activos: 24,
+          link: "https://chat.whatsapp.com/KVTyedioIByCZBt6ZHfCVr",
+          plataforma: "whatsapp"
+        }
+      ];
+      await guardarGruposEnStorage();
+    }
+  } catch (e) {
+    console.error("Error cargando grupos:", e);
+    gruposData = [];
   }
   window.gruposData = gruposData;
 }
 
-function guardarGruposEnStorage() {
-  localStorage.setItem("qigrupos_grupos", JSON.stringify(gruposData));
-  window.gruposData = gruposData;
+async function guardarGruposEnStorage() {
+  try {
+    await fetch(JSONBIN_CONFIG.url(), {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Master-Key": JSONBIN_CONFIG.apiKey
+      },
+      body: JSON.stringify({ grupos: gruposData })
+    });
+    window.gruposData = gruposData;
+  } catch (e) {
+    console.error("Error guardando grupos:", e);
+  }
 }
 
 let currentPlatform = "whatsapp";
 let currentCity = "todos";
-
-// ============================================================
-// FUNCIONES AUXILIARES
-// ============================================================
 
 function normalizarCiudad(ciudad) {
   if (!ciudad) return "otro";
@@ -71,48 +94,37 @@ function escapeHtml(str) {
   });
 }
 
-// ============================================================
-// AGREGAR GRUPO DESDE ADMIN
-// ============================================================
-
-function agregarGrupoDesdeAdmin(nombre, descripcion, link, ciudad, miembros) {
-  const newId = gruposData.length + 1;
+async function agregarGrupoDesdeAdmin(nombre, descripcion, link, ciudad, miembros) {
   const newGroup = {
-    id: newId,
-    nombre: nombre,
+    id: Date.now(),
+    nombre,
     descripcion: descripcion || "Grupo de compra y venta en Bolivia",
     ubicacion: ciudad,
     miembros: parseInt(miembros) || 1,
     activos: Math.floor((parseInt(miembros) || 1) * 0.85),
-    link: link,
+    link,
     plataforma: "whatsapp"
   };
-  
+
   gruposData.push(newGroup);
-  guardarGruposEnStorage();
+  await guardarGruposEnStorage();
   actualizarContadores();
-  
+
   if (currentPlatform === "whatsapp") {
     renderGrupos();
   } else {
     setActivePlatform("whatsapp");
   }
-  
   return true;
 }
 
-// ============================================================
-// CONTAR GRUPOS POR CIUDAD
-// ============================================================
-
 function actualizarContadores() {
   const gruposWhatsApp = gruposData.filter(g => g.plataforma === "whatsapp");
-  
   const contar = (ciudad) => {
     if (ciudad === "todos") return gruposWhatsApp.length;
     return gruposWhatsApp.filter(g => normalizarCiudad(g.ubicacion) === ciudad).length;
   };
-  
+
   const modalContadores = {
     modalTotalCount: contar("todos"),
     modalSantaCruzCount: contar("Santa Cruz"),
@@ -125,40 +137,21 @@ function actualizarContadores() {
     modalBeniCount: contar("Beni"),
     modalPandoCount: contar("Pando")
   };
-  
+
   for (const [id, value] of Object.entries(modalContadores)) {
     const el = document.getElementById(id);
     if (el) el.innerText = value;
   }
-  
-  const selectedCityCount = document.getElementById("selectedCityCount");
-  if (selectedCityCount) {
-    if (currentCity === "todos") {
-      selectedCityCount.innerText = `(${contar("todos")})`;
-    } else {
-      selectedCityCount.innerText = `(${contar(currentCity)})`;
-    }
-  }
-  
-  const selectedCityName = document.getElementById("selectedCityName");
-  if (selectedCityName) {
-    if (currentCity === "todos") {
-      selectedCityName.innerText = "Todos los departamentos";
-    } else {
-      selectedCityName.innerText = currentCity;
-    }
-  }
-  
-  const resultCount = document.getElementById("resultCount");
-  if (resultCount) {
-    const filtrados = getGruposFiltrados();
-    resultCount.innerText = filtrados.length;
-  }
-}
 
-// ============================================================
-// FILTRAR GRUPOS
-// ============================================================
+  const selectedCityCount = document.getElementById("selectedCityCount");
+  if (selectedCityCount) selectedCityCount.innerText = `(${contar(currentCity)})`;
+
+  const selectedCityName = document.getElementById("selectedCityName");
+  if (selectedCityName) selectedCityName.innerText = currentCity === "todos" ? "Todos los departamentos" : currentCity;
+
+  const resultCount = document.getElementById("resultCount");
+  if (resultCount) resultCount.innerText = getGruposFiltrados().length;
+}
 
 function getGruposFiltrados() {
   let filtrados = gruposData.filter(grupo => grupo.plataforma === currentPlatform);
@@ -168,24 +161,20 @@ function getGruposFiltrados() {
   return filtrados;
 }
 
-// ============================================================
-// RENDERIZAR GRUPOS
-// ============================================================
-
 function renderGrupos() {
   const filtrados = getGruposFiltrados();
   const gruposContainer = document.getElementById("gruposContainer");
   if (!gruposContainer) return;
-  
+
   if (filtrados.length === 0) {
     gruposContainer.innerHTML = `<div class="empty-message">
-      <i class="fab fa-whatsapp"></i> 
+      <i class="fab fa-whatsapp"></i>
       No hay grupos de ${currentPlatform} en ${currentCity === "todos" ? "Bolivia" : currentCity} aún.<br>
       ${window.adminFunctions?.isLogged() ? 'Usa el botón "Agregar" para añadir uno.' : '¡Vuelve pronto para nuevos grupos!'}
     </div>`;
     return;
   }
-  
+
   let html = "";
   filtrados.forEach(grupo => {
     html += `
@@ -207,9 +196,9 @@ function renderGrupos() {
       </div>
     `;
   });
-  
+
   gruposContainer.innerHTML = html;
-  
+
   document.querySelectorAll(".join-btn").forEach(btn => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -218,19 +207,10 @@ function renderGrupos() {
   });
 }
 
-// ============================================================
-// CAMBIAR FILTROS
-// ============================================================
-
 function setActivePlatform(platform) {
   currentPlatform = platform;
   document.querySelectorAll(".filter-chip").forEach(chip => {
-    const chipPlatform = chip.getAttribute("data-platform");
-    if (chipPlatform === platform) {
-      chip.classList.add("active");
-    } else {
-      chip.classList.remove("active");
-    }
+    chip.classList.toggle("active", chip.getAttribute("data-platform") === platform);
   });
   actualizarContadores();
   renderGrupos();
@@ -240,21 +220,16 @@ function setActiveCity(city) {
   currentCity = city;
   actualizarContadores();
   renderGrupos();
-  
   const cityModal = document.getElementById("cityModal");
   if (cityModal) cityModal.style.display = "none";
 }
-
-// ============================================================
-// MODAL DE CIUDADES
-// ============================================================
 
 function initCityModal() {
   const openBtn = document.getElementById("openCityModalBtn");
   const closeBtn = document.getElementById("closeCityModalBtn");
   const cityModal = document.getElementById("cityModal");
   const searchInput = document.getElementById("citySearchInput");
-  
+
   if (openBtn) {
     openBtn.addEventListener("click", () => {
       cityModal.style.display = "flex";
@@ -263,18 +238,15 @@ function initCityModal() {
       filterCityList("");
     });
   }
-  
+
   const closeModal = () => {
     cityModal.style.display = "none";
     document.body.style.overflow = "";
   };
-  
+
   if (closeBtn) closeBtn.addEventListener("click", closeModal);
-  
-  cityModal.addEventListener("click", (e) => {
-    if (e.target === cityModal) closeModal();
-  });
-  
+  cityModal.addEventListener("click", (e) => { if (e.target === cityModal) closeModal(); });
+
   document.querySelectorAll(".city-item").forEach(item => {
     item.addEventListener("click", () => {
       const city = item.getAttribute("data-city");
@@ -282,52 +254,46 @@ function initCityModal() {
       closeModal();
     });
   });
-  
+
   if (searchInput) {
-    searchInput.addEventListener("input", (e) => {
-      filterCityList(e.target.value.toLowerCase());
-    });
+    searchInput.addEventListener("input", (e) => filterCityList(e.target.value.toLowerCase()));
   }
 }
 
 function filterCityList(searchTerm) {
   document.querySelectorAll(".city-item").forEach(item => {
     const cityName = item.querySelector(".city-info span")?.innerText.toLowerCase() || "";
-    if (searchTerm === "" || cityName.includes(searchTerm)) {
-      item.style.display = "flex";
-    } else {
-      item.style.display = "none";
-    }
+    item.style.display = (searchTerm === "" || cityName.includes(searchTerm)) ? "flex" : "none";
   });
 }
 
-// ============================================================
-// INICIALIZAR
-// ============================================================
+document.addEventListener("DOMContentLoaded", async () => {
+  const gruposContainer = document.getElementById("gruposContainer");
+  if (gruposContainer) {
+    gruposContainer.innerHTML = `<div class="empty-message"><i class="fas fa-spinner fa-spin"></i> Cargando grupos...</div>`;
+  }
 
-document.addEventListener("DOMContentLoaded", () => {
-  cargarGruposDesdeStorage();
-  
+  await cargarGruposDesdeStorage();
+
   document.querySelectorAll(".filter-chip").forEach(chip => {
     chip.addEventListener("click", () => {
       const platform = chip.getAttribute("data-platform");
       if (platform) setActivePlatform(platform);
     });
   });
-  
+
   document.getElementById("homeBtn")?.addEventListener("click", () => {
     setActivePlatform("whatsapp");
     setActiveCity("todos");
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
-  
+
   initCityModal();
   actualizarContadores();
   setActivePlatform("whatsapp");
   setActiveCity("todos");
 });
 
-// Exportar funciones para admin.js
 window.agregarGrupoDesdeAdmin = agregarGrupoDesdeAdmin;
 window.actualizarContadores = actualizarContadores;
 window.renderGrupos = renderGrupos;
