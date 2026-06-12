@@ -13,6 +13,18 @@ let gruposData = [
     link: "https://chat.whatsapp.com/KVTyedioIByCZBt6ZHfCVr",
     plataforma: "whatsapp"
   }
+  // 👇 Agrega más grupos aquí, separados por coma
+  // Ejemplo:
+  // {
+  //   id: 2,
+  //   nombre: "Compra y Venta La Paz",
+  //   descripcion: "Grupo para comprar y vender en La Paz",
+  //   ubicacion: "La Paz",
+  //   miembros: 45,
+  //   activos: 38,
+  //   link: "https://chat.whatsapp.com/xxxxx",
+  //   plataforma: "whatsapp"
+  // }
 ];
 
 let currentPlatform = "whatsapp";
@@ -125,20 +137,20 @@ function renderGrupos() {
       <div class="grupo-card" data-id="${grupo.id}">
         <div class="card-header">
           <h3>${escapeHtml(grupo.nombre)}</h3>
-          <div class="badge-whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</div>
+          <div class="badge-whatsapp"><i class="fab fa-whatsapp"></i> WA</div>
         </div>
         <div class="descripcion">
           ${escapeHtml(grupo.descripcion)}
         </div>
         <div class="ubicacion">
           <i class="fas fa-map-pin"></i> ${escapeHtml(grupo.ubicacion)}
-          <span style="margin-left: auto; font-size:0.7rem; background:#eaf7f0; padding:2px 8px; border-radius:20px;">🇧🇴 Bolivia</span>
+          <span style="margin-left: auto; font-size:0.65rem; background:#eaf7f0; padding:2px 8px; border-radius:20px;">🇧🇴</span>
         </div>
         <div class="stats">
-          <div class="stat-item"><i class="fas fa-user-friends"></i> ${grupo.miembros} miembros</div>
-          <div class="stat-item"><i class="fas fa-chart-line"></i> ${grupo.activos} activos</div>
+          <div class="stat-item"><i class="fas fa-user-friends"></i> ${grupo.miembros}</div>
+          <div class="stat-item"><i class="fas fa-chart-line"></i> ${grupo.activos}</div>
         </div>
-        <button class="join-btn" data-link="${grupo.link}"><i class="fab fa-whatsapp"></i> Unirme al grupo</button>
+        <button class="join-btn" data-link="${grupo.link}"><i class="fab fa-whatsapp"></i> Unirme</button>
       </div>
     `;
   });
@@ -243,9 +255,9 @@ function setupAgregarGrupo() {
     if (modal) modal.style.display = "none";
     
     if (window.mostrarToast) {
-      window.mostrarToast(`✅ Grupo "${nombre}" agregado`, "#25D366");
+      window.mostrarToast(`✅ Grupo "${nombre}" agregado en ${ciudad}`, "#25D366");
     } else {
-      alert(`✅ Grupo "${nombre}" agregado correctamente`);
+      alert(`✅ Grupo "${nombre}" agregado correctamente en ${ciudad}`);
     }
   });
 }

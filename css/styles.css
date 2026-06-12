@@ -11,14 +11,13 @@ body {
   line-height: 1.4;
 }
 
-/* Contenedor principal */
 .container {
   max-width: 1280px;
   margin: 0 auto;
   padding: 1.5rem 1.8rem 3rem;
 }
 
-/* HEADER / NAVBAR */
+/* Navbar */
 .navbar {
   display: flex;
   flex-wrap: wrap;
@@ -63,7 +62,6 @@ body {
   font-size: 0.9rem;
   cursor: pointer;
   transition: 0.2s ease;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -72,26 +70,13 @@ body {
   border: 1px solid #e2edf2;
 }
 
-.nav-btn i {
-  font-size: 1rem;
-}
-
 .nav-btn.primary {
   background: #25D366;
   border-color: #25D366;
   color: white;
 }
 
-.nav-btn.primary i {
-  color: white;
-}
-
-.lang-btn {
-  background: white;
-  border: 1px solid #cbdde6;
-}
-
-/* filtros redes sociales */
+/* Filtros plataforma */
 .social-filters {
   display: flex;
   flex-wrap: wrap;
@@ -100,7 +85,6 @@ body {
   background: white;
   padding: 0.8rem 1.2rem;
   border-radius: 60px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
   border: 1px solid #eef3f8;
   justify-content: center;
 }
@@ -116,26 +100,47 @@ body {
   gap: 8px;
   cursor: pointer;
   transition: all 0.2s;
-  border: 1px solid transparent;
   color: #2c3f4f;
-}
-
-.filter-chip i {
-  font-size: 1rem;
 }
 
 .filter-chip.active {
   background: #25D366;
   color: white;
-  border-color: #25D366;
-  box-shadow: 0 6px 12px rgba(37,211,102,0.2);
 }
 
-.filter-chip.active i {
+/* Filtros ciudad */
+.city-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-bottom: 2rem;
+  background: white;
+  padding: 0.8rem 1.2rem;
+  border-radius: 60px;
+  border: 1px solid #eef3f8;
+  justify-content: center;
+}
+
+.city-chip {
+  background: #f0f4f8;
+  border-radius: 40px;
+  padding: 0.45rem 1.1rem;
+  font-weight: 500;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #2c3f4f;
+}
+
+.city-chip.active {
+  background: #1e2f3e;
   color: white;
 }
 
-/* grid de grupos */
+/* Grid grupos */
 .grupos-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
@@ -143,7 +148,7 @@ body {
   margin-top: 0.8rem;
 }
 
-/* tarjeta de grupo */
+/* Tarjeta grupo */
 .grupo-card {
   background: white;
   border-radius: 28px;
@@ -151,12 +156,10 @@ body {
   transition: transform 0.2s, box-shadow 0.2s;
   box-shadow: 0 12px 24px -12px rgba(0, 0, 0, 0.08);
   border: 1px solid #e5f0f5;
-  cursor: pointer;
 }
 
 .grupo-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 24px 32px -16px rgba(0, 0, 0, 0.12);
 }
 
 .card-header {
@@ -170,7 +173,6 @@ body {
   font-size: 1.35rem;
   font-weight: 700;
   font-family: 'Poppins', sans-serif;
-  letter-spacing: -0.2px;
   color: #0b2b26;
   word-break: break-word;
 }
@@ -186,10 +188,6 @@ body {
   align-items: center;
   gap: 5px;
   white-space: nowrap;
-}
-
-.badge-whatsapp i {
-  font-size: 0.8rem;
 }
 
 .descripcion {
@@ -211,17 +209,11 @@ body {
   background: #fafefc;
 }
 
-.ubicacion i {
-  color: #25D366;
-  width: 18px;
-}
-
 .stats {
   display: flex;
   gap: 1.5rem;
   padding: 0.6rem 1.2rem 1rem;
   border-top: 1px solid #eff6fa;
-  background: #ffffff;
 }
 
 .stat-item {
@@ -231,11 +223,6 @@ body {
   font-size: 0.85rem;
   font-weight: 500;
   color: #3c5a6f;
-}
-
-.stat-item i {
-  font-size: 0.9rem;
-  color: #7f8c8d;
 }
 
 .join-btn {
@@ -250,16 +237,14 @@ body {
   color: white;
   transition: 0.2s;
   border: none;
-  font-family: 'Inter', sans-serif;
   cursor: pointer;
 }
 
 .join-btn:hover {
   background: #20b859;
-  transform: scale(0.98);
 }
 
-/* Banner Bolivia */
+/* Banner */
 .bolivia-banner {
   background: linear-gradient(105deg, #fff5e8 0%, #f0faf5 100%);
   border-radius: 28px;
@@ -291,7 +276,7 @@ body {
   padding-top: 2rem;
 }
 
-/* Modal */
+/* Modales */
 .modal {
   display: none;
   position: fixed;
@@ -314,15 +299,7 @@ body {
   text-align: center;
 }
 
-.modal-content h3 {
-  margin: 1rem 0 0.5rem;
-}
-
-.modal-content p {
-  margin-bottom: 1rem;
-}
-
-.modal-content input {
+.modal-content input, .modal-content select {
   width: 100%;
   padding: 12px;
   border-radius: 60px;
@@ -363,153 +340,133 @@ body {
   color: #6c86a0;
 }
 
-@media (max-width: 700px) {
-  .container {
-    padding: 1rem;
-  }
-  .grupos-grid {
-    grid-template-columns: 1fr;
-  }
-  .social-filters {
-    border-radius: 30px;
-    justify-content: flex-start;
-    overflow-x: auto;
-  }
-  .card-header {
-    flex-direction: column;
-    gap: 8px;
-  }
-  .badge-whatsapp {
-    align-self: flex-start;
-  }
-}
-/* ============================================ */
-/* NUEVO: FILTRO POR CIUDAD / DEPARTAMENTO      */
-/* ============================================ */
-
-.city-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.7rem;
-  margin-bottom: 2rem;
-  background: white;
-  padding: 0.8rem 1.2rem;
-  border-radius: 60px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-  border: 1px solid #eef3f8;
-  justify-content: center;
-}
-
-.city-chip {
-  background: #f0f4f8;
-  border-radius: 40px;
-  padding: 0.45rem 1.1rem;
-  font-weight: 500;
-  font-size: 0.85rem;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: 1px solid transparent;
-  color: #2c3f4f;
-}
-
-.city-chip i {
-  font-size: 0.9rem;
-}
-
-.city-chip.active {
-  background: #1e2f3e;
-  color: white;
-  border-color: #1e2f3e;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.city-chip:hover:not(.active) {
-  background: #e4eaf1;
-  transform: translateY(-1px);
-}
-
-/* Responsive para city filters */
-@media (max-width: 700px) {
-  .city-filters {
-    border-radius: 24px;
-    justify-content: flex-start;
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    padding: 0.8rem 1rem;
-    gap: 0.6rem;
-  }
-  .city-chip {
-    white-space: nowrap;
-  }
-}
-/* ============================================ */
-/* ESTILOS PARA FILTRO DE CIUDADES (ya lo tenías) */
-/* ============================================ */
-
-.city-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.7rem;
-  margin-bottom: 2rem;
-  background: white;
-  padding: 0.8rem 1.2rem;
-  border-radius: 60px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-  border: 1px solid #eef3f8;
-  justify-content: center;
-}
-
-.city-chip {
-  background: #f0f4f8;
-  border-radius: 40px;
-  padding: 0.45rem 1.1rem;
-  font-weight: 500;
-  font-size: 0.85rem;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: 1px solid transparent;
-  color: #2c3f4f;
-}
-
-.city-chip.active {
-  background: #1e2f3e;
-  color: white;
-  border-color: #1e2f3e;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.city-chip:hover:not(.active) {
-  background: #e4eaf1;
-  transform: translateY(-1px);
-}
-
-@media (max-width: 700px) {
-  .city-filters {
-    border-radius: 24px;
-    justify-content: flex-start;
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    padding: 0.8rem 1rem;
-    gap: 0.6rem;
-  }
-  .city-chip {
-    white-space: nowrap;
-  }
-}
-
-/* Estado ADMIN - botón de logout */
 #adminLogoutBtn {
   background: #dc3545;
   color: white;
   border-color: #dc3545;
 }
 
-#adminLogoutBtn:hover {
-  background: #c82333;
+/* ============================================ */
+/* RESPONSIVE - TARJETAS COMPACTAS PARA MÓVIL   */
+/* ============================================ */
+
+@media (max-width: 700px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  /* Grid más compacto */
+  .grupos-grid {
+    gap: 1rem;
+  }
+  
+  /* Tarjetas más compactas */
+  .grupo-card {
+    border-radius: 20px;
+  }
+  
+  /* Header más pequeño */
+  .card-header {
+    padding: 0.8rem 1rem 0.3rem 1rem;
+  }
+  
+  .card-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.3;
+  }
+  
+  /* Badge más pequeño */
+  .badge-whatsapp {
+    padding: 3px 8px;
+    font-size: 0.6rem;
+  }
+  
+  /* Descripción: solo 1 línea */
+  .descripcion {
+    padding: 0.2rem 1rem 0.4rem 1rem;
+    font-size: 0.7rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    color: #6b7f8e;
+    border-bottom: none;
+  }
+  
+  /* Ubicación más compacta */
+  .ubicacion {
+    padding: 0.3rem 1rem;
+    font-size: 0.7rem;
+    gap: 5px;
+  }
+  
+  .ubicacion i {
+    font-size: 0.7rem;
+  }
+  
+  /* Stats en una sola línea */
+  .stats {
+    padding: 0.3rem 1rem 0.5rem 1rem;
+    gap: 1rem;
+    border-top: none;
+  }
+  
+  .stat-item {
+    font-size: 0.7rem;
+    gap: 4px;
+  }
+  
+  .stat-item i {
+    font-size: 0.7rem;
+  }
+  
+  /* Botón más compacto */
+  .join-btn {
+    margin: 0 0.8rem 0.8rem 0.8rem;
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+  
+  /* Filtros con scroll horizontal */
+  .social-filters, .city-filters {
+    border-radius: 30px;
+    justify-content: flex-start;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding: 0.6rem 1rem;
+    gap: 0.6rem;
+  }
+  
+  .filter-chip, .city-chip {
+    white-space: nowrap;
+    padding: 0.4rem 1rem;
+    font-size: 0.75rem;
+  }
+  
+  /* Banner más compacto */
+  .bolivia-banner {
+    padding: 0.7rem 1rem;
+    border-radius: 20px;
+  }
+  
+  .bolivia-banner div {
+    font-size: 0.75rem;
+  }
+  
+  .bolivia-banner span {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.8rem;
+  }
+  
+  /* Footer más compacto */
+  .footer-note {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    font-size: 0.7rem;
+  }
 }

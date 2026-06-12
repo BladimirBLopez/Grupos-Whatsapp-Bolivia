@@ -4,80 +4,33 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   
-  <!-- ============================================ -->
-  <!-- METADATOS PRINCIPALES PARA BUSCADORES (SEO)   -->
-  <!-- ============================================ -->
+  <!-- METADATOS SEO -->
   <title>Qigrupos Bolivia | Grupos de WhatsApp de Compra y Venta</title>
   <meta name="description" content="Encuentra los mejores grupos de WhatsApp de compra y venta en Bolivia. Únete a grupos por ciudad: Santa Cruz, La Paz, Cochabamba y más. ¡Compra y vende fácilmente!">
   <meta name="keywords" content="grupos whatsapp bolivia, compra y venta bolivia, whatsapp grupos santa cruz, grupos la paz, vender en bolivia, grupos whatsapp cochabamba">
   <meta name="author" content="Qigrupos Bolivia">
   <meta name="robots" content="index, follow">
-  <meta name="language" content="Spanish">
-  <meta name="revisit-after" content="7 days">
   
-  <!-- ============================================ -->
-  <!-- METADATOS PARA REDES SOCIALES (Open Graph)   -->
-  <!-- ============================================ -->
+  <!-- Open Graph -->
   <meta property="og:title" content="Qigrupos Bolivia | Grupos WhatsApp de Compra y Venta">
-  <meta property="og:description" content="Únete a grupos de WhatsApp de compra y venta en Bolivia. Filtra por ciudad: Santa Cruz, La Paz, Cochabamba, Sucre, Tarija y más.">
+  <meta property="og:description" content="Únete a grupos de WhatsApp de compra y venta en Bolivia. Filtra por ciudad.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://tusuario.github.io/qigrupos-bolivia">
-  <meta property="og:image" content="https://tusuario.github.io/qigrupos-bolivia/assets/logo-preview.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
   <meta property="og:locale" content="es_ES">
-  <meta property="og:site_name" content="Qigrupos Bolivia">
   
-  <!-- ============================================ -->
-  <!-- METADATOS PARA TWITTER                       -->
-  <!-- ============================================ -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Qigrupos Bolivia | Grupos WhatsApp de Compra y Venta">
-  <meta name="twitter:description" content="Encuentra grupos de WhatsApp de compra y venta en Bolivia. Filtra por ciudad y únete al que te interese.">
-  <meta name="twitter:image" content="https://tusuario.github.io/qigrupos-bolivia/assets/logo-preview.png">
+  <!-- Favicon con emoji -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇧🇴</text></svg>">
   
-  <!-- ============================================ -->
-  <!-- METADATOS PARA WHATSAPP / TELEGRAM           -->
-  <!-- ============================================ -->
-  <meta property="whatsapp:title" content="Qigrupos Bolivia">
-  <meta property="whatsapp:description" content="Directorio de grupos WhatsApp de compra y venta en Bolivia">
-  
-  <!-- ============================================ -->
-  <!-- METADATOS PARA MÓVILES Y PWA                 -->
-  <!-- ============================================ -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Qigrupos Bolivia">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="theme-color" content="#25D366">
-  <meta name="msapplication-TileColor" content="#25D366">
-  
-  <!-- ============================================ -->
-  <!-- FAVICON (Logo como ícono)                    -->
-  <!-- ============================================ -->
-  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="96x96" href="assets/favicon-96x96.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-  <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
-  
-  <!-- ============================================ -->
-  <!-- LINKS ADICIONALES                            -->
-  <!-- ============================================ -->
-  <link rel="canonical" href="https://tusuario.github.io/qigrupos-bolivia">
-  <link rel="alternate" hreflang="es" href="https://tusuario.github.io/qigrupos-bolivia">
-  
-  <!-- Font Awesome 6 -->
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
-  <!-- Estilos personalizados -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <!-- Estilos -->
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
 <div class="container">
-  <!-- Barra superior / Navbar -->
+  <!-- Navbar -->
   <div class="navbar">
     <div class="logo-area">
       <h1><i class="fab fa-whatsapp" style="color:#25D366;"></i> Qigrupos <span style="color:#2c3e4e;">Bolivia</span></h1>
@@ -100,18 +53,18 @@
     <div class="filter-chip" data-platform="facebook"><i class="fab fa-facebook"></i> Facebook</div>
   </div>
 
-  <!-- FILTRO POR CIUDAD / DEPARTAMENTO -->
+  <!-- Filtro por ciudad -->
   <div class="city-filters" id="cityFilters">
     <div class="city-chip active" data-city="todos">📌 Todos (<span id="totalCount">0</span>)</div>
-    <div class="city-chip" data-city="santa cruz">🟢 Santa Cruz (<span id="santaCruzCount">0</span>)</div>
-    <div class="city-chip" data-city="la paz">🔵 La Paz (<span id="laPazCount">0</span>)</div>
-    <div class="city-chip" data-city="cochabamba">🟠 Cochabamba (<span id="cochabambaCount">0</span>)</div>
-    <div class="city-chip" data-city="sucre">⚪ Sucre (<span id="sucreCount">0</span>)</div>
-    <div class="city-chip" data-city="tarija">🟣 Tarija (<span id="tarijaCount">0</span>)</div>
-    <div class="city-chip" data-city="potosi">🟤 Potosí (<span id="potosiCount">0</span>)</div>
-    <div class="city-chip" data-city="oruro">🟡 Oruro (<span id="oruroCount">0</span>)</div>
-    <div class="city-chip" data-city="beni">🌳 Beni (<span id="beniCount">0</span>)</div>
-    <div class="city-chip" data-city="pando">🐟 Pando (<span id="pandoCount">0</span>)</div>
+    <div class="city-chip" data-city="Santa Cruz">🟢 Santa Cruz (<span id="santaCruzCount">0</span>)</div>
+    <div class="city-chip" data-city="La Paz">🔵 La Paz (<span id="laPazCount">0</span>)</div>
+    <div class="city-chip" data-city="Cochabamba">🟠 Cochabamba (<span id="cochabambaCount">0</span>)</div>
+    <div class="city-chip" data-city="Sucre">⚪ Sucre (<span id="sucreCount">0</span>)</div>
+    <div class="city-chip" data-city="Tarija">🟣 Tarija (<span id="tarijaCount">0</span>)</div>
+    <div class="city-chip" data-city="Potosí">🟤 Potosí (<span id="potosiCount">0</span>)</div>
+    <div class="city-chip" data-city="Oruro">🟡 Oruro (<span id="oruroCount">0</span>)</div>
+    <div class="city-chip" data-city="Beni">🌳 Beni (<span id="beniCount">0</span>)</div>
+    <div class="city-chip" data-city="Pando">🐟 Pando (<span id="pandoCount">0</span>)</div>
   </div>
 
   <!-- Banner Bolivia -->
@@ -120,7 +73,7 @@
     <span>➕ Compra y venta segura</span>
   </div>
 
-  <!-- Grid dinámico de grupos -->
+  <!-- Grid de grupos -->
   <div id="gruposContainer" class="grupos-grid"></div>
   
   <div class="footer-note">
@@ -128,7 +81,7 @@
   </div>
 </div>
 
-<!-- Modal para "Subir grupo" (SOLO ADMIN) -->
+<!-- Modal Agregar grupo -->
 <div id="subirModal" class="modal">
   <div class="modal-content">
     <i class="fab fa-whatsapp" style="font-size:3rem; color:#25D366;"></i>
@@ -157,7 +110,7 @@
   </div>
 </div>
 
-<!-- Modal de Login -->
+<!-- Modal Login -->
 <div id="loginModal" class="modal" style="display: none;">
   <div class="modal-content" style="max-width: 350px;">
     <i class="fas fa-lock" style="font-size:3rem; color:#1e2f3e;"></i>
