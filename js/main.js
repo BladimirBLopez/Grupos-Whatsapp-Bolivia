@@ -2,7 +2,7 @@
 // CONFIGURACIÓN JSONBIN.IO
 // ============================================================
 
-const JSONBIN_BIN_ID = "6a2c8a98f5f4af5e29e9569e";
+const JSONBIN_BIN_ID = "6a2c8eeada38895dfeb7de55";
 const JSONBIN_API_KEY = String.raw`$2a$10$MxnpLMYRICgTS5j4jJrhgOta1bY6Xyxgp3HiqSob5dnj/0TzvUzRW`;
 const JSONBIN_URL = "https://api.jsonbin.io/v3/b/" + JSONBIN_BIN_ID;
 
