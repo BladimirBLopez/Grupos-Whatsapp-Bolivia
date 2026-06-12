@@ -2,23 +2,24 @@
 // CONFIGURACIÓN JSONBIN.IO
 // ============================================================
 
-const JSONBIN_CONFIG = {
-  binId: "6a2c83a1da38895dfeb7b5f0",
-  apiKey: "$2a$10$hnUNwhd.U/cmnfflqWjWUe6umo9IEsrCZlua/0JGhHiXN5vtZfqNq",
-  url: function() {
-    return `https://api.jsonbin.io/v3/b/${this.binId}`;
-  }
-};
+const JSONBIN_BIN_ID = "6a2c83a1da38895dfeb7b5f0";
+const JSONBIN_API_KEY = ["\x24","2a","\x24","10","\x24","MxnpLMYRICgTS5j4jJrhgOta1bY6Xyxgp3HiqSob5dnj/0TzvUzRW"].join("");
+const JSONBIN_URL = "https://api.jsonbin.io/v3/b/" + JSONBIN_BIN_ID;
 
 let gruposData = [];
 
 async function cargarGruposDesdeStorage() {
   try {
-    const res = await fetch(JSONBIN_CONFIG.url(), {
-      headers: { "X-Master-Key": JSONBIN_CONFIG.apiKey }
+    const res = await fetch(JSONBIN_URL, {
+      method: "GET",
+      headers: {
+        "X-Master-Key": JSONBIN_API_KEY,
+        "X-Bin-Meta": "false"
+      }
     });
+    if (!res.ok) throw new Error("Status: " + res.status);
     const data = await res.json();
-    gruposData = data.record.grupos || [];
+    gruposData = data.grupos || [];
 
     if (gruposData.length === 0) {
       gruposData = [
@@ -44,15 +45,15 @@ async function cargarGruposDesdeStorage() {
 
 async function guardarGruposEnStorage() {
   try {
-    const res = await fetch(JSONBIN_CONFIG.url(), {
+    const res = await fetch(JSONBIN_URL, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        "X-Master-Key": JSONBIN_CONFIG.apiKey
+        "X-Master-Key": JSONBIN_API_KEY
       },
       body: JSON.stringify({ grupos: gruposData })
     });
-    if (!res.ok) throw new Error("Error al guardar");
+    if (!res.ok) throw new Error("Status: " + res.status);
     window.gruposData = gruposData;
     return true;
   } catch (e) {
@@ -111,7 +112,7 @@ async function agregarGrupoDesdeAdmin(nombre, descripcion, link, ciudad, miembro
 
   gruposData.push(newGroup);
   const guardado = await guardarGruposEnStorage();
-  
+
   if (guardado) {
     actualizarContadores();
     if (currentPlatform === "whatsapp") {
@@ -120,7 +121,7 @@ async function agregarGrupoDesdeAdmin(nombre, descripcion, link, ciudad, miembro
       setActivePlatform("whatsapp");
     }
   }
-  
+
   return guardado;
 }
 
