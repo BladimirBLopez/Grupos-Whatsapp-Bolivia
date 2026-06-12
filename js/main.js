@@ -25,14 +25,14 @@ function cargarGruposDesdeStorage() {
     ];
     guardarGruposEnStorage();
   }
+  // Sincronizar con window para admin.js
+  window.gruposData = gruposData;
 }
 
 function guardarGruposEnStorage() {
   localStorage.setItem("qigrupos_grupos", JSON.stringify(gruposData));
+  window.gruposData = gruposData;
 }
-
-// Sincronizar window.gruposData para admin.js
-window.gruposData = gruposData;
 
 let currentPlatform = "whatsapp";
 let currentCity = "todos";
@@ -86,22 +86,50 @@ function actualizarContadores() {
     return gruposWhatsApp.filter(g => normalizarCiudad(g.ubicacion) === ciudad).length;
   };
   
-  const elementos = {
-    totalCount: contar("todos"),
-    santaCruzCount: contar("Santa Cruz"),
-    laPazCount: contar("La Paz"),
-    cochabambaCount: contar("Cochabamba"),
-    sucreCount: contar("Sucre"),
-    tarijaCount: contar("Tarija"),
-    potosiCount: contar("Potosí"),
-    oruroCount: contar("Oruro"),
-    beniCount: contar("Beni"),
-    pandoCount: contar("Pando")
+  // Actualizar contadores en el modal
+  const modalContadores = {
+    modalTotalCount: contar("todos"),
+    modalSantaCruzCount: contar("Santa Cruz"),
+    modalLaPazCount: contar("La Paz"),
+    modalCochabambaCount: contar("Cochabamba"),
+    modalSucreCount: contar("Sucre"),
+    modalTarijaCount: contar("Tarija"),
+    modalPotosiCount: contar("Potosí"),
+    modalOruroCount: contar("Oruro"),
+    modalBeniCount: contar("Beni"),
+    modalPandoCount: contar("Pando")
   };
   
-  for (const [id, value] of Object.entries(elementos)) {
+  for (const [id, value] of Object.entries(modalContadores)) {
     const el = document.getElementById(id);
     if (el) el.innerText = value;
+  }
+  
+  // Actualizar badge del botón selector
+  const selectedCityCount = document.getElementById("selectedCityCount");
+  if (selectedCityCount) {
+    if (currentCity === "todos") {
+      selectedCityCount.innerText = `(${contar("todos")})`;
+    } else {
+      selectedCityCount.innerText = `(${contar(currentCity)})`;
+    }
+  }
+  
+  // Actualizar nombre de ciudad seleccionada
+  const selectedCityName = document.getElementById("selectedCityName");
+  if (selectedCityName) {
+    if (currentCity === "todos") {
+      selectedCityName.innerText = "Todos los departamentos";
+    } else {
+      selectedCityName.innerText = currentCity;
+    }
+  }
+  
+  // Actualizar contador de resultados
+  const resultCount = document.getElementById("resultCount");
+  if (resultCount) {
+    const filtrados = getGruposFiltrados();
+    resultCount.innerText = filtrados.length;
   }
 }
 
@@ -141,14 +169,17 @@ function renderGrupos() {
   let html = "";
   filtrados.forEach(grupo => {
     html += `
-      <div class="grupo-card">
+      <div class="grupo-card" data-id="${grupo.id}">
         <div class="card-header">
           <h3>${escapeHtml(grupo.nombre)}</h3>
           <div class="badge-whatsapp"><i class="fab fa-whatsapp"></i> WA</div>
         </div>
-        <div class="descripcion">${escapeHtml(grupo.descripcion)}</div>
+        <div class="descripcion">
+          ${escapeHtml(grupo.descripcion)}
+        </div>
         <div class="ubicacion">
-          <i class="fas fa-map-pin"></i> ${escapeHtml(grupo.ubicacion)} 🇧🇴
+          <i class="fas fa-map-pin"></i> ${escapeHtml(grupo.ubicacion)}
+          <span style="margin-left: auto; font-size:0.65rem; background:#eaf7f0; padding:2px 8px; border-radius:20px;">🇧🇴</span>
         </div>
         <div class="stats">
           <div class="stat-item"><i class="fas fa-user-friends"></i> ${grupo.miembros}</div>
@@ -163,6 +194,7 @@ function renderGrupos() {
   
   document.querySelectorAll(".join-btn").forEach(btn => {
     btn.addEventListener("click", (e) => {
+      e.stopPropagation();
       unirseAlGrupo(btn.getAttribute("data-link"));
     });
   });
@@ -188,15 +220,73 @@ function setActivePlatform(platform) {
 
 function setActiveCity(city) {
   currentCity = city;
-  document.querySelectorAll(".city-chip").forEach(chip => {
-    const chipCity = chip.getAttribute("data-city");
-    if (chipCity === city) {
-      chip.classList.add("active");
+  actualizarContadores();
+  renderGrupos();
+  
+  // Cerrar modal si está abierto
+  const cityModal = document.getElementById("cityModal");
+  if (cityModal) cityModal.style.display = "none";
+}
+
+// ============================================================
+// MODAL DE CIUDADES
+// ============================================================
+
+function initCityModal() {
+  const openBtn = document.getElementById("openCityModalBtn");
+  const closeBtn = document.getElementById("closeCityModalBtn");
+  const cityModal = document.getElementById("cityModal");
+  const searchInput = document.getElementById("citySearchInput");
+  
+  // Abrir modal
+  if (openBtn) {
+    openBtn.addEventListener("click", () => {
+      cityModal.style.display = "flex";
+      document.body.style.overflow = "hidden";
+      if (searchInput) searchInput.value = "";
+      filterCityList("");
+    });
+  }
+  
+  // Cerrar modal
+  const closeModal = () => {
+    cityModal.style.display = "none";
+    document.body.style.overflow = "";
+  };
+  
+  if (closeBtn) closeBtn.addEventListener("click", closeModal);
+  
+  // Cerrar al hacer clic fuera
+  cityModal.addEventListener("click", (e) => {
+    if (e.target === cityModal) closeModal();
+  });
+  
+  // Seleccionar ciudad
+  document.querySelectorAll(".city-item").forEach(item => {
+    item.addEventListener("click", () => {
+      const city = item.getAttribute("data-city");
+      if (city) setActiveCity(city);
+      closeModal();
+    });
+  });
+  
+  // Búsqueda en tiempo real
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+      filterCityList(e.target.value.toLowerCase());
+    });
+  }
+}
+
+function filterCityList(searchTerm) {
+  document.querySelectorAll(".city-item").forEach(item => {
+    const cityName = item.querySelector(".city-info span")?.innerText.toLowerCase() || "";
+    if (searchTerm === "" || cityName.includes(searchTerm)) {
+      item.style.display = "flex";
     } else {
-      chip.classList.remove("active");
+      item.style.display = "none";
     }
   });
-  renderGrupos();
 }
 
 // ============================================================
@@ -240,7 +330,7 @@ function setupAgregarGrupo() {
     };
     
     gruposData.push(newGroup);
-    guardarGruposEnStorage();  // 🔐 GUARDAR EN LOCALSTORAGE
+    guardarGruposEnStorage();
     
     actualizarContadores();
     
@@ -268,35 +358,18 @@ function setupAgregarGrupo() {
 }
 
 // ============================================================
-// EXPORTAR (para admin.js)
-// ============================================================
-
-window.gruposData = gruposData;
-window.actualizarContadores = actualizarContadores;
-window.renderGrupos = renderGrupos;
-
-// ============================================================
 // INICIALIZAR
 // ============================================================
 
 document.addEventListener("DOMContentLoaded", () => {
   // Cargar grupos guardados
   cargarGruposDesdeStorage();
-  window.gruposData = gruposData;  // Actualizar referencia global
   
   // Filtros de plataforma
   document.querySelectorAll(".filter-chip").forEach(chip => {
     chip.addEventListener("click", () => {
       const platform = chip.getAttribute("data-platform");
       if (platform) setActivePlatform(platform);
-    });
-  });
-  
-  // Filtros de ciudad
-  document.querySelectorAll(".city-chip").forEach(chip => {
-    chip.addEventListener("click", () => {
-      const city = chip.getAttribute("data-city");
-      if (city) setActiveCity(city);
     });
   });
   
@@ -307,6 +380,9 @@ document.addEventListener("DOMContentLoaded", () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
   
+  // Inicializar modal de ciudades
+  initCityModal();
+  
   // Configurar agregar grupo
   setupAgregarGrupo();
   
@@ -315,3 +391,8 @@ document.addEventListener("DOMContentLoaded", () => {
   setActivePlatform("whatsapp");
   setActiveCity("todos");
 });
+
+// Sincronizar con window para admin.js
+window.gruposData = gruposData;
+window.actualizarContadores = actualizarContadores;
+window.renderGrupos = renderGrupos;
