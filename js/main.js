@@ -14,16 +14,16 @@ const gruposData = [
     plataforma: "whatsapp"
   }
   // ➕ AGREGA MÁS GRUPOS AQUÍ SIGUIENDO EL MISMO FORMATO:
-  // ,{
-  //   id: 2,
-  //   nombre: "Nombre del grupo",
-  //   descripcion: "Descripción del grupo",
-  //   ubicacion: "La Paz",        // Santa Cruz | La Paz | Cochabamba | Sucre | Tarija | Potosí | Oruro | Beni | Pando
-  //   miembros: 100,
-  //   activos: 85,
-  //   link: "https://chat.whatsapp.com/XXXXXX",
-  //   plataforma: "whatsapp"
-  // }
+  ,{
+     id: 2,
+     nombre: "🇧🇴VENTAS COCHABAMBA🇧🇴",
+     descripcion: "Aquí puedes comprar y vender de manera libre",
+     ubicacion: "Cochabamba",        // Santa Cruz | La Paz | Cochabamba | Sucre | Tarija | Potosí | Oruro | Beni | Pando
+     miembros: 370,
+     activos: 85,
+     link: "https://chat.whatsapp.com/Kd7GowNVQcy0ldYZVfeOrT?mode=gi_t",
+     plataforma: "whatsapp"
+   }
 ];
 
 // ============================================================
@@ -233,3 +233,4 @@ document.addEventListener("DOMContentLoaded", () => {
   setActivePlatform("whatsapp");
   setActiveCity("todos");
 });
+P
