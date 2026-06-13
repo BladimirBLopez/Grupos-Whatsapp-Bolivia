@@ -37,9 +37,6 @@
     </div>
     <div class="nav-links">
       <button class="nav-btn" id="homeBtn"><i class="fas fa-home"></i> Home</button>
-      <button class="nav-btn primary" id="subirGrupoBtn" style="display: none;"><i class="fas fa-plus"></i> Agregar</button>
-      <button class="nav-btn" id="adminLoginBtn"><i class="fas fa-user-shield"></i> Admin</button>
-      <button class="nav-btn" id="adminLogoutBtn" style="display: none;"><i class="fas fa-sign-out-alt"></i> Salir</button>
     </div>
   </div>
 
@@ -81,9 +78,7 @@
   </div>
 </div>
 
-<!-- ============================================ -->
-<!-- MODAL DE CIUDADES (NUEVO)                    -->
-<!-- ============================================ -->
+<!-- MODAL DE CIUDADES -->
 <div id="cityModal" class="modal-city">
   <div class="modal-city-content">
     <div class="modal-city-header">
@@ -173,49 +168,6 @@
   </div>
 </div>
 
-<!-- Modal Agregar grupo -->
-<div id="subirModal" class="modal">
-  <div class="modal-content">
-    <i class="fab fa-whatsapp" style="font-size:2.5rem; color:#25D366;"></i>
-    <h3>Agregar grupo</h3>
-    <input type="text" placeholder="Nombre" id="modalGroupName">
-    <input type="text" placeholder="Descripción" id="modalGroupDesc">
-    <input type="text" placeholder="Enlace WhatsApp" id="modalGroupLink">
-    <select id="modalCity">
-      <option value="">Selecciona ciudad</option>
-      <option value="Santa Cruz">Santa Cruz</option>
-      <option value="La Paz">La Paz</option>
-      <option value="Cochabamba">Cochabamba</option>
-      <option value="Sucre">Sucre</option>
-      <option value="Tarija">Tarija</option>
-      <option value="Potosí">Potosí</option>
-      <option value="Oruro">Oruro</option>
-      <option value="Beni">Beni</option>
-      <option value="Pando">Pando</option>
-    </select>
-    <input type="number" placeholder="Miembros" id="modalMembers" value="1">
-    <div class="modal-buttons">
-      <button id="modalConfirmBtn">Agregar</button>
-      <button id="modalCloseBtn">Cancelar</button>
-    </div>
-  </div>
-</div>
-
-<!-- Modal Login -->
-<div id="loginModal" class="modal" style="display: none;">
-  <div class="modal-content" style="max-width: 300px;">
-    <i class="fas fa-lock" style="font-size:2rem; color:#1e2f3e;"></i>
-    <h3>Admin</h3>
-    <input type="text" id="loginUser" placeholder="Usuario">
-    <input type="password" id="loginPass" placeholder="Contraseña">
-    <div class="modal-buttons">
-      <button id="loginBtn">Ingresar</button>
-      <button id="closeLoginBtn">Cancelar</button>
-    </div>
-  </div>
-</div>
-
-<script src="js/admin.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

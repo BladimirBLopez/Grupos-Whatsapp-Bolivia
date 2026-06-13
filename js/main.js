@@ -1,66 +1,34 @@
 // ============================================================
-// CONFIGURACIÓN JSONBIN.IO
+// DATOS DE GRUPOS - AGREGAR MANUALMENTE AQUÍ
 // ============================================================
 
-const JSONBIN_BIN_ID = "6a2c8eeada38895dfeb7de55";
-const JSONBIN_API_KEY = String.raw`$2a$10$MxnpLMYRICgTS5j4jJrhgOta1bY6Xyxgp3HiqSob5dnj/0TzvUzRW`;
-const JSONBIN_URL = "https://api.jsonbin.io/v3/b/" + JSONBIN_BIN_ID;
-
-let gruposData = [];
-
-async function cargarGruposDesdeStorage() {
-  try {
-    const res = await fetch(JSONBIN_URL, {
-      method: "GET",
-      headers: {
-        "X-Master-Key": JSONBIN_API_KEY,
-        "X-Bin-Meta": "false"
-      }
-    });
-    if (!res.ok) throw new Error("Status: " + res.status);
-    const data = await res.json();
-    gruposData = data.grupos || [];
-
-    if (gruposData.length === 0) {
-      gruposData = [
-        {
-          id: 1,
-          nombre: "🇳🇬🅒🅞🅜🅟🅡Á 🅨 🅥🅔🅝🅣🅐.🅢🅒🅩🇳🇬",
-          descripcion: "Grupo de compra y venta en Santa Cruz, Bolivia.",
-          ubicacion: "Santa Cruz",
-          miembros: 27,
-          activos: 24,
-          link: "https://chat.whatsapp.com/KVTyedioIByCZBt6ZHfCVr",
-          plataforma: "whatsapp"
-        }
-      ];
-      await guardarGruposEnStorage();
-    }
-  } catch (e) {
-    console.error("Error cargando grupos:", e);
-    gruposData = [];
+const gruposData = [
+  {
+    id: 1,
+    nombre: "🇳🇬🅒🅞🅜🅟🅡Á 🅨 🅥🅔🅝🅣🅐.🅢🅒🅩🇳🇬",
+    descripcion: "Grupo de compra y venta en Santa Cruz, Bolivia.",
+    ubicacion: "Santa Cruz",
+    miembros: 27,
+    activos: 24,
+    link: "https://chat.whatsapp.com/KVTyedioIByCZBt6ZHfCVr",
+    plataforma: "whatsapp"
   }
-  window.gruposData = gruposData;
-}
+  // ➕ AGREGA MÁS GRUPOS AQUÍ SIGUIENDO EL MISMO FORMATO:
+  // ,{
+  //   id: 2,
+  //   nombre: "Nombre del grupo",
+  //   descripcion: "Descripción del grupo",
+  //   ubicacion: "La Paz",        // Santa Cruz | La Paz | Cochabamba | Sucre | Tarija | Potosí | Oruro | Beni | Pando
+  //   miembros: 100,
+  //   activos: 85,
+  //   link: "https://chat.whatsapp.com/XXXXXX",
+  //   plataforma: "whatsapp"
+  // }
+];
 
-async function guardarGruposEnStorage() {
-  try {
-    const res = await fetch(JSONBIN_URL, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Master-Key": JSONBIN_API_KEY
-      },
-      body: JSON.stringify({ grupos: gruposData })
-    });
-    if (!res.ok) throw new Error("Status: " + res.status);
-    window.gruposData = gruposData;
-    return true;
-  } catch (e) {
-    console.error("Error guardando grupos:", e);
-    return false;
-  }
-}
+// ============================================================
+// LÓGICA PRINCIPAL - NO MODIFICAR
+// ============================================================
 
 let currentPlatform = "whatsapp";
 let currentCity = "todos";
@@ -96,33 +64,6 @@ function escapeHtml(str) {
     if (m === '>') return '&gt;';
     return m;
   });
-}
-
-async function agregarGrupoDesdeAdmin(nombre, descripcion, link, ciudad, miembros) {
-  const newGroup = {
-    id: Date.now(),
-    nombre,
-    descripcion: descripcion || "Grupo de compra y venta en Bolivia",
-    ubicacion: ciudad,
-    miembros: parseInt(miembros) || 1,
-    activos: Math.floor((parseInt(miembros) || 1) * 0.85),
-    link,
-    plataforma: "whatsapp"
-  };
-
-  gruposData.push(newGroup);
-  const guardado = await guardarGruposEnStorage();
-
-  if (guardado) {
-    actualizarContadores();
-    if (currentPlatform === "whatsapp") {
-      renderGrupos();
-    } else {
-      setActivePlatform("whatsapp");
-    }
-  }
-
-  return guardado;
 }
 
 function actualizarContadores() {
@@ -177,7 +118,7 @@ function renderGrupos() {
     gruposContainer.innerHTML = `<div class="empty-message">
       <i class="fab fa-whatsapp"></i>
       No hay grupos de ${currentPlatform} en ${currentCity === "todos" ? "Bolivia" : currentCity} aún.<br>
-      ${window.adminFunctions?.isLogged() ? 'Usa el botón "Agregar" para añadir uno.' : '¡Vuelve pronto para nuevos grupos!'}
+      ¡Vuelve pronto para nuevos grupos!
     </div>`;
     return;
   }
@@ -273,14 +214,7 @@ function filterCityList(searchTerm) {
   });
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
-  const gruposContainer = document.getElementById("gruposContainer");
-  if (gruposContainer) {
-    gruposContainer.innerHTML = `<div class="empty-message"><i class="fas fa-spinner fa-spin"></i> Cargando grupos...</div>`;
-  }
-
-  await cargarGruposDesdeStorage();
-
+document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".filter-chip").forEach(chip => {
     chip.addEventListener("click", () => {
       const platform = chip.getAttribute("data-platform");
@@ -299,8 +233,3 @@ document.addEventListener("DOMContentLoaded", async () => {
   setActivePlatform("whatsapp");
   setActiveCity("todos");
 });
-
-window.agregarGrupoDesdeAdmin = agregarGrupoDesdeAdmin;
-window.actualizarContadores = actualizarContadores;
-window.renderGrupos = renderGrupos;
-window.gruposData = gruposData;
