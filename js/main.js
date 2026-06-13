@@ -17,7 +17,7 @@ const gruposData = [
   ,{
      id: 2,
      nombre: "🇧🇴VENTAS COCHABAMBA🇧🇴",
-     descripcion: "Aquí puedes comprar y vender de manera libre",
+     descripcion: "Aquí puedes comprar y vender de manera libre.",
      ubicacion: "Cochabamba",        // Santa Cruz | La Paz | Cochabamba | Sucre | Tarija | Potosí | Oruro | Beni | Pando
      miembros: 370,
      activos: 85,
