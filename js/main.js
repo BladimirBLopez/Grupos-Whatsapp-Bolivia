@@ -13,7 +13,6 @@ const gruposData = [
     link: "https://chat.whatsapp.com/KVTyedioIByCZBt6ZHfCVr",
     plataforma: "whatsapp"
   }
-  // ➕ AGREGA MÁS GRUPOS AQUÍ SIGUIENDO EL MISMO FORMATO:
   ,{
      id: 2,
      nombre: "🇧🇴VENTAS COCHABAMBA🇧🇴",
@@ -22,6 +21,27 @@ const gruposData = [
      miembros: 370,
      activos: 85,
      link: "https://chat.whatsapp.com/Kd7GowNVQcy0ldYZVfeOrT?mode=gi_t",
+     plataforma: "whatsapp"
+   }
+     ,{
+     id: 3,
+     nombre: "🇧🇴🅒🅞🅜🅟🅡Á 🅨 🅥🅔🅝🅣🅐.🅑🅞🇧🇴",
+     descripcion: "🚫NO ENVIAR CONTENIDO INAPROPIADO 
+🚫 PROHIBIDO INSULTAR A LOS MIEMBROS DEL GRUPO",
+     ubicacion: "La Paz",        // Santa Cruz | La Paz | Cochabamba | Sucre | Tarija | Potosí | Oruro | Beni | Pando
+     miembros: 30,
+     activos: 12,
+     link: "https://chat.whatsapp.com/ILQqKaRRchtDhQCs6g3WzF",
+     plataforma: "whatsapp"
+   }
+  ,{
+     id: 4,
+     nombre: "Mercado Virtual TRINIDAD",
+     descripcion: "oferta de todo tipos de productos y servicios en la ciudad de Trinidad",
+     ubicacion: "Beni",        // Santa Cruz | La Paz | Cochabamba | Sucre | Tarija | Potosí | Oruro | Beni | Pando
+     miembros: 267,
+     activos: 85,
+     link: "https://chat.whatsapp.com/FMesPmRNXf9JOpWIloKfdH",
      plataforma: "whatsapp"
    }
 ];
