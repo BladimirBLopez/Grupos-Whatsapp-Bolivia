@@ -26,8 +26,7 @@ const gruposData = [
      ,{
      id: 3,
      nombre: "🇧🇴🅒🅞🅜🅟🅡Á 🅨 🅥🅔🅝🅣🅐.🅑🅞🇧🇴",
-     descripcion: "🚫NO ENVIAR CONTENIDO INAPROPIADO 
-🚫 PROHIBIDO INSULTAR A LOS MIEMBROS DEL GRUPO",
+     descripcion: "🚫NO ENVIAR CONTENIDO INAPROPIADO 🚫 PROHIBIDO INSULTAR A LOS MIEMBROS DEL GRUPO",
      ubicacion: "La Paz",        // Santa Cruz | La Paz | Cochabamba | Sucre | Tarija | Potosí | Oruro | Beni | Pando
      miembros: 30,
      activos: 12,
