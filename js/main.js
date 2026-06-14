@@ -12,37 +12,37 @@ const gruposData = [
     activos: 24,
     link: "https://chat.whatsapp.com/KVTyedioIByCZBt6ZHfCVr",
     plataforma: "whatsapp"
+  },
+  {
+    id: 2,
+    nombre: "🇧🇴VENTAS COCHABAMBA🇧🇴",
+    descripcion: "Aquí puedes comprar y vender de manera libre.",
+    ubicacion: "Cochabamba",
+    miembros: 370,
+    activos: 85,
+    link: "https://chat.whatsapp.com/Kd7GowNVQcy0ldYZVfeOrT?mode=gi_t",
+    plataforma: "whatsapp"
+  },
+  {
+    id: 3,
+    nombre: "🇧🇴🅒🅞🅜🅟🅡Á 🅨 🅥🅔🅝🅣🅐.🅑🅞🇧🇴",
+    descripcion: "🚫NO ENVIAR CONTENIDO INAPROPIADO 🚫 PROHIBIDO INSULTAR A LOS MIEMBROS DEL GRUPO",
+    ubicacion: "La Paz",
+    miembros: 30,
+    activos: 12,
+    link: "https://chat.whatsapp.com/ILQqKaRRchtDhQCs6g3WzF",
+    plataforma: "whatsapp"
+  },
+  {
+    id: 4,
+    nombre: "Mercado Virtual TRINIDAD",
+    descripcion: "oferta de todo tipos de productos y servicios en la ciudad de Trinidad",
+    ubicacion: "Beni",
+    miembros: 267,
+    activos: 85,
+    link: "https://chat.whatsapp.com/FMesPmRNXf9JOpWIloKfdH",
+    plataforma: "whatsapp"
   }
-  ,{
-     id: 2,
-     nombre: "🇧🇴VENTAS COCHABAMBA🇧🇴",
-     descripcion: "Aquí puedes comprar y vender de manera libre.",
-     ubicacion: "Cochabamba",        // Santa Cruz | La Paz | Cochabamba | Sucre | Tarija | Potosí | Oruro | Beni | Pando
-     miembros: 370,
-     activos: 85,
-     link: "https://chat.whatsapp.com/Kd7GowNVQcy0ldYZVfeOrT?mode=gi_t",
-     plataforma: "whatsapp"
-   }
-     ,{
-     id: 3,
-     nombre: "🇧🇴🅒🅞🅜🅟🅡Á 🅨 🅥🅔🅝🅣🅐.🅑🅞🇧🇴",
-     descripcion: "🚫NO ENVIAR CONTENIDO INAPROPIADO 🚫 PROHIBIDO INSULTAR A LOS MIEMBROS DEL GRUPO",
-     ubicacion: "La Paz",        // Santa Cruz | La Paz | Cochabamba | Sucre | Tarija | Potosí | Oruro | Beni | Pando
-     miembros: 30,
-     activos: 12,
-     link: "https://chat.whatsapp.com/ILQqKaRRchtDhQCs6g3WzF",
-     plataforma: "whatsapp"
-   }
-  ,{
-     id: 4,
-     nombre: "Mercado Virtual TRINIDAD",
-     descripcion: "oferta de todo tipos de productos y servicios en la ciudad de Trinidad",
-     ubicacion: "Beni",        // Santa Cruz | La Paz | Cochabamba | Sucre | Tarija | Potosí | Oruro | Beni | Pando
-     miembros: 267,
-     activos: 85,
-     link: "https://chat.whatsapp.com/FMesPmRNXf9JOpWIloKfdH",
-     plataforma: "whatsapp"
-   }
 ];
 
 // ============================================================
@@ -233,6 +233,28 @@ function filterCityList(searchTerm) {
   });
 }
 
+// ============================================================
+// BANNER FLOTANTE - PUBLICITAR GRUPO
+// ============================================================
+function initBannerPublicar() {
+  const banner = document.getElementById("bannerPublicar");
+  if (!banner) return;
+
+  setTimeout(() => {
+    banner.classList.add("visible");
+  }, 2000);
+
+  document.getElementById("closeBannerBtn")?.addEventListener("click", () => {
+    banner.classList.remove("visible");
+  });
+
+  document.getElementById("contactarBtn")?.addEventListener("click", () => {
+    const mensaje = encodeURIComponent("Hola! Quiero publicar mi grupo en Qigrupos Bolivia 🇧🇴");
+    window.open(`https://wa.me/59169356292?text=${mensaje}`, "_blank");
+  });
+}
+
+// ============================================================
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".filter-chip").forEach(chip => {
     chip.addEventListener("click", () => {
@@ -251,5 +273,5 @@ document.addEventListener("DOMContentLoaded", () => {
   actualizarContadores();
   setActivePlatform("whatsapp");
   setActiveCity("todos");
+  initBannerPublicar();
 });
-P
