@@ -10,20 +10,15 @@
   <meta name="author" content="Qigrupos Bolivia">
   <meta name="robots" content="index, follow">
   
-  <!-- Open Graph -->
   <meta property="og:title" content="Qigrupos Bolivia | Grupos WhatsApp de Compra y Venta">
   <meta property="og:description" content="Únete a grupos de WhatsApp de compra y venta en Bolivia. Filtra por ciudad.">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="es_ES">
   
-  <!-- Favicon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇧🇴</text></svg>">
   
-  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
-  <!-- Estilos -->
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -40,6 +35,9 @@
     </div>
   </div>
 
+  <!-- GRUPO DESTACADO FIJO (ARRIBA DE FILTROS) -->
+  <div id="grupoDestacadoFijo"></div>
+
   <!-- Filtros redes sociales -->
   <div class="social-filters" id="socialFilters">
     <div class="filter-chip active" data-platform="whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</div>
@@ -49,7 +47,7 @@
     <div class="filter-chip" data-platform="facebook"><i class="fab fa-facebook"></i> Facebook</div>
   </div>
 
-  <!-- BOTÓN SELECTOR DE CIUDAD (MODAL) -->
+  <!-- Selector de ciudad -->
   <div class="city-selector-btn" id="openCityModalBtn">
     <div class="city-selected">
       <i class="fas fa-map-marker-alt"></i>
@@ -73,6 +71,7 @@
   <!-- Grid grupos -->
   <div id="gruposContainer" class="grupos-grid"></div>
   
+  <!-- FOOTER -->
   <div class="footer-note">
     <i class="fab fa-whatsapp"></i> Grupos verificados de compra y venta Bolivia
   </div>
@@ -86,13 +85,11 @@
       <button class="close-city-modal" id="closeCityModalBtn">&times;</button>
     </div>
     
-    <!-- Buscador -->
     <div class="city-search">
       <i class="fas fa-search"></i>
       <input type="text" id="citySearchInput" placeholder="Buscar ciudad...">
     </div>
     
-    <!-- Lista de ciudades -->
     <div class="city-list" id="cityList">
       <div class="city-item active" data-city="todos">
         <div class="city-info">
@@ -168,22 +165,12 @@
   </div>
 </div>
 
-<!-- BANNER FLOTANTE - PUBLICITAR GRUPO -->
-<div class="banner-publicar" id="bannerPublicar">
-  <div class="banner-publicar-header">
-    <div class="banner-publicar-titulo">
-      <i class="fab fa-whatsapp"></i>
-      <span>¿Quieres publicar tu grupo?</span>
-    </div>
-    <button class="btn-cerrar-banner" id="closeBannerBtn" aria-label="Cerrar">×</button>
-  </div>
-  <p>Contáctame por WhatsApp y agrego tu grupo gratis a la lista 🇧🇴</p>
-  <div class="banner-publicar-actions">
-    <button class="btn-contactar-wa" id="contactarBtn">
-      <i class="fab fa-whatsapp"></i> Contactar ahora
-    </button>
-  </div>
-  <div class="banner-numero">📞 +591 69356292</div>
+<!-- BOTÓN FLOTANTE SENCILLO -->
+<div id="floatingButton" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
+  <button onclick="window.open('https://wa.me/59169356292?text=' + encodeURIComponent('Hola! Quiero publicar mi grupo en Qigrupos Bolivia 🇧🇴'), '_blank')" style="background: #25D366; border: none; color: white; padding: 12px 18px; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 8px; font-size: 14px;">
+    <i class="fab fa-whatsapp" style="font-size: 18px;"></i>
+    Publicar grupo
+  </button>
 </div>
 
 <script src="js/main.js"></script>

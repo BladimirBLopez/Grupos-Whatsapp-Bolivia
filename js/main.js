@@ -1,5 +1,5 @@
 // ============================================================
-// DATOS DE GRUPOS - AGREGAR MANUALMENTE AQUÍ
+// DATOS DE GRUPOS - CON CARACTERES ORIGINALES
 // ============================================================
 
 const gruposData = [
@@ -11,7 +11,8 @@ const gruposData = [
     miembros: 27,
     activos: 24,
     link: "https://chat.whatsapp.com/KVTyedioIByCZBt6ZHfCVr",
-    plataforma: "whatsapp"
+    plataforma: "whatsapp",
+    destacado: true
   },
   {
     id: 2,
@@ -21,7 +22,8 @@ const gruposData = [
     miembros: 370,
     activos: 85,
     link: "https://chat.whatsapp.com/Kd7GowNVQcy0ldYZVfeOrT?mode=gi_t",
-    plataforma: "whatsapp"
+    plataforma: "whatsapp",
+    destacado: false
   },
   {
     id: 3,
@@ -31,7 +33,8 @@ const gruposData = [
     miembros: 30,
     activos: 12,
     link: "https://chat.whatsapp.com/ILQqKaRRchtDhQCs6g3WzF",
-    plataforma: "whatsapp"
+    plataforma: "whatsapp",
+    destacado: false
   },
   {
     id: 4,
@@ -41,12 +44,13 @@ const gruposData = [
     miembros: 267,
     activos: 85,
     link: "https://chat.whatsapp.com/FMesPmRNXf9JOpWIloKfdH",
-    plataforma: "whatsapp"
+    plataforma: "whatsapp",
+    destacado: false
   }
 ];
 
 // ============================================================
-// LÓGICA PRINCIPAL - NO MODIFICAR
+// LÓGICA PRINCIPAL
 // ============================================================
 
 let currentPlatform = "whatsapp";
@@ -153,7 +157,6 @@ function renderGrupos() {
         <div class="descripcion">${escapeHtml(grupo.descripcion)}</div>
         <div class="ubicacion">
           <i class="fas fa-map-pin"></i> ${escapeHtml(grupo.ubicacion)}
-          <span style="margin-left: auto; font-size:0.65rem; background:#eaf7f0; padding:2px 8px; border-radius:20px;">🇧🇴</span>
         </div>
         <div class="stats">
           <div class="stat-item"><i class="fas fa-user-friends"></i> ${grupo.miembros}</div>
@@ -171,6 +174,52 @@ function renderGrupos() {
       unirseAlGrupo(btn.getAttribute("data-link"));
     });
   });
+}
+
+function renderGrupoDestacadoFijo() {
+  const container = document.getElementById("grupoDestacadoFijo");
+  if (!container) return;
+
+  const destacado = gruposData.find(g => g.destacado === true);
+  
+  if (!destacado) {
+    container.innerHTML = "";
+    return;
+  }
+
+  const html = `
+    <div class="destacado-fijo">
+      <div class="grupo-card destacado-card">
+        <div class="destacado-ribbon">
+          <i class="fas fa-crown"></i> GRUPO DESTACADO DE LA SEMANA
+        </div>
+        <div class="card-header">
+          <h3>${escapeHtml(destacado.nombre)} <span class="badge-destacado">⭐ DESTACADO</span></h3>
+          <div class="badge-whatsapp"><i class="fab fa-whatsapp"></i> WA</div>
+        </div>
+        <div class="descripcion">${escapeHtml(destacado.descripcion)}</div>
+        <div class="ubicacion">
+          <i class="fas fa-map-pin"></i> ${escapeHtml(destacado.ubicacion)}
+          <span style="margin-left: auto; background:#FFD70020; padding:2px 8px; border-radius:20px; font-size:0.65rem;">🔥 +50 miembros/semana</span>
+        </div>
+        <div class="stats">
+          <div class="stat-item"><i class="fas fa-user-friends"></i> ${destacado.miembros}</div>
+          <div class="stat-item"><i class="fas fa-chart-line"></i> ${destacado.activos}</div>
+        </div>
+        <button class="join-btn" data-link="${destacado.link}"><i class="fab fa-whatsapp"></i> Unirme ahora</button>
+      </div>
+    </div>
+  `;
+
+  container.innerHTML = html;
+  
+  const btn = container.querySelector(".join-btn");
+  if (btn) {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      unirseAlGrupo(btn.getAttribute("data-link"));
+    });
+  }
 }
 
 function setActivePlatform(platform) {
@@ -234,26 +283,25 @@ function filterCityList(searchTerm) {
 }
 
 // ============================================================
-// BANNER FLOTANTE - PUBLICITAR GRUPO
+// FUNCIONES GLOBALES PARA EL BANNER (DECLARADAS ANTES)
 // ============================================================
-function initBannerPublicar() {
-  const banner = document.getElementById("bannerPublicar");
-  if (!banner) return;
 
-  setTimeout(() => {
-    banner.classList.add("visible");
-  }, 2000);
+window.cerrarBanner = function() {
+  var banner = document.getElementById("bannerPublicar");
+  if (banner) {
+    banner.style.display = "none";
+  }
+  return false;
+};
 
-  document.getElementById("closeBannerBtn")?.addEventListener("click", () => {
-    banner.classList.remove("visible");
-  });
+window.contactarWhatsApp = function() {
+  var mensaje = encodeURIComponent("Hola! Quiero publicar mi grupo en Qigrupos Bolivia 🇧🇴");
+  window.open("https://wa.me/59169356292?text=" + mensaje, "_blank");
+  return false;
+};
 
-  document.getElementById("contactarBtn")?.addEventListener("click", () => {
-    const mensaje = encodeURIComponent("Hola! Quiero publicar mi grupo en Qigrupos Bolivia 🇧🇴");
-    window.open(`https://wa.me/59169356292?text=${mensaje}`, "_blank");
-  });
-}
-
+// ============================================================
+// INICIALIZACIÓN
 // ============================================================
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".filter-chip").forEach(chip => {
@@ -270,8 +318,17 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   initCityModal();
+  renderGrupoDestacadoFijo();
   actualizarContadores();
   setActivePlatform("whatsapp");
   setActiveCity("todos");
-  initBannerPublicar();
+  
+  // Mostrar el banner después de 2 segundos
+  setTimeout(function() {
+    var banner = document.getElementById("bannerPublicar");
+    if (banner) {
+      banner.style.bottom = "24px";
+      banner.style.opacity = "1";
+    }
+  }, 2000);
 });

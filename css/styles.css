@@ -18,7 +18,7 @@ body {
 }
 
 /* ============================================ */
-/* NAVBAR - RESPONSIVE                          */
+/* NAVBAR                                       */
 /* ============================================ */
 
 .navbar {
@@ -73,14 +73,8 @@ body {
   font-size: 0.8rem;
 }
 
-.nav-btn.primary {
-  background: #25D366;
-  border-color: #25D366;
-  color: white;
-}
-
 /* ============================================ */
-/* FILTROS REDES SOCIALES - 2 FILAS             */
+/* FILTROS REDES SOCIALES                       */
 /* ============================================ */
 
 .social-filters {
@@ -156,7 +150,7 @@ body {
 }
 
 /* ============================================ */
-/* BANNER                                       */
+/* BANNER BOLIVIA                               */
 /* ============================================ */
 
 .bolivia-banner {
@@ -203,7 +197,7 @@ body {
 }
 
 /* ============================================ */
-/* GRID DE GRUPOS - 1 COLUMNA EN MÓVIL          */
+/* GRID DE GRUPOS                               */
 /* ============================================ */
 
 .grupos-grid {
@@ -213,7 +207,7 @@ body {
 }
 
 /* ============================================ */
-/* TARJETA DE GRUPO - COMPACTA                  */
+/* TARJETA DE GRUPO                             */
 /* ============================================ */
 
 .grupo-card {
@@ -329,7 +323,20 @@ body {
 }
 
 /* ============================================ */
-/* MODAL DE CIUDADES - VERSIÓN MÓVIL            */
+/* FOOTER                                       */
+/* ============================================ */
+
+.footer-note {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: #8ba0ae;
+  font-size: 0.6rem;
+  border-top: 1px solid #deecf2;
+  padding-top: 1rem;
+}
+
+/* ============================================ */
+/* MODAL DE CIUDADES                            */
 /* ============================================ */
 
 .modal-city {
@@ -383,7 +390,6 @@ body {
   line-height: 1;
 }
 
-/* Buscador */
 .city-search {
   display: flex;
   align-items: center;
@@ -413,7 +419,6 @@ body {
   font-size: 0.8rem;
 }
 
-/* Lista de ciudades */
 .city-list {
   flex: 1;
   overflow-y: auto;
@@ -473,114 +478,183 @@ body {
 }
 
 /* ============================================ */
-/* MODALES NORMALES                             */
+/* GRUPO DESTACADO FIJO                         */
 /* ============================================ */
 
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
+.destacado-fijo {
+  margin-bottom: 1.5rem;
 }
 
-.modal-content {
-  background: white;
-  max-width: 350px;
-  width: 90%;
-  border-radius: 24px;
-  padding: 1.2rem;
+.destacado-card {
+  border: 2px solid #FFD700 !important;
+  background: linear-gradient(white, #FFFDF0);
+  position: relative;
+  overflow: hidden;
+}
+
+.destacado-ribbon {
+  background: linear-gradient(90deg, #FFD700, #FFA500);
+  color: #1a2c3e;
   text-align: center;
+  padding: 5px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 1px;
 }
 
-.modal-content h3 {
-  font-size: 1.1rem;
-  margin: 0.5rem 0;
+.destacado-ribbon i {
+  margin-right: 5px;
 }
 
-.modal-content input, .modal-content select {
-  width: 100%;
-  padding: 10px 14px;
-  border-radius: 40px;
-  border: 1px solid #ddd;
-  margin-bottom: 10px;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.85rem;
-}
-
-.modal-buttons {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.modal-buttons button {
-  flex: 1;
-  padding: 10px;
-  border-radius: 40px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  font-size: 0.85rem;
-}
-
-.modal-buttons button:first-child {
-  background: #25D366;
-  color: white;
-}
-
-.modal-buttons button:last-child {
-  background: #eef2f5;
-}
-
-.empty-message {
-  text-align: center;
-  padding: 2rem;
-  background: white;
-  border-radius: 18px;
-  color: #8ba0ae;
-  font-size: 0.8rem;
-}
-
-#adminLogoutBtn {
-  background: #dc3545;
-  color: white;
-}
-
-.footer-note {
-  text-align: center;
-  margin-top: 1.5rem;
-  color: #8ba0ae;
+.badge-destacado {
+  background: #FFD700;
+  color: #1a2c3e;
+  padding: 2px 8px;
+  border-radius: 20px;
   font-size: 0.6rem;
-  border-top: 1px solid #deecf2;
-  padding-top: 1rem;
+  font-weight: 800;
+  margin-left: 6px;
+  display: inline-block;
 }
 
 /* ============================================ */
-/* SCROLLBAR                                    */
+/* BANNER FLOTANTE - DISEÑO PROFESIONAL         */
 /* ============================================ */
 
-.city-list::-webkit-scrollbar {
-  width: 3px;
+.banner-publicar {
+  position: fixed !important;
+  bottom: 24px !important;
+  right: 24px !important;
+  left: auto !important;
+  top: auto !important;
+  transform: none !important;
+  width: auto !important;
+  min-width: 150px !important;
+  background: white !important;
+  border-radius: 16px !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important;
+  z-index: 9999 !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(37,211,102,0.3) !important;
+  transition: all 0.3s ease !important;
 }
 
-.city-list::-webkit-scrollbar-track {
-  background: #e2edf2;
-  border-radius: 10px;
+.banner-publicar:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.2) !important;
 }
 
-.city-list::-webkit-scrollbar-thumb {
-  background: #25D366;
-  border-radius: 10px;
+/* Cabecera */
+.banner-publicar-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background: linear-gradient(135deg, #075E54 0%, #128C7E 100%) !important;
+  padding: 10px 14px !important;
+  margin: 0 !important;
+  position: relative !important;
+}
+
+.banner-publicar-titulo {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  font-family: 'Poppins', sans-serif !important;
+  color: white !important;
+}
+
+.banner-publicar-titulo i {
+  font-size: 0.9rem !important;
+  color: #25D366 !important;
+  background: white !important;
+  border-radius: 50% !important;
+  padding: 3px !important;
+}
+
+.banner-publicar p {
+  display: none !important;
+}
+
+/* Botón cerrar */
+.btn-cerrar-banner {
+  background: rgba(255,255,255,0.2) !important;
+  border: none !important;
+  color: white !important;
+  border-radius: 50% !important;
+  width: 24px !important;
+  height: 24px !important;
+  font-size: 0.8rem !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  position: relative !important;
+  right: 0 !important;
+}
+
+.btn-cerrar-banner:hover {
+  background: rgba(255,255,255,0.4) !important;
+  transform: scale(1.1) !important;
+}
+
+/* Cuerpo del banner */
+.banner-publicar-actions {
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 12px 14px !important;
+  background: white !important;
+  gap: 8px !important;
+}
+
+.btn-contactar-wa {
+  background: #25D366 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 40px !important;
+  padding: 8px 12px !important;
+  font-size: 0.7rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  transition: all 0.2s !important;
+  width: 100% !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+.btn-contactar-wa:hover {
+  background: #1da851 !important;
+  transform: scale(1.02) !important;
+}
+
+.btn-contactar-wa i {
+  font-size: 0.75rem !important;
+}
+
+/* Texto adicional */
+.banner-publicar-actions::before {
+  content: "🌟 Destaca tu grupo";
+  display: block;
+  text-align: center;
+  font-size: 0.55rem;
+  color: #2c7a5e;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  margin-bottom: 4px;
 }
 
 /* ============================================ */
-/* TABLET Y ESCRITORIO                           */
+/* RESPONSIVE                                   */
 /* ============================================ */
 
 @media (min-width: 700px) {
@@ -632,206 +706,44 @@ body {
     gap: 1.5rem;
   }
 }
-/* BANNER FLOTANTE - PUBLICITAR GRUPO */
-.banner-publicar {
-  position: fixed;
-  bottom: -200px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 32px);
-  max-width: 480px;
-  background: linear-gradient(135deg, #075e54 0%, #128c7e 100%);
-  color: #fff;
-  border-radius: 18px 18px 0 0;
-  box-shadow: 0 -4px 24px rgba(0,0,0,0.22);
-  z-index: 9999;
-  padding: 18px 18px 22px;
-  transition: bottom 0.45s cubic-bezier(.4,0,.2,1);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.banner-publicar.visible {
-  bottom: 0;
-}
-.banner-publicar-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
-}
-.banner-publicar-titulo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 1rem;
-  font-weight: 700;
-  font-family: 'Poppins', sans-serif;
-}
-.banner-publicar-titulo i {
-  font-size: 1.3rem;
-  color: #25D366;
-}
-.banner-publicar p {
-  font-size: 0.82rem;
-  opacity: 0.88;
-  margin: 0;
-  line-height: 1.4;
-}
-.banner-publicar-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 4px;
-}
-.btn-contactar-wa {
-  flex: 1;
-  background: #25D366;
-  color: #fff;
-  border: none;
-  border-radius: 50px;
-  padding: 11px 16px;
-  font-size: 0.9rem;
-  font-weight: 700;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  transition: background 0.2s, transform 0.15s;
-  box-shadow: 0 2px 8px rgba(37,211,102,0.25);
-}
-.btn-contactar-wa:hover {
-  background: #1da851;
-  transform: scale(1.03);
-}
-.btn-contactar-wa i {
-  font-size: 1.1rem;
-}
-.btn-cerrar-banner {
-  background: rgba(255,255,255,0.15);
-  border: none;
-  color: #fff;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  font-size: 1.1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: background 0.2s;
-}
-.btn-cerrar-banner:hover {
-  background: rgba(255,255,255,0.28);
-}
-.banner-numero {
-  font-size: 0.78rem;
-  opacity: 0.75;
-  text-align: center;
-  letter-spacing: 0.5px;
-}
-/* ============================================================
-   BANNER FLOTANTE - PUBLICITAR GRUPO
-   ============================================================ */
 
-.banner-publicar {
-  position: fixed;
-  bottom: -200px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 32px);
-  max-width: 480px;
-  background: linear-gradient(135deg, #075e54 0%, #128c7e 100%);
-  color: #fff;
-  border-radius: 18px 18px 0 0;
-  box-shadow: 0 -4px 24px rgba(0,0,0,0.22);
-  z-index: 9999;
-  padding: 18px 18px 22px;
-  transition: bottom 0.45s cubic-bezier(.4,0,.2,1);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.banner-publicar.visible {
-  bottom: 0;
-}
-.banner-publicar-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
-}
-.banner-publicar-titulo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 1rem;
-  font-weight: 700;
-  font-family: 'Poppins', sans-serif;
-}
-.banner-publicar-titulo i {
-  font-size: 1.3rem;
-  color: #25D366;
-}
-.banner-publicar p {
-  font-size: 0.82rem;
-  opacity: 0.88;
-  margin: 0;
-  line-height: 1.4;
-}
-.banner-publicar-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 4px;
-}
-.btn-contactar-wa {
-  flex: 1;
-  background: #25D366;
-  color: #fff;
-  border: none;
-  border-radius: 50px;
-  padding: 11px 16px;
-  font-size: 0.9rem;
-  font-weight: 700;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  transition: background 0.2s, transform 0.15s;
-  box-shadow: 0 2px 8px rgba(37,211,102,0.25);
-}
-.btn-contactar-wa:hover {
-  background: #1da851;
-  transform: scale(1.03);
-}
-.btn-contactar-wa i {
-  font-size: 1.1rem;
-}
-.btn-cerrar-banner {
-  background: rgba(255,255,255,0.15);
-  border: none;
-  color: #fff;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  font-size: 1.1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: background 0.2s;
-}
-.btn-cerrar-banner:hover {
-  background: rgba(255,255,255,0.28);
-}
-.banner-numero {
-  font-size: 0.78rem;
-  opacity: 0.75;
-  text-align: center;
-  letter-spacing: 0.5px;
+@media (max-width: 550px) {
+  .banner-publicar {
+    bottom: 16px !important;
+    right: 16px !important;
+    min-width: 135px !important;
+  }
+  
+  .banner-publicar-header {
+    padding: 8px 12px !important;
+  }
+  
+  .banner-publicar-titulo {
+    font-size: 0.65rem !important;
+  }
+  
+  .banner-publicar-titulo i {
+    font-size: 0.75rem !important;
+    padding: 2px !important;
+  }
+  
+  .banner-publicar-actions {
+    padding: 10px 12px !important;
+    gap: 6px !important;
+  }
+  
+  .btn-contactar-wa {
+    padding: 6px 10px !important;
+    font-size: 0.6rem !important;
+  }
+  
+  .banner-publicar-actions::before {
+    font-size: 0.5rem !important;
+  }
+  
+  .btn-cerrar-banner {
+    width: 22px !important;
+    height: 22px !important;
+    font-size: 0.7rem !important;
+  }
 }
