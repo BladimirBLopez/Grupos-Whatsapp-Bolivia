@@ -24,18 +24,20 @@
 <body>
 
 <div class="container">
-  <!-- Navbar -->
+  <!-- Navbar - SIN botón Home, el logo es clickeable -->
   <div class="navbar">
-    <div class="logo-area">
+    <div class="logo-area" id="logoResetBtn" style="cursor: pointer;">
       <h1><i class="fab fa-whatsapp" style="color:#25D366;"></i> Qigrupos <span style="color:#2c3e4e;">Bolivia</span></h1>
       <p>Compra & Venta | Grupos exclusivos</p>
     </div>
     <div class="nav-links">
-      <button class="nav-btn" id="homeBtn"><i class="fas fa-home"></i> Home</button>
+      <button class="nav-btn publish-btn" id="publishGroupBtn">
+        <i class="fab fa-whatsapp"></i> Publicar grupo
+      </button>
     </div>
   </div>
 
-  <!-- GRUPO DESTACADO FIJO (ARRIBA DE FILTROS) -->
+  <!-- Grupo Destacado -->
   <div id="grupoDestacadoFijo"></div>
 
   <!-- Filtros redes sociales -->
@@ -162,14 +164,6 @@
       </div>
     </div>
   </div>
-</div>
-
-<!-- BOTÓN FLOTANTE SENCILLO -->
-<div id="floatingButton" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
-  <button onclick="window.open('https://wa.me/59169356292?text=' + encodeURIComponent('Hola! Quiero publicar mi grupo en Qigrupos Bolivia 🇧🇴'), '_blank')" style="background: #25D366; border: none; color: white; padding: 12px 18px; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 8px; font-size: 14px;">
-    <i class="fab fa-whatsapp" style="font-size: 18px;"></i>
-    Publicar grupo
-  </button>
 </div>
 
 <script src="js/main.js"></script>

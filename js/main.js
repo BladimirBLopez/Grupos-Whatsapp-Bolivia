@@ -1,82 +1,15 @@
 // ============================================================
-// DATOS DE GRUPOS - CON CARACTERES ORIGINALES
+// DATOS DE GRUPOS - CARGADOS DESDE JSON EXTERNO
 // ============================================================
 
-const gruposData = [
-  {
-    id: 1,
-    nombre: "🇳🇬🅒🅞🅜🅟🅡Á 🅨 🅥🅔🅝🅣🅐.🅢🅒🅩🇳🇬",
-    descripcion: "Grupo de compra y venta en Santa Cruz, Bolivia.",
-    ubicacion: "Santa Cruz",
-    miembros: 27,
-    activos: 24,
-    link: "https://chat.whatsapp.com/KVTyedioIByCZBt6ZHfCVr",
-    plataforma: "whatsapp",
-    destacado: false
-  },
-  {
-    id: 2,
-    nombre: "🇧🇴VENTAS COCHABAMBA🇧🇴",
-    descripcion: "Aquí puedes comprar y vender de manera libre.",
-    ubicacion: "Cochabamba",
-    miembros: 370,
-    activos: 85,
-    link: "https://chat.whatsapp.com/Kd7GowNVQcy0ldYZVfeOrT?mode=gi_t",
-    plataforma: "whatsapp",
-    destacado: true
-  },
-  {
-    id: 3,
-    nombre: "🇧🇴🅒🅞🅜🅟🅡Á 🅨 🅥🅔🅝🅣🅐.🅑🅞🇧🇴",
-    descripcion: "🚫NO ENVIAR CONTENIDO INAPROPIADO 🚫 PROHIBIDO INSULTAR A LOS MIEMBROS DEL GRUPO",
-    ubicacion: "La Paz",
-    miembros: 30,
-    activos: 12,
-    link: "https://chat.whatsapp.com/ILQqKaRRchtDhQCs6g3WzF",
-    plataforma: "whatsapp",
-    destacado: false
-  },
-  {
-    id: 4,
-    nombre: "Mercado Virtual TRINIDAD",
-    descripcion: "oferta de todo tipos de productos y servicios en la ciudad de Trinidad",
-    ubicacion: "Beni",
-    miembros: 267,
-    activos: 85,
-    link: "https://chat.whatsapp.com/FMesPmRNXf9JOpWIloKfdH",
-    plataforma: "whatsapp",
-    destacado: false
-  },
-  {
-    id: 5,
-    nombre: "Bol 🪵🇳🇬 🛍️COMPRA Y VENTA 🛒 Bol 🇧🇴",
-    descripcion: "COMPRA Y VENTA BOLIVIA, grupo libre",
-    ubicacion: "Santa cruz",
-    miembros: 66,
-    activos: 12,
-    link: "https://chat.whatsapp.com/KpNSEALEieWHOHEXkbGg6n",
-    plataforma: "whatsapp",
-    destacado: false
-  },
-  {
-    id: 6,
-    nombre: "MARKETPLACE 1 COMPRA Y VENTA Bolivia",
-    descripcion: "hola mucho gusto bienvenido ah este grupo",
-    ubicacion: "Santa cruz",
-    miembros: 798,
-    activos: 222,
-    link: "https://chat.whatsapp.com/Bj6VMUc2kWOBLc55NqZuxL",
-    plataforma: "whatsapp",
-    destacado: false
-  }
-];
-
-// ============================================================
-// LÓGICA PRINCIPAL
-// ============================================================
-
+let gruposData = [];
 let currentPlatform = "whatsapp";
 let currentCity = "todos";
+let isModalAnimating = false;
+
+// ============================================================
+// FUNCIONES PRINCIPALES
+// ============================================================
 
 function normalizarCiudad(ciudad) {
   if (!ciudad) return "otro";
@@ -112,10 +45,10 @@ function escapeHtml(str) {
 }
 
 function actualizarContadores() {
-  const gruposWhatsApp = gruposData.filter(g => g.plataforma === "whatsapp");
+  const gruposFiltradosPorPlataforma = gruposData.filter(g => g.plataforma === currentPlatform);
   const contar = (ciudad) => {
-    if (ciudad === "todos") return gruposWhatsApp.length;
-    return gruposWhatsApp.filter(g => normalizarCiudad(g.ubicacion) === ciudad).length;
+    if (ciudad === "todos") return gruposFiltradosPorPlataforma.length;
+    return gruposFiltradosPorPlataforma.filter(g => normalizarCiudad(g.ubicacion) === ciudad).length;
   };
 
   const ids = {
@@ -251,14 +184,38 @@ function setActivePlatform(platform) {
   });
   actualizarContadores();
   renderGrupos();
+  renderGrupoDestacadoFijo();
 }
 
 function setActiveCity(city) {
   currentCity = city;
   actualizarContadores();
   renderGrupos();
+  
   const cityModal = document.getElementById("cityModal");
-  if (cityModal) cityModal.style.display = "none";
+  if (cityModal && cityModal.style.display === "flex") {
+    closeModalSuave(cityModal);
+  }
+}
+
+function closeModalSuave(modal) {
+  if (isModalAnimating) return;
+  isModalAnimating = true;
+  modal.style.display = "none";
+  document.body.style.overflow = "";
+  setTimeout(() => {
+    isModalAnimating = false;
+  }, 200);
+}
+
+function openModalSuave(modal) {
+  if (isModalAnimating) return;
+  isModalAnimating = true;
+  modal.style.display = "flex";
+  document.body.style.overflow = "hidden";
+  setTimeout(() => {
+    isModalAnimating = false;
+  }, 200);
 }
 
 function initCityModal() {
@@ -268,32 +225,60 @@ function initCityModal() {
   const searchInput = document.getElementById("citySearchInput");
 
   if (openBtn) {
-    openBtn.addEventListener("click", () => {
-      cityModal.style.display = "flex";
-      document.body.style.overflow = "hidden";
-      if (searchInput) searchInput.value = "";
-      filterCityList("");
+    const newOpenBtn = openBtn.cloneNode(true);
+    openBtn.parentNode.replaceChild(newOpenBtn, openBtn);
+    
+    newOpenBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (cityModal && cityModal.style.display !== "flex") {
+        actualizarContadores();
+        openModalSuave(cityModal);
+        if (searchInput) {
+          searchInput.value = "";
+          filterCityList("");
+        }
+      }
     });
   }
 
   const closeModal = () => {
-    cityModal.style.display = "none";
-    document.body.style.overflow = "";
+    if (cityModal && cityModal.style.display === "flex") {
+      closeModalSuave(cityModal);
+    }
   };
 
-  if (closeBtn) closeBtn.addEventListener("click", closeModal);
-  cityModal.addEventListener("click", (e) => { if (e.target === cityModal) closeModal(); });
+  if (closeBtn) {
+    const newCloseBtn = closeBtn.cloneNode(true);
+    closeBtn.parentNode.replaceChild(newCloseBtn, closeBtn);
+    newCloseBtn.addEventListener("click", closeModal);
+  }
+  
+  if (cityModal) {
+    cityModal.addEventListener("click", (e) => { 
+      if (e.target === cityModal) closeModal(); 
+    });
+  }
 
   document.querySelectorAll(".city-item").forEach(item => {
-    item.addEventListener("click", () => {
-      const city = item.getAttribute("data-city");
-      if (city) setActiveCity(city);
+    const newItem = item.cloneNode(true);
+    item.parentNode.replaceChild(newItem, item);
+    
+    newItem.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const city = newItem.getAttribute("data-city");
+      if (city) {
+        setActiveCity(city);
+      }
       closeModal();
     });
   });
 
   if (searchInput) {
-    searchInput.addEventListener("input", (e) => filterCityList(e.target.value.toLowerCase()));
+    const newSearchInput = searchInput.cloneNode(true);
+    searchInput.parentNode.replaceChild(newSearchInput, searchInput);
+    newSearchInput.addEventListener("input", (e) => filterCityList(e.target.value.toLowerCase()));
   }
 }
 
@@ -304,53 +289,83 @@ function filterCityList(searchTerm) {
   });
 }
 
-// ============================================================
-// FUNCIONES GLOBALES PARA EL BANNER (DECLARADAS ANTES)
-// ============================================================
+function resetFilters() {
+  setActivePlatform("whatsapp");
+  setActiveCity("todos");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 
-window.cerrarBanner = function() {
-  var banner = document.getElementById("bannerPublicar");
-  if (banner) {
-    banner.style.display = "none";
-  }
-  return false;
-};
-
-window.contactarWhatsApp = function() {
-  var mensaje = encodeURIComponent("Hola! Quiero publicar mi grupo en Qigrupos Bolivia 🇧🇴");
+function publishGroup() {
+  const mensaje = encodeURIComponent("Hola! Quiero publicar mi grupo en Qigrupos Bolivia 🇧🇴");
   window.open("https://wa.me/59169356292?text=" + mensaje, "_blank");
-  return false;
-};
+}
 
 // ============================================================
-// INICIALIZACIÓN
+// CARGAR GRUPOS DESDE JSON EXTERNO
 // ============================================================
-document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".filter-chip").forEach(chip => {
-    chip.addEventListener("click", () => {
-      const platform = chip.getAttribute("data-platform");
-      if (platform) setActivePlatform(platform);
+
+async function cargarGrupos() {
+  try {
+    const response = await fetch('data/grupos.json');
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    const data = await response.json();
+    gruposData = data.grupos;
+    console.log(`✅ ${gruposData.length} grupos cargados correctamente`);
+    
+    // Iniciar la página después de cargar los datos
+    iniciarPagina();
+  } catch (error) {
+    console.error('❌ Error al cargar grupos:', error);
+    const container = document.getElementById("gruposContainer");
+    if (container) {
+      container.innerHTML = `<div class="empty-message">
+        <i class="fas fa-exclamation-triangle"></i>
+        Error al cargar los grupos. Por favor, recarga la página.<br>
+        <small>Detalle: ${error.message}</small>
+      </div>`;
+    }
+  }
+}
+
+function iniciarPagina() {
+  // Configurar filtros de plataforma
+  const filterContainer = document.querySelector(".social-filters");
+  if (filterContainer) {
+    const originalChips = document.querySelectorAll(".filter-chip");
+    originalChips.forEach(chip => {
+      const newChip = chip.cloneNode(true);
+      chip.parentNode.replaceChild(newChip, chip);
+      newChip.addEventListener("click", () => {
+        const platform = newChip.getAttribute("data-platform");
+        if (platform) setActivePlatform(platform);
+      });
     });
-  });
+  }
 
-  document.getElementById("homeBtn")?.addEventListener("click", () => {
-    setActivePlatform("whatsapp");
-    setActiveCity("todos");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
+  // Logo clickeable para resetear filtros
+  const logoReset = document.getElementById("logoResetBtn");
+  if (logoReset) {
+    logoReset.addEventListener("click", resetFilters);
+  }
+
+  // Botón Publicar grupo en navbar
+  const publishBtn = document.getElementById("publishGroupBtn");
+  if (publishBtn) {
+    publishBtn.addEventListener("click", publishGroup);
+  }
 
   initCityModal();
   renderGrupoDestacadoFijo();
   actualizarContadores();
   setActivePlatform("whatsapp");
   setActiveCity("todos");
-  
-  // Mostrar el banner después de 2 segundos
-  setTimeout(function() {
-    var banner = document.getElementById("bannerPublicar");
-    if (banner) {
-      banner.style.bottom = "24px";
-      banner.style.opacity = "1";
-    }
-  }, 2000);
+}
+
+// ============================================================
+// INICIALIZACIÓN - Cargar grupos desde JSON
+// ============================================================
+document.addEventListener("DOMContentLoaded", () => {
+  cargarGrupos();
 });

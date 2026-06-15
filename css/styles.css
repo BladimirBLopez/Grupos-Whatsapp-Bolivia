@@ -53,6 +53,7 @@ body {
   align-items: center;
 }
 
+/* Botón Publicar grupo en navbar */
 .nav-btn {
   background: white;
   border: none;
@@ -67,10 +68,22 @@ body {
   font-family: 'Inter', sans-serif;
   color: #1f2f3e;
   border: 1px solid #e2edf2;
+  transition: all 0.2s;
 }
 
-.nav-btn i {
-  font-size: 0.8rem;
+.publish-btn {
+  background: #25D366 !important;
+  color: white !important;
+  border: none !important;
+}
+
+.publish-btn i {
+  color: white !important;
+}
+
+.publish-btn:hover {
+  background: #20b859 !important;
+  transform: scale(1.02);
 }
 
 /* ============================================ */
@@ -123,6 +136,11 @@ body {
   justify-content: space-between;
   cursor: pointer;
   transition: all 0.2s;
+}
+
+.city-selector-btn:hover {
+  border-color: #25D366;
+  box-shadow: 0 2px 8px rgba(37, 211, 102, 0.1);
 }
 
 .city-selected {
@@ -216,6 +234,12 @@ body {
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   border: 1px solid #e5f0f5;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.grupo-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 .card-header {
@@ -320,6 +344,14 @@ body {
 
 .join-btn:hover {
   background: #20b859;
+}
+
+.empty-message {
+  text-align: center;
+  padding: 3rem;
+  color: #8ba0ae;
+  background: white;
+  border-radius: 18px;
 }
 
 /* ============================================ */
@@ -478,7 +510,7 @@ body {
 }
 
 /* ============================================ */
-/* GRUPO DESTACADO FIJO                         */
+/* GRUPO DESTACADO                              */
 /* ============================================ */
 
 .destacado-fijo {
@@ -515,142 +547,6 @@ body {
   font-weight: 800;
   margin-left: 6px;
   display: inline-block;
-}
-
-/* ============================================ */
-/* BANNER FLOTANTE - DISEÑO PROFESIONAL         */
-/* ============================================ */
-
-.banner-publicar {
-  position: fixed !important;
-  bottom: 24px !important;
-  right: 24px !important;
-  left: auto !important;
-  top: auto !important;
-  transform: none !important;
-  width: auto !important;
-  min-width: 150px !important;
-  background: white !important;
-  border-radius: 16px !important;
-  padding: 0 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important;
-  z-index: 9999 !important;
-  overflow: hidden !important;
-  border: 1px solid rgba(37,211,102,0.3) !important;
-  transition: all 0.3s ease !important;
-}
-
-.banner-publicar:hover {
-  transform: translateY(-3px) !important;
-  box-shadow: 0 12px 28px rgba(0,0,0,0.2) !important;
-}
-
-/* Cabecera */
-.banner-publicar-header {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  background: linear-gradient(135deg, #075E54 0%, #128C7E 100%) !important;
-  padding: 10px 14px !important;
-  margin: 0 !important;
-  position: relative !important;
-}
-
-.banner-publicar-titulo {
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  font-size: 0.75rem !important;
-  font-weight: 700 !important;
-  font-family: 'Poppins', sans-serif !important;
-  color: white !important;
-}
-
-.banner-publicar-titulo i {
-  font-size: 0.9rem !important;
-  color: #25D366 !important;
-  background: white !important;
-  border-radius: 50% !important;
-  padding: 3px !important;
-}
-
-.banner-publicar p {
-  display: none !important;
-}
-
-/* Botón cerrar */
-.btn-cerrar-banner {
-  background: rgba(255,255,255,0.2) !important;
-  border: none !important;
-  color: white !important;
-  border-radius: 50% !important;
-  width: 24px !important;
-  height: 24px !important;
-  font-size: 0.8rem !important;
-  cursor: pointer !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  transition: all 0.2s !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  position: relative !important;
-  right: 0 !important;
-}
-
-.btn-cerrar-banner:hover {
-  background: rgba(255,255,255,0.4) !important;
-  transform: scale(1.1) !important;
-}
-
-/* Cuerpo del banner */
-.banner-publicar-actions {
-  display: flex !important;
-  flex-direction: column !important;
-  padding: 12px 14px !important;
-  background: white !important;
-  gap: 8px !important;
-}
-
-.btn-contactar-wa {
-  background: #25D366 !important;
-  color: white !important;
-  border: none !important;
-  border-radius: 40px !important;
-  padding: 8px 12px !important;
-  font-size: 0.7rem !important;
-  font-weight: 700 !important;
-  cursor: pointer !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 8px !important;
-  transition: all 0.2s !important;
-  width: 100% !important;
-  font-family: 'Inter', sans-serif !important;
-}
-
-.btn-contactar-wa:hover {
-  background: #1da851 !important;
-  transform: scale(1.02) !important;
-}
-
-.btn-contactar-wa i {
-  font-size: 0.75rem !important;
-}
-
-/* Texto adicional */
-.banner-publicar-actions::before {
-  content: "🌟 Destaca tu grupo";
-  display: block;
-  text-align: center;
-  font-size: 0.55rem;
-  color: #2c7a5e;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-  margin-bottom: 4px;
 }
 
 /* ============================================ */
@@ -704,46 +600,5 @@ body {
   .grupos-grid {
     grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
     gap: 1.5rem;
-  }
-}
-
-@media (max-width: 550px) {
-  .banner-publicar {
-    bottom: 16px !important;
-    right: 16px !important;
-    min-width: 135px !important;
-  }
-  
-  .banner-publicar-header {
-    padding: 8px 12px !important;
-  }
-  
-  .banner-publicar-titulo {
-    font-size: 0.65rem !important;
-  }
-  
-  .banner-publicar-titulo i {
-    font-size: 0.75rem !important;
-    padding: 2px !important;
-  }
-  
-  .banner-publicar-actions {
-    padding: 10px 12px !important;
-    gap: 6px !important;
-  }
-  
-  .btn-contactar-wa {
-    padding: 6px 10px !important;
-    font-size: 0.6rem !important;
-  }
-  
-  .banner-publicar-actions::before {
-    font-size: 0.5rem !important;
-  }
-  
-  .btn-cerrar-banner {
-    width: 22px !important;
-    height: 22px !important;
-    font-size: 0.7rem !important;
   }
 }
