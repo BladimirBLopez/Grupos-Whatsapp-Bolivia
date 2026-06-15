@@ -12,7 +12,7 @@ const gruposData = [
     activos: 24,
     link: "https://chat.whatsapp.com/KVTyedioIByCZBt6ZHfCVr",
     plataforma: "whatsapp",
-    destacado: true
+    destacado: false
   },
   {
     id: 2,
@@ -23,7 +23,7 @@ const gruposData = [
     activos: 85,
     link: "https://chat.whatsapp.com/Kd7GowNVQcy0ldYZVfeOrT?mode=gi_t",
     plataforma: "whatsapp",
-    destacado: false
+    destacado: true
   },
   {
     id: 3,
@@ -44,6 +44,28 @@ const gruposData = [
     miembros: 267,
     activos: 85,
     link: "https://chat.whatsapp.com/FMesPmRNXf9JOpWIloKfdH",
+    plataforma: "whatsapp",
+    destacado: false
+  },
+  {
+    id: 5,
+    nombre: "Bol 🪵🇳🇬 🛍️COMPRA Y VENTA 🛒 Bol 🇧🇴",
+    descripcion: "COMPRA Y VENTA BOLIVIA, grupo libre",
+    ubicacion: "Santa cruz",
+    miembros: 66,
+    activos: 12,
+    link: "https://chat.whatsapp.com/KpNSEALEieWHOHEXkbGg6n",
+    plataforma: "whatsapp",
+    destacado: false
+  },
+  {
+    id: 6,
+    nombre: "MARKETPLACE 1 COMPRA Y VENTA Bolivia",
+    descripcion: "hola mucho gusto bienvenido ah este grupo",
+    ubicacion: "Santa cruz",
+    miembros: 798,
+    activos: 222,
+    link: "https://chat.whatsapp.com/Bj6VMUc2kWOBLc55NqZuxL",
     plataforma: "whatsapp",
     destacado: false
   }
