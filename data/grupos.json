@@ -65,6 +65,28 @@
       "link": "https://chat.whatsapp.com/Bj6VMUc2kWOBLc55NqZuxL",
       "plataforma": "whatsapp",
       "destacado": false
+    },
+    {
+      "id": 7,
+      "nombre": "Compra y Venta La paz 🇧🇴💰",
+      "descripcion": "Grupo para emprendedores y compradores que buscan buenos productos.",
+      "ubicacion": "La paz",
+      "miembros": 64,
+      "activos": 22,
+      "link": "https://chat.whatsapp.com/Ihk2qKPIiKaGZcLMXmHJcx",
+      "plataforma": "whatsapp",
+      "destacado": false
+    },
+    {
+      "id": 8,
+      "nombre": "🇧🇴COMPRA Y VENTA TROPICO🇧🇴",
+      "descripcion": "Compra y venta Tropico",
+      "ubicacion": "Cochabamba",
+      "miembros": 221,
+      "activos": 59,
+      "link": "https://chat.whatsapp.com/CithzbaxoaFGio7RSHAltu",
+      "plataforma": "whatsapp",
+      "destacado": false
     }
   ]
 }
