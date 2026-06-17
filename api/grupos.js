@@ -1,9 +1,14 @@
-// api/grupos.js - Versión con require (más compatible con Vercel)
-const fs = require('fs');
-const path = require('path');
+// api/grupos.js - Con MongoDB Atlas
+import { MongoClient } from 'mongodb';
 
-module.exports = async function handler(req, res) {
-  // Configurar CORS
+// ============================================
+// CONFIGURACIÓN DE MONGODB
+// ============================================
+const uri = 'mongodb+srv://admin:admin123@cluster0.wkzzcug.mongodb.net/?appName=Cluster0';
+const client = new MongoClient(uri);
+
+export default async function handler(req, res) {
+  // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -12,72 +17,68 @@ module.exports = async function handler(req, res) {
     return res.status(200).end();
   }
 
-  const jsonPath = path.join(process.cwd(), 'data', 'grupos.json');
+  try {
+    await client.connect();
+    const db = client.db('grupos_db');
+    const collection = db.collection('grupos');
 
-  // GET
-  if (req.method === 'GET') {
-    try {
-      const data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
-      return res.status(200).json(data);
-    } catch (error) {
-      return res.status(500).json({ error: 'Error al obtener grupos' });
+    // GET
+    if (req.method === 'GET') {
+      const data = await collection.find({}).toArray();
+      return res.status(200).json({ grupos: data });
     }
-  }
 
-  // POST
-  if (req.method === 'POST') {
-    try {
+    // POST
+    if (req.method === 'POST') {
       const { grupo } = req.body;
       if (!grupo || !grupo.nombre || !grupo.link) {
         return res.status(400).json({ error: 'Datos incompletos' });
       }
 
-      const data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
-      const nuevoId = data.grupos.length > 0 ? Math.max(...data.grupos.map(g => g.id)) + 1 : 1;
-      const nuevoGrupo = { id: nuevoId, ...grupo, plataforma: 'whatsapp', fecha: new Date().toISOString() };
-      data.grupos.push(nuevoGrupo);
-      fs.writeFileSync(jsonPath, JSON.stringify(data, null, 2));
-      
-      return res.status(201).json({ success: true, grupo: nuevoGrupo });
-    } catch (error) {
-      return res.status(500).json({ error: 'Error al crear grupo' });
-    }
-  }
+      const nuevoGrupo = {
+        ...grupo,
+        plataforma: grupo.plataforma || 'whatsapp',
+        fecha: new Date().toISOString()
+      };
 
-  // PUT
-  if (req.method === 'PUT') {
-    try {
+      const result = await collection.insertOne(nuevoGrupo);
+      return res.status(201).json({ 
+        success: true, 
+        grupo: { id: result.insertedId, ...nuevoGrupo }
+      });
+    }
+
+    // PUT
+    if (req.method === 'PUT') {
       const { id, datos } = req.body;
       if (!id) return res.status(400).json({ error: 'ID requerido' });
 
-      const data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
-      const index = data.grupos.findIndex(g => g.id === id);
-      if (index === -1) return res.status(404).json({ error: 'Grupo no encontrado' });
-      
-      data.grupos[index] = { ...data.grupos[index], ...datos };
-      fs.writeFileSync(jsonPath, JSON.stringify(data, null, 2));
+      const { ObjectId } = await import('mongodb');
+      await collection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: datos }
+      );
       
       return res.status(200).json({ success: true });
-    } catch (error) {
-      return res.status(500).json({ error: 'Error al actualizar' });
     }
-  }
 
-  // DELETE
-  if (req.method === 'DELETE') {
-    try {
+    // DELETE
+    if (req.method === 'DELETE') {
       const { id } = req.body;
       if (!id) return res.status(400).json({ error: 'ID requerido' });
 
-      const data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
-      data.grupos = data.grupos.filter(g => g.id !== id);
-      fs.writeFileSync(jsonPath, JSON.stringify(data, null, 2));
+      const { ObjectId } = await import('mongodb');
+      await collection.deleteOne({ _id: new ObjectId(id) });
       
       return res.status(200).json({ success: true });
-    } catch (error) {
-      return res.status(500).json({ error: 'Error al eliminar' });
     }
-  }
 
-  return res.status(405).json({ error: 'Método no permitido' });
-};
+    return res.status(405).json({ error: 'Método no permitido' });
+
+  } catch (error) {
+    console.error('❌ Error:', error);
+    return res.status(500).json({ error: error.message });
+  } finally {
+    await client.close();
+  }
+}
