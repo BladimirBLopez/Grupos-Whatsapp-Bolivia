@@ -22,13 +22,13 @@ export default async function handler(req, res) {
     const db = client.db('grupos_db');
     const collection = db.collection('grupos');
 
-    // GET
+    // GET - Obtener todos los grupos
     if (req.method === 'GET') {
       const data = await collection.find({}).toArray();
       return res.status(200).json({ grupos: data });
     }
 
-    // POST
+    // POST - Crear nuevo grupo
     if (req.method === 'POST') {
       const { grupo } = req.body;
       if (!grupo || !grupo.nombre || !grupo.link) {
@@ -48,7 +48,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // PUT
+    // PUT - Actualizar grupo
     if (req.method === 'PUT') {
       const { id, datos } = req.body;
       if (!id) return res.status(400).json({ error: 'ID requerido' });
@@ -62,7 +62,7 @@ export default async function handler(req, res) {
       return res.status(200).json({ success: true });
     }
 
-    // DELETE
+    // DELETE - Eliminar grupo
     if (req.method === 'DELETE') {
       const { id } = req.body;
       if (!id) return res.status(400).json({ error: 'ID requerido' });
