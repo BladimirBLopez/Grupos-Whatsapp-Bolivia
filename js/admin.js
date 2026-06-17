@@ -1,4 +1,9 @@
 // ============================================
+// CONFIGURACIÓN DE LA API
+// ============================================
+const API_URL = 'https://grupos-whatsapp-bolivia.vercel.app/api/grupos';
+
+// ============================================
 // VARIABLES GLOBALES
 // ============================================
 let gruposData = [];
@@ -9,7 +14,7 @@ let grupoAEliminar = null;
 // ============================================
 async function cargarGrupos() {
   try {
-    const response = await fetch('/api/grupos');
+    const response = await fetch(API_URL);
     
     if (response.ok) {
       const data = await response.json();
@@ -89,7 +94,6 @@ function renderizarTabla() {
     </tr>
   `).join('');
   
-  // Actualizar contador de resultados en el buscador
   const searchInput = document.getElementById('searchGrupos');
   if (searchInput) {
     filtrarGruposAdmin(searchInput.value);
@@ -116,7 +120,6 @@ function filtrarGruposAdmin(texto) {
   const rows = document.querySelectorAll('#adminGruposBody tr');
   const busqueda = texto.toLowerCase().trim();
   
-  // Si no hay filas o solo tiene el mensaje de "no hay grupos", salir
   if (rows.length === 0 || rows[0].cells.length === 1) return;
   
   rows.forEach(row => {
@@ -132,15 +135,6 @@ function filtrarGruposAdmin(texto) {
     
     row.style.display = match ? '' : 'none';
   });
-  
-  // Actualizar contador visible
-  const visibles = document.querySelectorAll('#adminGruposBody tr[style*="display: none"]');
-  const totalVisibles = rows.length - visibles.length;
-  const counter = document.querySelector('.results-counter');
-  if (counter) {
-    const span = counter.querySelector('span');
-    if (span) span.textContent = totalVisibles;
-  }
 }
 
 // ============================================
@@ -156,13 +150,11 @@ function abrirModal(grupo = null) {
     return;
   }
   
-  // Resetear formulario
   form.reset();
   document.getElementById('editId').value = '';
   document.getElementById('fDestacado').checked = false;
   
   if (grupo) {
-    // Modo edición
     titulo.innerHTML = '<i class="fas fa-edit"></i> Editar Grupo';
     document.getElementById('editId').value = grupo.id;
     document.getElementById('fNombre').value = grupo.nombre || '';
@@ -173,7 +165,6 @@ function abrirModal(grupo = null) {
     document.getElementById('fActivos').value = grupo.activos || 0;
     document.getElementById('fDestacado').checked = grupo.destacado || false;
   } else {
-    // Modo creación
     titulo.innerHTML = '<i class="fas fa-plus-circle"></i> Nuevo Grupo';
   }
   
@@ -224,7 +215,6 @@ async function guardarGrupo(e) {
     destacado: document.getElementById('fDestacado').checked
   };
 
-  // Validaciones
   if (!datos.nombre || datos.nombre.length < 3) {
     mostrarNotificacion('❌ El nombre debe tener al menos 3 caracteres', 'error');
     return;
@@ -238,15 +228,13 @@ async function guardarGrupo(e) {
     let response;
     
     if (id) {
-      // Editar grupo existente
-      response = await fetch('/api/grupos', {
+      response = await fetch(API_URL, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: parseInt(id), datos })
       });
     } else {
-      // Crear nuevo grupo
-      response = await fetch('/api/grupos', {
+      response = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ grupo: datos })
@@ -279,7 +267,7 @@ async function eliminarGrupo() {
   if (grupoAEliminar === null) return;
   
   try {
-    const response = await fetch('/api/grupos', {
+    const response = await fetch(API_URL, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: grupoAEliminar })
@@ -305,7 +293,7 @@ async function eliminarGrupo() {
 // ============================================
 async function toggleDestacado(id, checked) {
   try {
-    const response = await fetch('/api/grupos', {
+    const response = await fetch(API_URL, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
@@ -353,7 +341,6 @@ function exportarJSON() {
 // NOTIFICACIONES
 // ============================================
 function mostrarNotificacion(mensaje, tipo = 'success') {
-  // Eliminar notificaciones anteriores
   const notifAnterior = document.querySelector('.admin-notification');
   if (notifAnterior) notifAnterior.remove();
   
@@ -395,7 +382,6 @@ function mostrarNotificacion(mensaje, tipo = 'success') {
 document.addEventListener('DOMContentLoaded', function() {
   console.log('🚀 Panel Admin iniciado');
   
-  // === Botón Nuevo Grupo ===
   const btnNuevo = document.getElementById('btnNuevoGrupo');
   if (btnNuevo) {
     btnNuevo.addEventListener('click', function() {
@@ -403,19 +389,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // === Cerrar modal con X ===
   const closeBtn = document.getElementById('closeModalBtn');
   if (closeBtn) {
     closeBtn.addEventListener('click', cerrarModal);
   }
   
-  // === Cerrar modal con Cancelar ===
   const cancelBtn = document.getElementById('cancelModalBtn');
   if (cancelBtn) {
     cancelBtn.addEventListener('click', cerrarModal);
   }
 
-  // === Cerrar modal haciendo clic fuera ===
   const modalGrupo = document.getElementById('modalGrupo');
   if (modalGrupo) {
     modalGrupo.addEventListener('click', function(e) {
@@ -423,7 +406,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // === Confirmación de eliminación ===
   const confirmDelete = document.getElementById('confirmDeleteBtn');
   if (confirmDelete) {
     confirmDelete.addEventListener('click', eliminarGrupo);
@@ -434,7 +416,6 @@ document.addEventListener('DOMContentLoaded', function() {
     cancelConfirm.addEventListener('click', cerrarConfirmacion);
   }
 
-  // === Buscador ===
   const searchInput = document.getElementById('searchGrupos');
   if (searchInput) {
     searchInput.addEventListener('input', function() {
@@ -442,13 +423,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // === Exportar JSON ===
   const exportBtn = document.getElementById('btnExportarJSON');
   if (exportBtn) {
     exportBtn.addEventListener('click', exportarJSON);
   }
 
-  // === Limpiar Cache ===
   const cacheBtn = document.getElementById('btnLimpiarCache');
   if (cacheBtn) {
     cacheBtn.addEventListener('click', function() {
@@ -460,18 +439,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // === Envío del formulario ===
   const form = document.getElementById('formGrupo');
   if (form) {
     form.addEventListener('submit', guardarGrupo);
   }
 
-  // === Cargar grupos al inicio ===
   cargarGrupos();
 });
 
 // ============================================
-// ESTILOS PARA ANIMACIONES (se agregan dinámicamente)
+// ESTILOS PARA ANIMACIONES
 // ============================================
 (function agregarEstilosAnimacion() {
   const style = document.createElement('style');
