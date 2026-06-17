@@ -1,8 +1,8 @@
-// api/grupos.js
-const fs = require('fs');
-const path = require('path');
+// api/grupos.js - Versión con import/export para Vercel
+import fs from 'fs';
+import path from 'path';
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   // Configurar CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -12,165 +12,72 @@ module.exports = async function handler(req, res) {
     return res.status(200).end();
   }
 
-  // Ruta al archivo JSON
   const jsonPath = path.join(process.cwd(), 'data', 'grupos.json');
 
-  // ============================================
-  // GET - Obtener todos los grupos
-  // ============================================
+  // GET
   if (req.method === 'GET') {
     try {
-      console.log('📥 GET /api/grupos');
       const data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
       return res.status(200).json(data);
     } catch (error) {
-      console.error('❌ Error GET:', error);
-      return res.status(500).json({ 
-        error: 'Error al obtener grupos', 
-        details: error.message 
-      });
+      return res.status(500).json({ error: 'Error al obtener grupos' });
     }
   }
 
-  // ============================================
-  // POST - Crear nuevo grupo
-  // ============================================
+  // POST
   if (req.method === 'POST') {
     try {
-      console.log('📥 POST /api/grupos');
-      console.log('📦 Body:', req.body);
-      
       const { grupo } = req.body;
-      
       if (!grupo || !grupo.nombre || !grupo.link) {
-        return res.status(400).json({ 
-          error: 'Datos incompletos: nombre y link son requeridos' 
-        });
+        return res.status(400).json({ error: 'Datos incompletos' });
       }
 
-      let data;
-      try {
-        data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
-      } catch (e) {
-        data = { grupos: [] };
-      }
-      
-      const nuevoId = data.grupos.length > 0 
-        ? Math.max(...data.grupos.map(g => g.id)) + 1 
-        : 1;
-      
-      const nuevoGrupo = {
-        id: nuevoId,
-        ...grupo,
-        plataforma: grupo.plataforma || 'whatsapp',
-        fecha: new Date().toISOString()
-      };
-      
+      const data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+      const nuevoId = data.grupos.length > 0 ? Math.max(...data.grupos.map(g => g.id)) + 1 : 1;
+      const nuevoGrupo = { id: nuevoId, ...grupo, plataforma: 'whatsapp', fecha: new Date().toISOString() };
       data.grupos.push(nuevoGrupo);
       fs.writeFileSync(jsonPath, JSON.stringify(data, null, 2));
-      console.log('✅ Grupo creado ID:', nuevoId);
       
-      return res.status(201).json({ 
-        success: true, 
-        grupo: nuevoGrupo,
-        message: 'Grupo creado exitosamente'
-      });
+      return res.status(201).json({ success: true, grupo: nuevoGrupo });
     } catch (error) {
-      console.error('❌ Error POST:', error);
-      return res.status(500).json({ 
-        error: 'Error al crear grupo', 
-        details: error.message 
-      });
+      return res.status(500).json({ error: 'Error al crear grupo' });
     }
   }
 
-  // ============================================
-  // PUT - Actualizar grupo
-  // ============================================
+  // PUT
   if (req.method === 'PUT') {
     try {
-      console.log('📥 PUT /api/grupos');
-      console.log('📦 Body:', req.body);
-      
       const { id, datos } = req.body;
-      
-      if (!id) {
-        return res.status(400).json({ error: 'ID requerido' });
-      }
+      if (!id) return res.status(400).json({ error: 'ID requerido' });
 
-      let data;
-      try {
-        data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
-      } catch (e) {
-        data = { grupos: [] };
-      }
-      
+      const data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
       const index = data.grupos.findIndex(g => g.id === id);
-      if (index === -1) {
-        return res.status(404).json({ error: 'Grupo no encontrado' });
-      }
+      if (index === -1) return res.status(404).json({ error: 'Grupo no encontrado' });
       
       data.grupos[index] = { ...data.grupos[index], ...datos };
       fs.writeFileSync(jsonPath, JSON.stringify(data, null, 2));
       
-      console.log('✅ Grupo actualizado ID:', id);
-      
-      return res.status(200).json({ 
-        success: true, 
-        message: 'Grupo actualizado' 
-      });
+      return res.status(200).json({ success: true });
     } catch (error) {
-      console.error('❌ Error PUT:', error);
-      return res.status(500).json({ 
-        error: 'Error al actualizar', 
-        details: error.message 
-      });
+      return res.status(500).json({ error: 'Error al actualizar' });
     }
   }
 
-  // ============================================
-  // DELETE - Eliminar grupo
-  // ============================================
+  // DELETE
   if (req.method === 'DELETE') {
     try {
-      console.log('📥 DELETE /api/grupos');
-      console.log('📦 Body:', req.body);
-      
       const { id } = req.body;
-      
-      if (!id) {
-        return res.status(400).json({ error: 'ID requerido' });
-      }
+      if (!id) return res.status(400).json({ error: 'ID requerido' });
 
-      let data;
-      try {
-        data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
-      } catch (e) {
-        data = { grupos: [] };
-      }
-      
-      const grupoExistente = data.grupos.find(g => g.id === id);
-      if (!grupoExistente) {
-        return res.status(404).json({ error: 'Grupo no encontrado' });
-      }
-      
+      const data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
       data.grupos = data.grupos.filter(g => g.id !== id);
       fs.writeFileSync(jsonPath, JSON.stringify(data, null, 2));
       
-      console.log('🗑️ Grupo eliminado ID:', id);
-      
-      return res.status(200).json({ 
-        success: true, 
-        message: 'Grupo eliminado' 
-      });
+      return res.status(200).json({ success: true });
     } catch (error) {
-      console.error('❌ Error DELETE:', error);
-      return res.status(500).json({ 
-        error: 'Error al eliminar', 
-        details: error.message 
-      });
+      return res.status(500).json({ error: 'Error al eliminar' });
     }
   }
 
   return res.status(405).json({ error: 'Método no permitido' });
-};
+}
