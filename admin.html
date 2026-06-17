@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Admin - Qigrupos Bolivia</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<div class="admin-container">
+  <!-- Header -->
+  <header class="admin-header">
+    <div class="admin-header-left">
+      <a href="index.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Volver
+      </a>
+      <h1><i class="fas fa-crown" style="color:#FFD700;"></i> Panel de Administración</h1>
+    </div>
+    <div class="admin-header-right">
+      <span class="admin-badge"><i class="fas fa-shield-alt"></i> Admin</span>
+    </div>
+  </header>
+
+  <!-- Estadísticas -->
+  <div class="admin-stats">
+    <div class="stat-card">
+      <i class="fas fa-users" style="color:#25D366;"></i>
+      <div>
+        <span class="stat-number" id="totalGrupos">0</span>
+        <span class="stat-label">Total Grupos</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <i class="fas fa-star" style="color:#FFD700;"></i>
+      <div>
+        <span class="stat-number" id="totalDestacados">0</span>
+        <span class="stat-label">Destacados</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <i class="fas fa-city" style="color:#FF6B6B;"></i>
+      <div>
+        <span class="stat-number" id="totalCiudades">0</span>
+        <span class="stat-label">Ciudades</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botones de acción -->
+  <div class="admin-actions">
+    <button class="btn-primary" id="btnNuevoGrupo">
+      <i class="fas fa-plus-circle"></i> Nuevo Grupo
+    </button>
+    <button class="btn-secondary" id="btnExportarJSON">
+      <i class="fas fa-download"></i> Exportar JSON
+    </button>
+    <button class="btn-danger" id="btnLimpiarCache">
+      <i class="fas fa-trash-alt"></i> Limpiar Cache
+    </button>
+  </div>
+
+  <!-- Buscador -->
+  <div class="admin-search">
+    <i class="fas fa-search"></i>
+    <input type="text" id="searchGrupos" placeholder="Buscar grupo por nombre, ciudad o descripción...">
+  </div>
+
+  <!-- Lista de grupos -->
+  <div class="admin-table-container">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Ciudad</th>
+          <th>Miembros</th>
+          <th>Destacado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="adminGruposBody">
+        <!-- Los grupos se cargarán aquí -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ====== MODAL PARA CREAR/EDITAR GRUPO ====== -->
+<div id="modalGrupo" class="admin-modal" style="display:none;">
+  <div class="admin-modal-content">
+    <div class="admin-modal-header">
+      <h3 id="modalTitulo"><i class="fas fa-edit"></i> Nuevo Grupo</h3>
+      <button class="modal-close" id="closeModalBtn">&times;</button>
+    </div>
+    
+    <form id="formGrupo">
+      <input type="hidden" id="editId" value="">
+      
+      <div class="form-group">
+        <label><i class="fas fa-tag"></i> Nombre del grupo *</label>
+        <input type="text" id="fNombre" required placeholder="Ej: Compra y Venta Santa Cruz">
+      </div>
+
+      <div class="form-group">
+        <label><i class="fas fa-align-left"></i> Descripción</label>
+        <textarea id="fDescripcion" rows="2" placeholder="Describe brevemente el grupo..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label><i class="fas fa-map-marker-alt"></i> Ciudad *</label>
+        <select id="fCiudad" required>
+          <option value="Santa Cruz">Santa Cruz</option>
+          <option value="La Paz">La Paz</option>
+          <option value="Cochabamba">Cochabamba</option>
+          <option value="Sucre">Sucre</option>
+          <option value="Tarija">Tarija</option>
+          <option value="Potosí">Potosí</option>
+          <option value="Oruro">Oruro</option>
+          <option value="Beni">Beni</option>
+          <option value="Pando">Pando</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label><i class="fas fa-link"></i> Enlace del grupo *</label>
+        <input type="url" id="fEnlace" required placeholder="https://chat.whatsapp.com/...">
+      </div>
+
+      <div class="form-group">
+        <label><i class="fas fa-users"></i> Miembros</label>
+        <input type="number" id="fMiembros" value="0" min="0">
+      </div>
+
+      <div class="form-group">
+        <label><i class="fas fa-chart-line"></i> Activos</label>
+        <input type="number" id="fActivos" value="0" min="0">
+      </div>
+
+      <div class="form-group checkbox-group">
+        <label>
+          <input type="checkbox" id="fDestacado">
+          <i class="fas fa-star" style="color:#FFD700;"></i> Marcar como destacado
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" id="cancelModalBtn">Cancelar</button>
+        <button type="submit" class="btn-save" id="submitGrupoBtn">
+          <i class="fas fa-save"></i> Guardar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ====== MODAL DE CONFIRMACIÓN ====== -->
+<div id="modalConfirmacion" class="admin-modal" style="display:none;">
+  <div class="admin-modal-content" style="max-width:400px; text-align:center;">
+    <div style="font-size:3rem; margin-bottom:1rem;">⚠️</div>
+    <h3 style="margin-bottom:0.5rem;">¿Estás seguro?</h3>
+    <p style="color:#6b7f8e; margin-bottom:1.5rem;" id="confirmacionMensaje">Esta acción no se puede deshacer.</p>
+    <div style="display:flex; gap:1rem; justify-content:center;">
+      <button class="btn-cancel" id="cancelConfirmBtn">Cancelar</button>
+      <button class="btn-danger" id="confirmDeleteBtn">
+        <i class="fas fa-trash-alt"></i> Eliminar
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="js/admin.js"></script>
+</body>
+</html>

@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
   
   <!-- ====== GOOGLE ANALYTICS ====== -->
-  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-E20HT1VNFK"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -35,16 +34,17 @@
 <body>
 
 <div class="container">
-  <!-- Navbar - SIN botón Home, el logo es clickeable -->
+  <!-- Navbar -->
   <div class="navbar">
     <div class="logo-area" id="logoResetBtn" style="cursor: pointer;">
       <h1><i class="fab fa-whatsapp" style="color:#25D366;"></i> Qigrupos <span style="color:#2c3e4e;">Bolivia</span></h1>
       <p>Compra & Venta | Grupos exclusivos</p>
     </div>
     <div class="nav-links">
-      <button class="nav-btn publish-btn" id="publishGroupBtn">
-        <i class="fab fa-whatsapp"></i> Publicar grupo
-      </button>
+      <!-- BOTÓN ADMIN - Redirige a admin.html -->
+      <a href="admin.html" class="nav-btn publish-btn" style="text-decoration:none;">
+        <i class="fas fa-crown"></i> Admin
+      </a>
     </div>
   </div>
 

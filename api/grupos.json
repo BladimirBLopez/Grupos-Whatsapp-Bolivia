@@ -1,0 +1,140 @@
+// api/grupos.js
+import { kv } from '@vercel/kv';
+
+export default async function handler(req, res) {
+  // Configurar CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  // ============================================
+  // GET - Obtener todos los grupos
+  // ============================================
+  if (req.method === 'GET') {
+    try {
+      const data = await kv.get('grupos');
+      
+      // Si no hay datos en KV, cargar desde JSON por defecto
+      if (!data) {
+        const fs = require('fs');
+        const path = require('path');
+        const jsonPath = path.join(process.cwd(), 'data', 'grupos.json');
+        const jsonData = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+        
+        await kv.set('grupos', jsonData);
+        return res.status(200).json(jsonData);
+      }
+      
+      return res.status(200).json(data);
+    } catch (error) {
+      console.error('Error GET:', error);
+      return res.status(500).json({ error: 'Error al obtener grupos' });
+    }
+  }
+
+  // ============================================
+  // POST - Crear nuevo grupo
+  // ============================================
+  if (req.method === 'POST') {
+    try {
+      const { grupo } = req.body;
+      
+      if (!grupo || !grupo.nombre || !grupo.link) {
+        return res.status(400).json({ error: 'Datos incompletos' });
+      }
+
+      const data = await kv.get('grupos') || { grupos: [] };
+      
+      const nuevoId = data.grupos.length > 0 
+        ? Math.max(...data.grupos.map(g => g.id)) + 1 
+        : 1;
+      
+      const nuevoGrupo = {
+        id: nuevoId,
+        ...grupo,
+        plataforma: grupo.plataforma || 'whatsapp',
+        fecha: new Date().toISOString()
+      };
+      
+      data.grupos.push(nuevoGrupo);
+      await kv.set('grupos', data);
+      
+      return res.status(201).json({ 
+        success: true, 
+        grupo: nuevoGrupo,
+        message: 'Grupo creado exitosamente'
+      });
+    } catch (error) {
+      console.error('Error POST:', error);
+      return res.status(500).json({ error: 'Error al crear grupo' });
+    }
+  }
+
+  // ============================================
+  // PUT - Actualizar grupo
+  // ============================================
+  if (req.method === 'PUT') {
+    try {
+      const { id, datos } = req.body;
+      
+      if (!id) {
+        return res.status(400).json({ error: 'ID requerido' });
+      }
+
+      const data = await kv.get('grupos') || { grupos: [] };
+      
+      const index = data.grupos.findIndex(g => g.id === id);
+      if (index === -1) {
+        return res.status(404).json({ error: 'Grupo no encontrado' });
+      }
+      
+      data.grupos[index] = { ...data.grupos[index], ...datos };
+      await kv.set('grupos', data);
+      
+      return res.status(200).json({ 
+        success: true, 
+        message: 'Grupo actualizado' 
+      });
+    } catch (error) {
+      console.error('Error PUT:', error);
+      return res.status(500).json({ error: 'Error al actualizar' });
+    }
+  }
+
+  // ============================================
+  // DELETE - Eliminar grupo
+  // ============================================
+  if (req.method === 'DELETE') {
+    try {
+      const { id } = req.body;
+      
+      if (!id) {
+        return res.status(400).json({ error: 'ID requerido' });
+      }
+
+      const data = await kv.get('grupos') || { grupos: [] };
+      
+      const grupoExistente = data.grupos.find(g => g.id === id);
+      if (!grupoExistente) {
+        return res.status(404).json({ error: 'Grupo no encontrado' });
+      }
+      
+      data.grupos = data.grupos.filter(g => g.id !== id);
+      await kv.set('grupos', data);
+      
+      return res.status(200).json({ 
+        success: true, 
+        message: 'Grupo eliminado' 
+      });
+    } catch (error) {
+      console.error('Error DELETE:', error);
+      return res.status(500).json({ error: 'Error al eliminar' });
+    }
+  }
+
+  return res.status(405).json({ error: 'Método no permitido' });
+}
