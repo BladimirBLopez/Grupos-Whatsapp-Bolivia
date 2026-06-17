@@ -1,8 +1,8 @@
-// api/grupos.js - Versión con import/export para Vercel
-import fs from 'fs';
-import path from 'path';
+// api/grupos.js - Versión con require (más compatible con Vercel)
+const fs = require('fs');
+const path = require('path');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // Configurar CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -80,4 +80,4 @@ export default async function handler(req, res) {
   }
 
   return res.status(405).json({ error: 'Método no permitido' });
-}
+};
