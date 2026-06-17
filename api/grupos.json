@@ -1,7 +1,8 @@
 // api/grupos.js
-import { kv } from '@vercel/kv';
+const fs = require('fs');
+const path = require('path');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // Configurar CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -11,28 +12,23 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
+  // Ruta al archivo JSON
+  const jsonPath = path.join(process.cwd(), 'data', 'grupos.json');
+
   // ============================================
   // GET - Obtener todos los grupos
   // ============================================
   if (req.method === 'GET') {
     try {
-      const data = await kv.get('grupos');
-      
-      // Si no hay datos en KV, cargar desde JSON por defecto
-      if (!data) {
-        const fs = require('fs');
-        const path = require('path');
-        const jsonPath = path.join(process.cwd(), 'data', 'grupos.json');
-        const jsonData = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
-        
-        await kv.set('grupos', jsonData);
-        return res.status(200).json(jsonData);
-      }
-      
+      console.log('📥 GET /api/grupos');
+      const data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
       return res.status(200).json(data);
     } catch (error) {
-      console.error('Error GET:', error);
-      return res.status(500).json({ error: 'Error al obtener grupos' });
+      console.error('❌ Error GET:', error);
+      return res.status(500).json({ 
+        error: 'Error al obtener grupos', 
+        details: error.message 
+      });
     }
   }
 
@@ -41,13 +37,23 @@ export default async function handler(req, res) {
   // ============================================
   if (req.method === 'POST') {
     try {
+      console.log('📥 POST /api/grupos');
+      console.log('📦 Body:', req.body);
+      
       const { grupo } = req.body;
       
       if (!grupo || !grupo.nombre || !grupo.link) {
-        return res.status(400).json({ error: 'Datos incompletos' });
+        return res.status(400).json({ 
+          error: 'Datos incompletos: nombre y link son requeridos' 
+        });
       }
 
-      const data = await kv.get('grupos') || { grupos: [] };
+      let data;
+      try {
+        data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+      } catch (e) {
+        data = { grupos: [] };
+      }
       
       const nuevoId = data.grupos.length > 0 
         ? Math.max(...data.grupos.map(g => g.id)) + 1 
@@ -61,7 +67,8 @@ export default async function handler(req, res) {
       };
       
       data.grupos.push(nuevoGrupo);
-      await kv.set('grupos', data);
+      fs.writeFileSync(jsonPath, JSON.stringify(data, null, 2));
+      console.log('✅ Grupo creado ID:', nuevoId);
       
       return res.status(201).json({ 
         success: true, 
@@ -69,8 +76,11 @@ export default async function handler(req, res) {
         message: 'Grupo creado exitosamente'
       });
     } catch (error) {
-      console.error('Error POST:', error);
-      return res.status(500).json({ error: 'Error al crear grupo' });
+      console.error('❌ Error POST:', error);
+      return res.status(500).json({ 
+        error: 'Error al crear grupo', 
+        details: error.message 
+      });
     }
   }
 
@@ -79,13 +89,21 @@ export default async function handler(req, res) {
   // ============================================
   if (req.method === 'PUT') {
     try {
+      console.log('📥 PUT /api/grupos');
+      console.log('📦 Body:', req.body);
+      
       const { id, datos } = req.body;
       
       if (!id) {
         return res.status(400).json({ error: 'ID requerido' });
       }
 
-      const data = await kv.get('grupos') || { grupos: [] };
+      let data;
+      try {
+        data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+      } catch (e) {
+        data = { grupos: [] };
+      }
       
       const index = data.grupos.findIndex(g => g.id === id);
       if (index === -1) {
@@ -93,15 +111,20 @@ export default async function handler(req, res) {
       }
       
       data.grupos[index] = { ...data.grupos[index], ...datos };
-      await kv.set('grupos', data);
+      fs.writeFileSync(jsonPath, JSON.stringify(data, null, 2));
+      
+      console.log('✅ Grupo actualizado ID:', id);
       
       return res.status(200).json({ 
         success: true, 
         message: 'Grupo actualizado' 
       });
     } catch (error) {
-      console.error('Error PUT:', error);
-      return res.status(500).json({ error: 'Error al actualizar' });
+      console.error('❌ Error PUT:', error);
+      return res.status(500).json({ 
+        error: 'Error al actualizar', 
+        details: error.message 
+      });
     }
   }
 
@@ -110,13 +133,21 @@ export default async function handler(req, res) {
   // ============================================
   if (req.method === 'DELETE') {
     try {
+      console.log('📥 DELETE /api/grupos');
+      console.log('📦 Body:', req.body);
+      
       const { id } = req.body;
       
       if (!id) {
         return res.status(400).json({ error: 'ID requerido' });
       }
 
-      const data = await kv.get('grupos') || { grupos: [] };
+      let data;
+      try {
+        data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+      } catch (e) {
+        data = { grupos: [] };
+      }
       
       const grupoExistente = data.grupos.find(g => g.id === id);
       if (!grupoExistente) {
@@ -124,17 +155,22 @@ export default async function handler(req, res) {
       }
       
       data.grupos = data.grupos.filter(g => g.id !== id);
-      await kv.set('grupos', data);
+      fs.writeFileSync(jsonPath, JSON.stringify(data, null, 2));
+      
+      console.log('🗑️ Grupo eliminado ID:', id);
       
       return res.status(200).json({ 
         success: true, 
         message: 'Grupo eliminado' 
       });
     } catch (error) {
-      console.error('Error DELETE:', error);
-      return res.status(500).json({ error: 'Error al eliminar' });
+      console.error('❌ Error DELETE:', error);
+      return res.status(500).json({ 
+        error: 'Error al eliminar', 
+        details: error.message 
+      });
     }
   }
 
   return res.status(405).json({ error: 'Método no permitido' });
-}
+};
