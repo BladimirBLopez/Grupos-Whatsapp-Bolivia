@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
   
-  <!-- ====== GOOGLE ANALYTICS ====== -->
+  <!-- GOOGLE ANALYTICS -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-E20HT1VNFK"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -12,7 +12,6 @@
     gtag('js', new Date());
     gtag('config', 'G-E20HT1VNFK');
   </script>
-  <!-- ====== FIN GOOGLE ANALYTICS ====== -->
   
   <title>Qigrupos Bolivia | Grupos WhatsApp Compra y Venta</title>
   <meta name="description" content="Encuentra los mejores grupos de WhatsApp de compra y venta en Bolivia. Únete a grupos por ciudad: Santa Cruz, La Paz, Cochabamba y más.">
@@ -30,6 +29,163 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  
+  <style>
+    /* ===== MODAL LOGIN ===== */
+    .login-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(5px);
+    }
+    
+    .login-modal.show {
+      display: flex;
+    }
+    
+    .login-modal-content {
+      background: white;
+      border-radius: 24px;
+      padding: 2.5rem 2rem;
+      max-width: 380px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      animation: slideUp 0.4s ease;
+      position: relative;
+    }
+    
+    .login-modal-content .logo {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .login-modal-content .logo i {
+      font-size: 2.5rem;
+      color: #25D366;
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+    
+    .login-modal-content .logo h2 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.5rem;
+      background: linear-gradient(135deg, #075E54, #25D366);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .login-modal-content .logo p {
+      color: #8ba0ae;
+      font-size: 0.8rem;
+      -webkit-text-fill-color: #8ba0ae;
+    }
+    
+    .login-modal-content .form-group {
+      margin-bottom: 1rem;
+    }
+    
+    .login-modal-content .form-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.8rem;
+      color: #1a2c3e;
+      margin-bottom: 4px;
+    }
+    
+    .login-modal-content .form-group label i {
+      margin-right: 6px;
+      color: #25D366;
+    }
+    
+    .login-modal-content .form-group input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: 'Inter', sans-serif;
+      transition: border-color 0.2s;
+    }
+    
+    .login-modal-content .form-group input:focus {
+      outline: none;
+      border-color: #25D366;
+      box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
+    }
+    
+    .login-modal-content .btn-login {
+      width: 100%;
+      padding: 11px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      color: white;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Inter', sans-serif;
+      margin-top: 0.5rem;
+    }
+    
+    .login-modal-content .btn-login:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+    }
+    
+    .login-modal-content .btn-login:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .login-modal-content .error-msg {
+      color: #dc3545;
+      font-size: 0.8rem;
+      text-align: center;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    
+    .login-modal-content .error-msg.show {
+      display: block;
+    }
+    
+    .login-modal-content .close-login {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 1.6rem;
+      cursor: pointer;
+      color: #8ba0ae;
+      transition: color 0.2s;
+    }
+    
+    .login-modal-content .close-login:hover {
+      color: #1a2c3e;
+    }
+    
+    .login-modal-content .footer-text {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.65rem;
+      color: #8ba0ae;
+    }
+    
+    @keyframes slideUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
 </head>
 <body>
 
@@ -41,10 +197,10 @@
       <p>Compra & Venta | Grupos exclusivos</p>
     </div>
     <div class="nav-links">
-      <!-- BOTÓN ADMIN - Redirige a admin.html -->
-      <a href="admin.html" class="nav-btn publish-btn" style="text-decoration:none;">
+      <!-- BOTÓN ADMIN - Ahora abre modal de login -->
+      <button class="nav-btn publish-btn" id="btnAdminLogin" style="text-decoration:none; border:none; cursor:pointer;">
         <i class="fas fa-crown"></i> Admin
-      </a>
+      </button>
     </div>
   </div>
 
@@ -89,7 +245,7 @@
   </div>
 </div>
 
-<!-- MODAL DE CIUDADES -->
+<!-- ===== MODAL DE CIUDADES ===== -->
 <div id="cityModal" class="modal-city">
   <div class="modal-city-content">
     <div class="modal-city-header">
@@ -173,6 +329,43 @@
         </div>
         <span class="city-count" id="modalPandoCount">0</span>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL DE LOGIN ===== -->
+<div class="login-modal" id="loginModal">
+  <div class="login-modal-content">
+    <button class="close-login" id="closeLoginBtn">&times;</button>
+    
+    <div class="logo">
+      <i class="fas fa-crown"></i>
+      <h2>Qigrupos Admin</h2>
+      <p>Ingresa tus credenciales</p>
+    </div>
+    
+    <form id="loginForm">
+      <div class="form-group">
+        <label><i class="fas fa-user"></i> Usuario</label>
+        <input type="text" id="loginUser" placeholder="admin" required>
+      </div>
+      
+      <div class="form-group">
+        <label><i class="fas fa-lock"></i> Contraseña</label>
+        <input type="password" id="loginPass" placeholder="••••••••" required>
+      </div>
+      
+      <button type="submit" class="btn-login" id="loginSubmitBtn">
+        <i class="fas fa-sign-in-alt"></i> Ingresar
+      </button>
+      
+      <div class="error-msg" id="loginError">
+        <i class="fas fa-exclamation-circle"></i> Usuario o contraseña incorrectos
+      </div>
+    </form>
+    
+    <div class="footer-text">
+      <i class="fas fa-shield-alt"></i> Acceso restringido a administradores
     </div>
   </div>
 </div>
