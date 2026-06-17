@@ -1,5 +1,5 @@
 // ============================================
-// CONFIGURACIÓN DE LA API
+// CONFIGURACIÓN DE LA API - URL ABSOLUTA
 // ============================================
 const API_URL = 'https://grupos-whatsapp-bolivia.vercel.app/api/grupos';
 
@@ -14,12 +14,13 @@ let grupoAEliminar = null;
 // ============================================
 async function cargarGrupos() {
   try {
+    console.log('🔄 Cargando grupos desde:', API_URL);
     const response = await fetch(API_URL);
     
     if (response.ok) {
       const data = await response.json();
       gruposData = data.grupos || [];
-      console.log(`✅ ${gruposData.length} grupos cargados desde la API`);
+      console.log(`✅ ${gruposData.length} grupos cargados`);
     } else {
       console.warn('⚠️ Fallback a JSON local');
       const localResponse = await fetch('data/grupos.json');
@@ -31,16 +32,7 @@ async function cargarGrupos() {
     actualizarEstadisticas();
   } catch (error) {
     console.error('❌ Error al cargar grupos:', error);
-    
-    try {
-      const localResponse = await fetch('data/grupos.json');
-      const data = await localResponse.json();
-      gruposData = data.grupos || [];
-      renderizarTabla();
-      actualizarEstadisticas();
-    } catch (fallbackError) {
-      mostrarNotificacion('❌ Error al cargar los grupos', 'error');
-    }
+    mostrarNotificacion('❌ Error al cargar grupos: ' + error.message, 'error');
   }
 }
 
