@@ -1,114 +1,111 @@
-{
-  "grupos": [
-    {
-      "id": 1,
-      "nombre": "🇳🇬🅒🅞🅜🅟🅡Á 🅨 🅥🅔🅝🅣🅐.🅢🅒🅩🇳🇬",
-      "descripcion": "Grupo de compra y venta en Santa Cruz, Bolivia.",
-      "ubicacion": "Santa Cruz",
-      "miembros": 27,
-      "activos": 24,
-      "link": "https://chat.whatsapp.com/KVTyedioIByCZBt6ZHfCVr",
-      "plataforma": "whatsapp",
-      "destacado": false
-    },
-    {
-      "id": 2,
-      "nombre": "🇧🇴VENTAS COCHABAMBA🇧🇴",
-      "descripcion": "Aquí puedes comprar y vender de manera libre.",
-      "ubicacion": "Cochabamba",
-      "miembros": 370,
-      "activos": 85,
-      "link": "https://chat.whatsapp.com/Kd7GowNVQcy0ldYZVfeOrT?mode=gi_t",
-      "plataforma": "whatsapp",
-      "destacado": true
-    },
-    {
-      "id": 3,
-      "nombre": "🇧🇴🅒🅞🅜🅟🅡Á 🅨 🅥🅔🅝🅣🅐.🅑🅞🇧🇴",
-      "descripcion": "🚫NO ENVIAR CONTENIDO INAPROPIADO 🚫 PROHIBIDO INSULTAR A LOS MIEMBROS DEL GRUPO",
-      "ubicacion": "La Paz",
-      "miembros": 30,
-      "activos": 12,
-      "link": "https://chat.whatsapp.com/ILQqKaRRchtDhQCs6g3WzF",
-      "plataforma": "whatsapp",
-      "destacado": false
-    },
-    {
-      "id": 4,
-      "nombre": "Mercado Virtual TRINIDAD",
-      "descripcion": "oferta de todo tipos de productos y servicios en la ciudad de Trinidad",
-      "ubicacion": "Beni",
-      "miembros": 267,
-      "activos": 85,
-      "link": "https://chat.whatsapp.com/FMesPmRNXf9JOpWIloKfdH",
-      "plataforma": "whatsapp",
-      "destacado": false
-    },
-    {
-      "id": 5,
-      "nombre": "Bol 🪵🇳🇬 🛍️COMPRA Y VENTA 🛒 Bol 🇧🇴",
-      "descripcion": "COMPRA Y VENTA BOLIVIA, grupo libre",
-      "ubicacion": "Santa Cruz",
-      "miembros": 66,
-      "activos": 12,
-      "link": "https://chat.whatsapp.com/KpNSEALEieWHOHEXkbGg6n",
-      "plataforma": "whatsapp",
-      "destacado": false
-    },
-    {
-      "id": 6,
-      "nombre": "MARKETPLACE 1 COMPRA Y VENTA Bolivia",
-      "descripcion": "hola mucho gusto bienvenido ah este grupo",
-      "ubicacion": "Santa Cruz",
-      "miembros": 798,
-      "activos": 222,
-      "link": "https://chat.whatsapp.com/Bj6VMUc2kWOBLc55NqZuxL",
-      "plataforma": "whatsapp",
-      "destacado": false
-    },
-    {
-      "id": 7,
-      "nombre": "Compra y Venta La paz 🇧🇴💰",
-      "descripcion": "Grupo para emprendedores y compradores que buscan buenos productos.",
-      "ubicacion": "La paz",
-      "miembros": 64,
-      "activos": 22,
-      "link": "https://chat.whatsapp.com/Ihk2qKPIiKaGZcLMXmHJcx",
-      "plataforma": "whatsapp",
-      "destacado": false
-    },
-    {
-      "id": 8,
-      "nombre": "🇧🇴COMPRA Y VENTA TROPICO🇧🇴",
-      "descripcion": "Compra y venta Tropico",
-      "ubicacion": "Cochabamba",
-      "miembros": 221,
-      "activos": 59,
-      "link": "https://chat.whatsapp.com/CithzbaxoaFGio7RSHAltu",
-      "plataforma": "whatsapp",
-      "destacado": false
-    },
-    {
-      "id": 9,
-      "nombre": "Compra y Venta YACUIBA",
-      "descripcion": "",
-      "ubicacion": "Tarija",
-      "miembros": 350,
-      "activos": 70,
-      "link": "https://chat.whatsapp.com/CP3lzn3AG6b4bJuSRBgj58",
-      "plataforma": "whatsapp",
-      "destacado": false
-    },
-    {
-      "id": 10,
-      "nombre": "COMPRA Y VENTA LA PAZ",
-      "descripcion": "",
-      "ubicacion": "La Paz",
-      "miembros": 305,
-      "activos": 99,
-      "link": "https://chat.whatsapp.com/HcdE6PL5XWU4fCwqQe2HfC?s=cl&p=a&ilr=4",
-      "plataforma": "whatsapp",
-      "destacado": false
+// api/grupos.js
+import { MongoClient, ObjectId } from 'mongodb';
+
+// Reutilizar conexión entre llamadas (importante en Vercel)
+let cachedClient = null;
+
+async function conectar() {
+  if (cachedClient) return cachedClient;
+  
+  const uri = process.env.MONGODB_URI;
+  if (!uri) throw new Error('Falta la variable de entorno MONGODB_URI');
+  
+  const client = new MongoClient(uri);
+  await client.connect();
+  cachedClient = client;
+  return client;
+}
+
+export default async function handler(req, res) {
+  // CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  try {
+    const client = await conectar();
+    const db = client.db('grupos_db');
+    const col = db.collection('grupos');
+
+    // ── GET: obtener todos ──────────────────────────────────────────
+    if (req.method === 'GET') {
+      const grupos = await col.find({}).toArray();
+
+      // Convertir _id a string para que el frontend lo use como "id"
+      const data = grupos.map(g => ({
+        ...g,
+        id: g._id.toString(),
+        _id: undefined
+      }));
+
+      return res.status(200).json({ grupos: data });
     }
-  ]
+
+    // ── POST: crear grupo ───────────────────────────────────────────
+    if (req.method === 'POST') {
+      const { grupo } = req.body;
+
+      if (!grupo?.nombre || !grupo?.link) {
+        return res.status(400).json({ error: 'Faltan nombre o link' });
+      }
+
+      const nuevo = {
+        nombre:      grupo.nombre,
+        descripcion: grupo.descripcion || '',
+        ubicacion:   grupo.ubicacion   || '',
+        link:        grupo.link,
+        miembros:    Number(grupo.miembros) || 0,
+        activos:     Number(grupo.activos)  || 0,
+        destacado:   Boolean(grupo.destacado),
+        plataforma:  grupo.plataforma || 'whatsapp',
+        fecha:       new Date().toISOString()
+      };
+
+      const result = await col.insertOne(nuevo);
+      return res.status(201).json({
+        success: true,
+        grupo: { ...nuevo, id: result.insertedId.toString() }
+      });
+    }
+
+    // ── PUT: actualizar grupo ───────────────────────────────────────
+    if (req.method === 'PUT') {
+      const { id, datos } = req.body;
+
+      if (!id) return res.status(400).json({ error: 'ID requerido' });
+
+      // Eliminar campos que no deben actualizarse
+      const { _id, id: ignoredId, fecha, ...camposLimpios } = datos || {};
+
+      if (camposLimpios.miembros !== undefined) camposLimpios.miembros = Number(camposLimpios.miembros);
+      if (camposLimpios.activos  !== undefined) camposLimpios.activos  = Number(camposLimpios.activos);
+
+      await col.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: camposLimpios }
+      );
+
+      return res.status(200).json({ success: true });
+    }
+
+    // ── DELETE: eliminar grupo ──────────────────────────────────────
+    if (req.method === 'DELETE') {
+      const { id } = req.body;
+
+      if (!id) return res.status(400).json({ error: 'ID requerido' });
+
+      await col.deleteOne({ _id: new ObjectId(id) });
+      return res.status(200).json({ success: true });
+    }
+
+    return res.status(405).json({ error: 'Método no permitido' });
+
+  } catch (error) {
+    console.error('Error MongoDB:', error.message);
+    return res.status(500).json({ error: error.message });
+  }
 }

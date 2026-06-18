@@ -1,35 +1,11 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "*.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "css/**/*.css",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "js/**/*.js",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "data/**/*.json",
-      "use": "@vercel/static"
+  "functions": {
+    "api/grupos.js": {
+      "memory": 128,
+      "maxDuration": 10
     }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
+  },
+  "rewrites": [
+    { "source": "/api/grupos", "destination": "/api/grupos.js" }
   ]
 }
