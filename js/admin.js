@@ -1,46 +1,32 @@
 // js/admin.js
-// ============================================
-// CONFIGURACIÓN DE LA API
-// ============================================
-// En Vercel usa ruta relativa (funciona en cualquier dominio)
 const API_URL = '/api/grupos';
 
-// ============================================
-// VARIABLES GLOBALES
-// ============================================
 let gruposData = [];
 let grupoAEliminar = null;
 
 // ============================================
-// CARGAR GRUPOS DESDE LA API
+// CARGAR GRUPOS
 // ============================================
 async function cargarGrupos() {
   try {
-    console.log('🔄 Cargando grupos desde MongoDB...');
     const response = await fetch(API_URL);
-
     if (response.ok) {
       const data = await response.json();
       gruposData = data.grupos || [];
-      console.log(`✅ ${gruposData.length} grupos cargados`);
     } else {
-      // Fallback al JSON local si la API falla
-      console.warn('⚠️ API no disponible, usando JSON local');
       const localRes = await fetch('data/grupos.json');
       const data = await localRes.json();
       gruposData = data.grupos || [];
     }
-
     renderizarTabla();
     actualizarEstadisticas();
   } catch (error) {
-    console.error('❌ Error al cargar grupos:', error);
     mostrarNotificacion('❌ Error al cargar grupos: ' + error.message, 'error');
   }
 }
 
 // ============================================
-// RENDERIZAR TABLA DE ADMIN
+// RENDERIZAR TABLA
 // ============================================
 function renderizarTabla() {
   const tbody = document.getElementById('adminGruposBody');
@@ -58,10 +44,8 @@ function renderizarTabla() {
   }
 
   tbody.innerHTML = gruposData.map(grupo => {
-    // id es el ObjectId de MongoDB (string)
-    const idStr = grupo.id || grupo._id || '';
+    const idStr = grupo.id || '';
     const grupoJSON = JSON.stringify(grupo).replace(/"/g, '&quot;');
-
     return `
     <tr data-id="${idStr}">
       <td>${idStr.slice(-6)}</td>
@@ -98,25 +82,29 @@ function renderizarTabla() {
 }
 
 // ============================================
-// ACTUALIZAR ESTADÍSTICAS
+// ESTADÍSTICAS
 // ============================================
 function actualizarEstadisticas() {
   const total = gruposData.length;
   const destacados = gruposData.filter(g => g.destacado).length;
+  const ciudades = new Set(gruposData.map(g => g.ubicacion).filter(Boolean)).size;
 
-  const elTotal = document.getElementById('statTotal');
-  const elDest  = document.getElementById('statDestacados');
-  if (elTotal) elTotal.textContent = total;
-  if (elDest)  elDest.textContent  = destacados;
+  const elTotal    = document.getElementById('totalGrupos');
+  const elDest     = document.getElementById('totalDestacados');
+  const elCiudades = document.getElementById('totalCiudades');
+
+  if (elTotal)    elTotal.textContent    = total;
+  if (elDest)     elDest.textContent     = destacados;
+  if (elCiudades) elCiudades.textContent = ciudades;
 }
 
 // ============================================
-// GUARDAR GRUPO (crear o editar)
+// GUARDAR GRUPO
 // ============================================
 async function guardarGrupo(e) {
   e.preventDefault();
 
-  const id = document.getElementById('editId').value; // ObjectId string o vacío
+  const id = document.getElementById('editId').value;
 
   const datos = {
     nombre:      document.getElementById('fNombre').value.trim(),
@@ -125,7 +113,8 @@ async function guardarGrupo(e) {
     link:        document.getElementById('fEnlace').value.trim(),
     miembros:    parseInt(document.getElementById('fMiembros').value) || 0,
     activos:     parseInt(document.getElementById('fActivos').value) || 0,
-    destacado:   document.getElementById('fDestacado').checked
+    destacado:   document.getElementById('fDestacado').checked,
+    plataforma:  'whatsapp'
   };
 
   if (!datos.nombre || datos.nombre.length < 3) {
@@ -139,16 +128,13 @@ async function guardarGrupo(e) {
 
   try {
     let response;
-
     if (id) {
-      // Editar grupo existente
       response = await fetch(API_URL, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, datos })
       });
     } else {
-      // Crear nuevo grupo
       response = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -166,7 +152,6 @@ async function guardarGrupo(e) {
       mostrarNotificacion('❌ Error: ' + (result.error || 'Error al guardar'), 'error');
     }
   } catch (error) {
-    console.error('Error al guardar:', error);
     mostrarNotificacion('❌ Error de conexión', 'error');
   }
 }
@@ -195,7 +180,6 @@ async function eliminarGrupo() {
       mostrarNotificacion('❌ Error: ' + (result.error || 'Error al eliminar'), 'error');
     }
   } catch (error) {
-    console.error('Error al eliminar:', error);
     mostrarNotificacion('❌ Error de conexión', 'error');
   }
 }
@@ -214,8 +198,6 @@ async function toggleDestacado(id, checked) {
     if (response.ok) {
       await cargarGrupos();
       mostrarNotificacion(checked ? '⭐ Destacado activado' : '⭐ Destacado desactivado');
-    } else {
-      mostrarNotificacion('❌ Error al actualizar destacado', 'error');
     }
   } catch (error) {
     mostrarNotificacion('❌ Error de conexión', 'error');
@@ -223,19 +205,19 @@ async function toggleDestacado(id, checked) {
 }
 
 // ============================================
-// ABRIR / CERRAR MODAL
+// MODAL CREAR/EDITAR
 // ============================================
 function abrirModal(grupo = null) {
-  const modal = document.getElementById('modalGrupo');
-  const form  = document.getElementById('formGrupo');
-  const title = document.getElementById('modalTitle');
+  const modal  = document.getElementById('modalGrupo');
+  const form   = document.getElementById('formGrupo');
+  const titulo = document.getElementById('modalTitulo');
 
   form.reset();
   document.getElementById('editId').value = '';
 
   if (grupo) {
-    title.textContent = '✏️ Editar Grupo';
-    document.getElementById('editId').value      = grupo.id || grupo._id || '';
+    titulo.innerHTML = '<i class="fas fa-edit"></i> Editar Grupo';
+    document.getElementById('editId').value      = grupo.id || '';
     document.getElementById('fNombre').value      = grupo.nombre      || '';
     document.getElementById('fDescripcion').value = grupo.descripcion || '';
     document.getElementById('fCiudad').value      = grupo.ubicacion   || '';
@@ -244,11 +226,10 @@ function abrirModal(grupo = null) {
     document.getElementById('fActivos').value     = grupo.activos     || 0;
     document.getElementById('fDestacado').checked = Boolean(grupo.destacado);
   } else {
-    title.textContent = '➕ Agregar Grupo';
+    titulo.innerHTML = '<i class="fas fa-plus-circle"></i> Nuevo Grupo';
   }
 
   modal.style.display = 'flex';
-  form.addEventListener('submit', guardarGrupo, { once: true });
 }
 
 function cerrarModal() {
@@ -258,18 +239,18 @@ function cerrarModal() {
 
 function abrirConfirmacion(id) {
   grupoAEliminar = id;
-  const modal = document.getElementById('modalConfirmar');
+  const modal = document.getElementById('modalConfirmacion');
   if (modal) modal.style.display = 'flex';
 }
 
 function cerrarConfirmacion() {
   grupoAEliminar = null;
-  const modal = document.getElementById('modalConfirmar');
+  const modal = document.getElementById('modalConfirmacion');
   if (modal) modal.style.display = 'none';
 }
 
 // ============================================
-// FILTRAR EN TABLA
+// FILTRAR
 // ============================================
 function filtrarGruposAdmin(texto) {
   const filas = document.querySelectorAll('#adminGruposBody tr');
@@ -283,19 +264,17 @@ function filtrarGruposAdmin(texto) {
 // NOTIFICACIONES
 // ============================================
 function mostrarNotificacion(mensaje, tipo = 'success') {
-  const el = document.getElementById('notificacion') || crearNotificacion();
+  let el = document.getElementById('notificacion');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'notificacion';
+    el.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 20px;border-radius:8px;z-index:9999;font-weight:600;display:none;color:#fff;';
+    document.body.appendChild(el);
+  }
   el.textContent = mensaje;
-  el.className = 'notificacion ' + tipo;
+  el.style.background = tipo === 'error' ? '#e74c3c' : '#25D366';
   el.style.display = 'block';
   setTimeout(() => { el.style.display = 'none'; }, 3000);
-}
-
-function crearNotificacion() {
-  const el = document.createElement('div');
-  el.id = 'notificacion';
-  el.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 20px;border-radius:8px;z-index:9999;font-weight:600;display:none;';
-  document.body.appendChild(el);
-  return el;
 }
 
 // ============================================
@@ -304,25 +283,20 @@ function crearNotificacion() {
 document.addEventListener('DOMContentLoaded', () => {
   cargarGrupos();
 
-  // Buscar en tabla
-  const searchInput = document.getElementById('searchGrupos');
-  if (searchInput) {
-    searchInput.addEventListener('input', e => filtrarGruposAdmin(e.target.value));
-  }
+  // Botón nuevo grupo
+  document.getElementById('btnNuevoGrupo')?.addEventListener('click', () => abrirModal());
 
-  // Botón agregar
-  const btnAgregar = document.getElementById('btnAgregarGrupo');
-  if (btnAgregar) btnAgregar.addEventListener('click', () => abrirModal());
+  // Cerrar modal con X
+  document.getElementById('closeModalBtn')?.addEventListener('click', cerrarModal);
+  document.getElementById('cancelModalBtn')?.addEventListener('click', cerrarModal);
 
-  // Botón confirmar eliminar
-  const btnConfirmar = document.getElementById('btnConfirmarEliminar');
-  if (btnConfirmar) btnConfirmar.addEventListener('click', eliminarGrupo);
+  // Confirmar eliminar
+  document.getElementById('confirmDeleteBtn')?.addEventListener('click', eliminarGrupo);
+  document.getElementById('cancelConfirmBtn')?.addEventListener('click', cerrarConfirmacion);
 
-  // Cerrar modales con X
-  document.querySelectorAll('[data-cerrar-modal]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      cerrarModal();
-      cerrarConfirmacion();
-    });
-  });
+  // Formulario guardar
+  document.getElementById('formGrupo')?.addEventListener('submit', guardarGrupo);
+
+  // Buscar
+  document.getElementById('searchGrupos')?.addEventListener('input', e => filtrarGruposAdmin(e.target.value));
 });
