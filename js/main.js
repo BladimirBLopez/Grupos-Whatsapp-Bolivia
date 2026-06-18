@@ -70,7 +70,7 @@ function mostrarGrupoDestacado() {
   if (!destacado) { banner.innerHTML = ''; return; }
 
   banner.innerHTML = `
-    <div style="background:linear-gradient(135deg,#FFD700,#FFA500);border-radius:16px;padding:1rem 1.2rem;margin-bottom:1rem;box-shadow:0 4px 20px rgba(255,165,0,0.3);">
+    <div style="background:#F5A623;;border-radius:16px;padding:1rem 1.2rem;margin-bottom:1rem;box-shadow:0 4px 20px rgba(255,165,0,0.3);">
       <div style="font-size:0.7rem;font-weight:800;letter-spacing:2px;color:#5a3e00;margin-bottom:0.5rem;">👑 GRUPO DESTACADO DE LA SEMANA</div>
       <div style="font-weight:700;font-size:1rem;color:#1a1a1a;margin-bottom:0.3rem;">${destacado.nombre}</div>
       ${destacado.descripcion ? `<div style="font-size:0.8rem;color:#3a3a3a;margin-bottom:0.5rem;">${destacado.descripcion}</div>` : ''}
@@ -105,9 +105,7 @@ function renderizarGrupos() {
     );
   }
 
-  const destacados = gruposFiltrados.filter(g => g.destacado === true);
-  const normales = gruposFiltrados.filter(g => g.destacado !== true);
-  const gruposOrdenados = [...destacados, ...normales];
+  const gruposOrdenados = gruposFiltrados.filter(g => g.destacado !== true);
 
   const resultCount = document.getElementById('resultCount');
   if (resultCount) resultCount.textContent = gruposOrdenados.length;
