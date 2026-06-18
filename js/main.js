@@ -65,21 +65,33 @@ function iniciarPagina() {
 function mostrarGrupoDestacado() {
   const banner = document.getElementById('grupoDestacadoFijo');
   if (!banner) return;
-
   const destacado = gruposData.find(g => g.destacado === true);
   if (!destacado) { banner.innerHTML = ''; return; }
-
   banner.innerHTML = `
-    <div style="background:#F5A623;;border-radius:16px;padding:1rem 1.2rem;margin-bottom:1rem;box-shadow:0 4px 20px rgba(255,165,0,0.3);">
-      <div style="font-size:0.7rem;font-weight:800;letter-spacing:2px;color:#5a3e00;margin-bottom:0.5rem;">👑 GRUPO DESTACADO DE LA SEMANA</div>
-      <div style="font-weight:700;font-size:1rem;color:#1a1a1a;margin-bottom:0.3rem;">${destacado.nombre}</div>
-      ${destacado.descripcion ? `<div style="font-size:0.8rem;color:#3a3a3a;margin-bottom:0.5rem;">${destacado.descripcion}</div>` : ''}
-      <div style="font-size:0.8rem;color:#5a3e00;margin-bottom:0.8rem;">
-        📍 ${destacado.ubicacion} · 👥 ${destacado.miembros} miembros · 📈 ${destacado.activos} activos
+    <div style="border:2px solid #F5A623;border-radius:16px;overflow:hidden;margin-bottom:1rem;box-shadow:0 2px 12px rgba(245,166,35,0.2);">
+      <div style="background:#F5A623;padding:8px 14px;text-align:center;">
+        <span style="font-size:0.75rem;font-weight:800;letter-spacing:2px;color:#fff;">👑 GRUPO DESTACADO DE LA SEMANA</span>
       </div>
-      <a href="${destacado.link}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;background:#25D366;color:white;padding:8px 18px;border-radius:50px;font-weight:700;font-size:0.85rem;text-decoration:none;">
-        <i class="fab fa-whatsapp"></i> Unirme ahora
-      </a>
+      <div style="background:#fffdf0;padding:1rem 1.2rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;flex-wrap:wrap;gap:6px;">
+          <div style="font-weight:700;font-size:1rem;color:#1a1a1a;">${destacado.nombre}</div>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <span style="background:#F5A623;color:#fff;font-size:0.65rem;font-weight:700;padding:3px 8px;border-radius:20px;">⭐ DESTACADO</span>
+            <span style="border:1.5px solid #25D366;color:#25D366;font-size:0.65rem;font-weight:700;padding:3px 8px;border-radius:20px;">WA</span>
+          </div>
+        </div>
+        ${destacado.descripcion ? `<div style="font-size:0.82rem;color:#555;margin-bottom:0.5rem;">${destacado.descripcion}</div>` : ''}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;flex-wrap:wrap;gap:6px;">
+          <span style="font-size:0.8rem;color:#25D366;font-weight:600;">📍 ${destacado.ubicacion}</span>
+          <span style="background:#fff3e0;color:#e65100;font-size:0.75rem;font-weight:700;padding:3px 10px;border-radius:20px;">🔥 +50 miembros/semana</span>
+        </div>
+        <div style="font-size:0.8rem;color:#555;margin-bottom:0.8rem;">
+          👥 ${destacado.miembros} &nbsp;·&nbsp; 📈 ${destacado.activos}
+        </div>
+        <a href="${destacado.link}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;background:#25D366;color:white;padding:9px 20px;border-radius:50px;font-weight:700;font-size:0.85rem;text-decoration:none;">
+          <i class="fab fa-whatsapp"></i> Unirme ahora
+        </a>
+      </div>
     </div>
   `;
 }
