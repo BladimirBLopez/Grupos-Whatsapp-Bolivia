@@ -23,22 +23,18 @@ async function cargarGrupos() {
       const localResponse = await fetch('data/grupos.json');
       const data = await localResponse.json();
       gruposData = data.grupos || [];
-      console.log(`✅ ${gruposData.length} grupos cargados desde JSON local`);
     }
     
     iniciarPagina();
     
   } catch (error) {
     console.error('❌ Error al cargar grupos:', error);
-    
     try {
       const localResponse = await fetch('data/grupos.json');
       const data = await localResponse.json();
       gruposData = data.grupos || [];
-      console.log(`✅ ${gruposData.length} grupos cargados desde JSON (fallback)`);
       iniciarPagina();
     } catch (fallbackError) {
-      console.error('❌ Error crítico:', fallbackError);
       const container = document.getElementById('gruposContainer');
       if (container) {
         container.innerHTML = `<div class="empty-message">
@@ -55,13 +51,37 @@ async function cargarGrupos() {
 // ============================================
 function iniciarPagina() {
   console.log('🚀 Iniciando página con', gruposData.length, 'grupos');
-  
-  // Mostrar grupos en consola para debugging
   console.log('📋 Datos de grupos:', gruposData);
-  
+
+  mostrarGrupoDestacado();
   actualizarContadoresCiudades();
   renderizarGrupos();
   configurarEventListeners();
+}
+
+// ============================================
+// BANNER GRUPO DESTACADO
+// ============================================
+function mostrarGrupoDestacado() {
+  const banner = document.getElementById('grupoDestacadoFijo');
+  if (!banner) return;
+
+  const destacado = gruposData.find(g => g.destacado === true);
+  if (!destacado) { banner.innerHTML = ''; return; }
+
+  banner.innerHTML = `
+    <div style="background:linear-gradient(135deg,#FFD700,#FFA500);border-radius:16px;padding:1rem 1.2rem;margin-bottom:1rem;box-shadow:0 4px 20px rgba(255,165,0,0.3);">
+      <div style="font-size:0.7rem;font-weight:800;letter-spacing:2px;color:#5a3e00;margin-bottom:0.5rem;">👑 GRUPO DESTACADO DE LA SEMANA</div>
+      <div style="font-weight:700;font-size:1rem;color:#1a1a1a;margin-bottom:0.3rem;">${destacado.nombre}</div>
+      ${destacado.descripcion ? `<div style="font-size:0.8rem;color:#3a3a3a;margin-bottom:0.5rem;">${destacado.descripcion}</div>` : ''}
+      <div style="font-size:0.8rem;color:#5a3e00;margin-bottom:0.8rem;">
+        📍 ${destacado.ubicacion} · 👥 ${destacado.miembros} miembros · 📈 ${destacado.activos} activos
+      </div>
+      <a href="${destacado.link}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;background:#25D366;color:white;padding:8px 18px;border-radius:50px;font-weight:700;font-size:0.85rem;text-decoration:none;">
+        <i class="fab fa-whatsapp"></i> Unirme ahora
+      </a>
+    </div>
+  `;
 }
 
 // ============================================
@@ -69,61 +89,44 @@ function iniciarPagina() {
 // ============================================
 function renderizarGrupos() {
   const container = document.getElementById('gruposContainer');
-  if (!container) {
-    console.error('❌ No se encontró #gruposContainer');
-    return;
-  }
-  
-  console.log('🔍 Renderizando con ciudad:', ciudadSeleccionada, 'plataforma:', plataformaSeleccionada);
-  
+  if (!container) return;
+
   let gruposFiltrados = [...gruposData];
-  
-  // Filtrar por plataforma
+
   if (plataformaSeleccionada !== 'todos') {
-    gruposFiltrados = gruposFiltrados.filter(g => 
+    gruposFiltrados = gruposFiltrados.filter(g =>
       g.plataforma && g.plataforma.toLowerCase() === plataformaSeleccionada.toLowerCase()
     );
   }
-  
-  // Filtrar por ciudad
+
   if (ciudadSeleccionada !== 'todos') {
-    gruposFiltrados = gruposFiltrados.filter(g => 
+    gruposFiltrados = gruposFiltrados.filter(g =>
       g.ubicacion && g.ubicacion.toLowerCase() === ciudadSeleccionada.toLowerCase()
     );
   }
-  
-  console.log('📊 Grupos después de filtrar:', gruposFiltrados.length);
-  
-  // Separar destacados
+
   const destacados = gruposFiltrados.filter(g => g.destacado === true);
   const normales = gruposFiltrados.filter(g => g.destacado !== true);
   const gruposOrdenados = [...destacados, ...normales];
-  
-  // Actualizar contador
+
   const resultCount = document.getElementById('resultCount');
-  if (resultCount) {
-    resultCount.textContent = gruposOrdenados.length;
-  }
-  
-  // Si no hay grupos
+  if (resultCount) resultCount.textContent = gruposOrdenados.length;
+
   if (gruposOrdenados.length === 0) {
     container.innerHTML = `
       <div class="empty-message">
         <i class="fas fa-search" style="font-size:2rem; display:block; margin-bottom:0.5rem;"></i>
         No se encontraron grupos para esta búsqueda
-      </div>
-    `;
+      </div>`;
     return;
   }
-  
-  // Renderizar tarjetas
+
   container.innerHTML = gruposOrdenados.map(grupo => `
     <div class="grupo-card ${grupo.destacado ? 'destacado-card' : ''}">
       ${grupo.destacado ? `
         <div class="destacado-ribbon">
           <i class="fas fa-star"></i> GRUPO DESTACADO
-        </div>
-      ` : ''}
+        </div>` : ''}
       <div class="card-header">
         <h3>${grupo.nombre || 'Sin nombre'}</h3>
         <span class="badge-whatsapp"><i class="fab fa-whatsapp"></i> ${grupo.plataforma || 'WhatsApp'}</span>
@@ -141,8 +144,6 @@ function renderizarGrupos() {
       </a>
     </div>
   `).join('');
-  
-  console.log('✅ Renderizados', gruposOrdenados.length, 'grupos');
 }
 
 // ============================================
@@ -150,28 +151,22 @@ function renderizarGrupos() {
 // ============================================
 function actualizarContadoresCiudades() {
   const ciudades = ['todos', 'Santa Cruz', 'La Paz', 'Cochabamba', 'Sucre', 'Tarija', 'Potosí', 'Oruro', 'Beni', 'Pando'];
-  
+
   ciudades.forEach(ciudad => {
-    let count;
-    if (ciudad === 'todos') {
-      count = gruposData.length;
-    } else {
-      count = gruposData.filter(g => g.ubicacion && g.ubicacion.toLowerCase() === ciudad.toLowerCase()).length;
-    }
-    
+    let count = ciudad === 'todos'
+      ? gruposData.length
+      : gruposData.filter(g => g.ubicacion && g.ubicacion.toLowerCase() === ciudad.toLowerCase()).length;
+
     const elementId = ciudad === 'todos' ? 'modalTotalCount' : `modal${ciudad.replace(/ /g, '')}Count`;
     const element = document.getElementById(elementId);
     if (element) element.textContent = count;
   });
-  
+
   const badge = document.getElementById('selectedCityCount');
   if (badge) {
-    let count;
-    if (ciudadSeleccionada === 'todos') {
-      count = gruposData.length;
-    } else {
-      count = gruposData.filter(g => g.ubicacion && g.ubicacion.toLowerCase() === ciudadSeleccionada.toLowerCase()).length;
-    }
+    const count = ciudadSeleccionada === 'todos'
+      ? gruposData.length
+      : gruposData.filter(g => g.ubicacion && g.ubicacion.toLowerCase() === ciudadSeleccionada.toLowerCase()).length;
     badge.textContent = `(${count})`;
   }
 }
@@ -188,66 +183,49 @@ const ADMIN_CREDENTIALS = {
 // CONFIGURAR EVENT LISTENERS
 // ============================================
 function configurarEventListeners() {
-  console.log('🔧 Configurando event listeners...');
-  
-  // --- Botón Admin (login) ---
-  const btnAdmin = document.getElementById('btnAdminLogin');
-  if (btnAdmin) {
-    btnAdmin.addEventListener('click', function() {
-      document.getElementById('loginModal').classList.add('show');
-      document.getElementById('loginForm').reset();
-      document.getElementById('loginError').classList.remove('show');
-      document.getElementById('loginUser').focus();
-    });
-  }
-  
+  // --- Botón Admin ---
+  document.getElementById('btnAdminLogin')?.addEventListener('click', function() {
+    document.getElementById('loginModal').classList.add('show');
+    document.getElementById('loginForm').reset();
+    document.getElementById('loginError').classList.remove('show');
+    document.getElementById('loginUser').focus();
+  });
+
   // --- Cerrar modal login ---
-  const closeLogin = document.getElementById('closeLoginBtn');
-  if (closeLogin) {
-    closeLogin.addEventListener('click', function() {
-      document.getElementById('loginModal').classList.remove('show');
-    });
-  }
-  
+  document.getElementById('closeLoginBtn')?.addEventListener('click', function() {
+    document.getElementById('loginModal').classList.remove('show');
+  });
+
   // --- Cerrar login clic fuera ---
-  const loginModal = document.getElementById('loginModal');
-  if (loginModal) {
-    loginModal.addEventListener('click', function(e) {
-      if (e.target === this) {
-        this.classList.remove('show');
-      }
-    });
-  }
-  
+  document.getElementById('loginModal')?.addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('show');
+  });
+
   // --- Enviar login ---
-  const loginForm = document.getElementById('loginForm');
-  if (loginForm) {
-    loginForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const user = document.getElementById('loginUser').value.trim();
-      const pass = document.getElementById('loginPass').value.trim();
-      const error = document.getElementById('loginError');
-      const btn = document.getElementById('loginSubmitBtn');
-      
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
-      
-      setTimeout(() => {
-        if (user === ADMIN_CREDENTIALS.usuario && pass === ADMIN_CREDENTIALS.password) {
-          window.location.href = 'admin.html';
-        } else {
-          error.classList.add('show');
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Ingresar';
-          document.getElementById('loginPass').value = '';
-          document.getElementById('loginPass').focus();
-          setTimeout(() => error.classList.remove('show'), 3000);
-        }
-      }, 800);
-    });
-  }
-  
+  document.getElementById('loginForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const user = document.getElementById('loginUser').value.trim();
+    const pass = document.getElementById('loginPass').value.trim();
+    const error = document.getElementById('loginError');
+    const btn = document.getElementById('loginSubmitBtn');
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
+
+    setTimeout(() => {
+      if (user === ADMIN_CREDENTIALS.usuario && pass === ADMIN_CREDENTIALS.password) {
+        window.location.href = 'admin.html';
+      } else {
+        error.classList.add('show');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Ingresar';
+        document.getElementById('loginPass').value = '';
+        document.getElementById('loginPass').focus();
+        setTimeout(() => error.classList.remove('show'), 3000);
+      }
+    }, 800);
+  });
+
   // --- Filtros de plataforma ---
   document.querySelectorAll('.filter-chip').forEach(chip => {
     chip.addEventListener('click', function() {
@@ -257,84 +235,55 @@ function configurarEventListeners() {
       renderizarGrupos();
     });
   });
-  
-  // --- Abrir modal de ciudades ---
-  const openBtn = document.getElementById('openCityModalBtn');
-  if (openBtn) {
-    openBtn.addEventListener('click', function() {
-      document.getElementById('cityModal').style.display = 'flex';
-    });
-  }
-  
-  // --- Cerrar modal de ciudades ---
-  const closeBtn = document.getElementById('closeCityModalBtn');
-  if (closeBtn) {
-    closeBtn.addEventListener('click', function() {
-      document.getElementById('cityModal').style.display = 'none';
-    });
-  }
-  
+
+  // --- Abrir modal ciudades ---
+  document.getElementById('openCityModalBtn')?.addEventListener('click', function() {
+    document.getElementById('cityModal').style.display = 'flex';
+  });
+
+  // --- Cerrar modal ciudades ---
+  document.getElementById('closeCityModalBtn')?.addEventListener('click', function() {
+    document.getElementById('cityModal').style.display = 'none';
+  });
+
   // --- Cerrar ciudades clic fuera ---
-  const cityModal = document.getElementById('cityModal');
-  if (cityModal) {
-    cityModal.addEventListener('click', function(e) {
-      if (e.target === this) {
-        this.style.display = 'none';
-      }
-    });
-  }
-  
+  document.getElementById('cityModal')?.addEventListener('click', function(e) {
+    if (e.target === this) this.style.display = 'none';
+  });
+
   // --- Seleccionar ciudad ---
   document.querySelectorAll('.city-item').forEach(item => {
     item.addEventListener('click', function() {
       document.querySelectorAll('.city-item').forEach(i => i.classList.remove('active'));
       this.classList.add('active');
-      
-      const ciudad = this.dataset.city;
-      ciudadSeleccionada = ciudad;
-      
-      const nameSpan = document.getElementById('selectedCityName');
-      if (nameSpan) {
-        nameSpan.textContent = ciudad === 'todos' ? 'Todos los departamentos' : ciudad;
-      }
-      
+      ciudadSeleccionada = this.dataset.city;
+      document.getElementById('selectedCityName').textContent =
+        ciudadSeleccionada === 'todos' ? 'Todos los departamentos' : ciudadSeleccionada;
       document.getElementById('cityModal').style.display = 'none';
       renderizarGrupos();
       actualizarContadoresCiudades();
     });
   });
-  
+
   // --- Buscador de ciudades ---
-  const citySearch = document.getElementById('citySearchInput');
-  if (citySearch) {
-    citySearch.addEventListener('input', function() {
-      const busqueda = this.value.toLowerCase().trim();
-      document.querySelectorAll('.city-item').forEach(item => {
-        const text = item.querySelector('.city-info span')?.textContent?.toLowerCase() || '';
-        item.style.display = text.includes(busqueda) ? '' : 'none';
-      });
+  document.getElementById('citySearchInput')?.addEventListener('input', function() {
+    const busqueda = this.value.toLowerCase().trim();
+    document.querySelectorAll('.city-item').forEach(item => {
+      const text = item.querySelector('.city-info span')?.textContent?.toLowerCase() || '';
+      item.style.display = text.includes(busqueda) ? '' : 'none';
     });
-  }
-  
+  });
+
   // --- Logo reset ---
-  const logoBtn = document.getElementById('logoResetBtn');
-  if (logoBtn) {
-    logoBtn.addEventListener('click', function() {
-      ciudadSeleccionada = 'todos';
-      plataformaSeleccionada = 'whatsapp';
-      
-      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-      const whatsappChip = document.querySelector('.filter-chip[data-platform="whatsapp"]');
-      if (whatsappChip) whatsappChip.classList.add('active');
-      
-      document.getElementById('selectedCityName').textContent = 'Todos los departamentos';
-      
-      renderizarGrupos();
-      actualizarContadoresCiudades();
-    });
-  }
-  
-  console.log('✅ Event listeners configurados');
+  document.getElementById('logoResetBtn')?.addEventListener('click', function() {
+    ciudadSeleccionada = 'todos';
+    plataformaSeleccionada = 'whatsapp';
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    document.querySelector('.filter-chip[data-platform="whatsapp"]')?.classList.add('active');
+    document.getElementById('selectedCityName').textContent = 'Todos los departamentos';
+    renderizarGrupos();
+    actualizarContadoresCiudades();
+  });
 }
 
 // ============================================
