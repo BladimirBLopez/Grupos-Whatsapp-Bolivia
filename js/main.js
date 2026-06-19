@@ -6,6 +6,42 @@ let ciudadSeleccionada = 'todos';
 let plataformaSeleccionada = 'whatsapp';
 
 // ============================================
+// HELPER: ÍCONO Y COLOR POR PLATAFORMA
+// ============================================
+function iconoPlataforma(plataforma) {
+  const iconos = {
+    whatsapp: 'fab fa-whatsapp',
+    telegram:  'fab fa-telegram',
+    facebook:  'fab fa-facebook',
+    discord:   'fab fa-discord',
+    otro:      'fas fa-link'
+  };
+  return iconos[(plataforma || 'whatsapp').toLowerCase()] || 'fab fa-whatsapp';
+}
+
+function colorPlataforma(plataforma) {
+  const colores = {
+    whatsapp: '#25D366',
+    telegram:  '#229ED9',
+    facebook:  '#1877F2',
+    discord:   '#5865F2',
+    otro:      '#8ba0ae'
+  };
+  return colores[(plataforma || 'whatsapp').toLowerCase()] || '#25D366';
+}
+
+function labelPlataforma(plataforma) {
+  const labels = {
+    whatsapp: 'WhatsApp',
+    telegram:  'Telegram',
+    facebook:  'Facebook',
+    discord:   'Discord',
+    otro:      'Otro'
+  };
+  return labels[(plataforma || 'whatsapp').toLowerCase()] || 'WhatsApp';
+}
+
+// ============================================
 // CARGAR GRUPOS DESDE LA API
 // ============================================
 async function cargarGrupos() {
@@ -51,7 +87,6 @@ async function cargarGrupos() {
 // ============================================
 function iniciarPagina() {
   console.log('🚀 Iniciando página con', gruposData.length, 'grupos');
-  console.log('📋 Datos de grupos:', gruposData);
 
   mostrarGrupoDestacado();
   actualizarContadoresCiudades();
@@ -67,6 +102,12 @@ function mostrarGrupoDestacado() {
   if (!banner) return;
   const destacado = gruposData.find(g => g.destacado === true);
   if (!destacado) { banner.innerHTML = ''; return; }
+
+  const plat     = destacado.plataforma || 'whatsapp';
+  const icono    = iconoPlataforma(plat);
+  const color    = colorPlataforma(plat);
+  const label    = labelPlataforma(plat);
+
   banner.innerHTML = `
     <div style="border:2px solid #F5A623;border-radius:16px;overflow:hidden;margin-bottom:1rem;box-shadow:0 2px 12px rgba(245,166,35,0.2);">
       <div style="background:#F5A623;padding:8px 14px;text-align:center;">
@@ -77,7 +118,9 @@ function mostrarGrupoDestacado() {
           <div style="font-weight:700;font-size:1rem;color:#1a1a1a;">${destacado.nombre}</div>
           <div style="display:flex;gap:6px;align-items:center;">
             <span style="background:#F5A623;color:#fff;font-size:0.65rem;font-weight:700;padding:3px 8px;border-radius:20px;">⭐ DESTACADO</span>
-            <span style="border:1.5px solid #25D366;color:#25D366;font-size:0.65rem;font-weight:700;padding:3px 8px;border-radius:20px;">WA</span>
+            <span style="border:1.5px solid ${color};color:${color};font-size:0.65rem;font-weight:700;padding:3px 8px;border-radius:20px;">
+              <i class="${icono}"></i> ${label}
+            </span>
           </div>
         </div>
         ${destacado.descripcion ? `<div style="font-size:0.82rem;color:#555;margin-bottom:0.5rem;">${destacado.descripcion}</div>` : ''}
@@ -88,8 +131,9 @@ function mostrarGrupoDestacado() {
         <div style="font-size:0.8rem;color:#555;margin-bottom:0.8rem;">
           👥 ${destacado.miembros} &nbsp;·&nbsp; 📈 ${destacado.activos}
         </div>
-        <a href="${destacado.link}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;background:#25D366;color:white;padding:9px 20px;border-radius:50px;font-weight:700;font-size:0.85rem;text-decoration:none;">
-          <i class="fab fa-whatsapp"></i> Unirme ahora
+        <a href="${destacado.link}" target="_blank" rel="noopener noreferrer"
+           style="display:inline-flex;align-items:center;gap:6px;background:${color};color:white;padding:9px 20px;border-radius:50px;font-weight:700;font-size:0.85rem;text-decoration:none;">
+          <i class="${icono}"></i> Unirme ahora
         </a>
       </div>
     </div>
@@ -107,7 +151,7 @@ function renderizarGrupos() {
 
   if (plataformaSeleccionada !== 'todos') {
     gruposFiltrados = gruposFiltrados.filter(g =>
-      g.plataforma && g.plataforma.toLowerCase() === plataformaSeleccionada.toLowerCase()
+      (g.plataforma || 'whatsapp').toLowerCase() === plataformaSeleccionada.toLowerCase()
     );
   }
 
@@ -131,7 +175,13 @@ function renderizarGrupos() {
     return;
   }
 
-  container.innerHTML = gruposOrdenados.map(grupo => `
+  container.innerHTML = gruposOrdenados.map(grupo => {
+    const plat  = grupo.plataforma || 'whatsapp';
+    const icono = iconoPlataforma(plat);
+    const color = colorPlataforma(plat);
+    const label = labelPlataforma(plat);
+
+    return `
     <div class="grupo-card ${grupo.destacado ? 'destacado-card' : ''}">
       ${grupo.destacado ? `
         <div class="destacado-ribbon">
@@ -139,7 +189,9 @@ function renderizarGrupos() {
         </div>` : ''}
       <div class="card-header">
         <h3>${grupo.nombre || 'Sin nombre'}</h3>
-        <span class="badge-whatsapp"><i class="fab fa-whatsapp"></i> ${grupo.plataforma || 'WhatsApp'}</span>
+        <span class="badge-whatsapp" style="background:${color}20; color:${color}; border:1px solid ${color}40;">
+          <i class="${icono}"></i> ${label}
+        </span>
       </div>
       ${grupo.descripcion ? `<div class="descripcion">${grupo.descripcion}</div>` : ''}
       <div class="ubicacion">
@@ -149,11 +201,12 @@ function renderizarGrupos() {
         <span class="stat-item"><i class="fas fa-users"></i> ${grupo.miembros || 0} miembros</span>
         <span class="stat-item"><i class="fas fa-chart-line"></i> ${grupo.activos || 0} activos</span>
       </div>
-      <a href="${grupo.link || '#'}" target="_blank" rel="noopener noreferrer" class="join-btn">
-        <i class="fab fa-whatsapp"></i> Unirse al grupo
+      <a href="${grupo.link || '#'}" target="_blank" rel="noopener noreferrer"
+         class="join-btn" style="background:${color};">
+        <i class="${icono}"></i> Unirse al grupo
       </a>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 // ============================================
