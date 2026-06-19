@@ -4,6 +4,8 @@
 let gruposData = [];
 let ciudadSeleccionada = 'todos';
 let plataformaSeleccionada = 'whatsapp';
+let gruposMostrados = 5;
+const GRUPOS_POR_PAGINA = 5;
 
 // ============================================
 // HELPER: ÍCONO Y COLOR POR PLATAFORMA
@@ -108,7 +110,6 @@ function mostrarGrupoDestacado() {
       border: 2px solid #E8B923;
       box-shadow: 0 0 0 4px rgba(232,185,35,0.1), 0 8px 28px rgba(232,185,35,0.18), 0 2px 10px rgba(0,0,0,0.06);
     ">
-      <!-- Franja dorada superior -->
       <div style="
         background: linear-gradient(90deg, #B8860B, #FFD700, #F5A623, #FFD700, #B8860B);
         padding: 7px 14px;
@@ -124,10 +125,7 @@ function mostrarGrupoDestacado() {
         <i class="fas fa-crown" style="color:#fff; font-size:0.75rem;"></i>
       </div>
 
-      <!-- Cuerpo compacto -->
       <div style="padding: 0.85rem 1rem;">
-
-        <!-- Nombre + badges en una fila -->
         <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; margin-bottom:0.4rem; flex-wrap:wrap;">
           <h3 style="margin:0; font-size:1rem; font-weight:800; color:#0f1f2e; flex:1;">${destacado.nombre}</h3>
           <div style="display:flex; gap:5px; align-items:center; flex-shrink:0;">
@@ -147,7 +145,6 @@ function mostrarGrupoDestacado() {
           </div>
         </div>
 
-        <!-- Descripción (compacta, 2 líneas máx) -->
         ${destacado.descripcion ? `
         <p style="
           margin:0 0 0.5rem;
@@ -155,7 +152,6 @@ function mostrarGrupoDestacado() {
           display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
         ">${destacado.descripcion}</p>` : ''}
 
-        <!-- Ciudad + badge fuego -->
         <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:4px; margin-bottom:0.5rem;">
           <span style="font-size:0.78rem; font-weight:700; color:#e65100;">
             <i class="fas fa-map-marker-alt"></i> ${destacado.ubicacion || 'Bolivia'}
@@ -168,12 +164,10 @@ function mostrarGrupoDestacado() {
           ">🔥 +50 miembros/semana</span>
         </div>
 
-        <!-- Stats inline -->
         <div style="font-size:0.78rem; color:#555; margin-bottom:0.75rem;">
           👥 ${destacado.miembros || 0} &nbsp;·&nbsp; 📈 ${destacado.activos || 0}
         </div>
 
-        <!-- Botón -->
         <a href="${destacado.link}" target="_blank" rel="noopener noreferrer" style="
           display:inline-flex; align-items:center; gap:7px;
           background:linear-gradient(135deg, ${color}, ${color}cc);
@@ -186,14 +180,13 @@ function mostrarGrupoDestacado() {
         >
           <i class="${icono}"></i> Unirme ahora
         </a>
-
       </div>
     </div>
   `;
 }
 
 // ============================================
-// RENDERIZAR GRUPOS
+// RENDERIZAR GRUPOS CON PAGINACIÓN
 // ============================================
 function renderizarGrupos() {
   const container = document.getElementById('gruposContainer');
@@ -214,11 +207,13 @@ function renderizarGrupos() {
   }
 
   const gruposOrdenados = gruposFiltrados.filter(g => g.destacado !== true);
+  const total = gruposOrdenados.length;
+  const visibles = gruposOrdenados.slice(0, gruposMostrados);
 
   const resultCount = document.getElementById('resultCount');
-  if (resultCount) resultCount.textContent = gruposOrdenados.length;
+  if (resultCount) resultCount.textContent = total;
 
-  if (gruposOrdenados.length === 0) {
+  if (total === 0) {
     container.innerHTML = `
       <div class="empty-message">
         <i class="fas fa-search" style="font-size:2rem; display:block; margin-bottom:0.5rem;"></i>
@@ -227,18 +222,14 @@ function renderizarGrupos() {
     return;
   }
 
-  container.innerHTML = gruposOrdenados.map(grupo => {
+  const tarjetas = visibles.map(grupo => {
     const plat  = grupo.plataforma || 'whatsapp';
     const icono = iconoPlataforma(plat);
     const color = colorPlataforma(plat);
     const label = labelPlataforma(plat);
 
     return `
-    <div class="grupo-card ${grupo.destacado ? 'destacado-card' : ''}">
-      ${grupo.destacado ? `
-        <div class="destacado-ribbon">
-          <i class="fas fa-star"></i> GRUPO DESTACADO
-        </div>` : ''}
+    <div class="grupo-card">
       <div class="card-header">
         <h3>${grupo.nombre || 'Sin nombre'}</h3>
         <span class="badge-whatsapp" style="background:${color}20; color:${color}; border:1px solid ${color}40;">
@@ -259,6 +250,46 @@ function renderizarGrupos() {
       </a>
     </div>`;
   }).join('');
+
+  // Botón "Ver más" si quedan grupos
+  const hayMas = gruposMostrados < total;
+  const botonVerMas = hayMas ? `
+    <div style="text-align:center; margin-top:1rem;">
+      <button id="btnVerMas" style="
+        background:#fff;
+        border: 2px solid #25D366;
+        color: #25D366;
+        font-weight: 700;
+        font-size: 0.9rem;
+        padding: 10px 28px;
+        border-radius: 50px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        box-shadow: 0 2px 10px rgba(37,211,102,0.15);
+        transition: all 0.2s;
+      "
+      onmouseover="this.style.background='#25D366'; this.style.color='#fff';"
+      onmouseout="this.style.background='#fff'; this.style.color='#25D366';"
+      >
+        <i class="fas fa-chevron-down"></i>
+        Ver más grupos (${total - gruposMostrados} restantes)
+      </button>
+    </div>` : '';
+
+  container.innerHTML = tarjetas + botonVerMas;
+
+  // Evento del botón ver más
+  document.getElementById('btnVerMas')?.addEventListener('click', () => {
+    gruposMostrados += GRUPOS_POR_PAGINA;
+    renderizarGrupos();
+    // Scroll suave al nuevo contenido
+    const cards = container.querySelectorAll('.grupo-card');
+    if (cards.length > 0) {
+      cards[cards.length - GRUPOS_POR_PAGINA]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
 }
 
 // ============================================
@@ -337,11 +368,13 @@ function configurarEventListeners() {
     }, 800);
   });
 
+  // Filtros plataforma — resetea paginación
   document.querySelectorAll('.filter-chip').forEach(chip => {
     chip.addEventListener('click', function() {
       document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
       this.classList.add('active');
       plataformaSeleccionada = this.dataset.platform;
+      gruposMostrados = GRUPOS_POR_PAGINA;
       renderizarGrupos();
     });
   });
@@ -358,6 +391,7 @@ function configurarEventListeners() {
     if (e.target === this) this.style.display = 'none';
   });
 
+  // Seleccionar ciudad — resetea paginación
   document.querySelectorAll('.city-item').forEach(item => {
     item.addEventListener('click', function() {
       document.querySelectorAll('.city-item').forEach(i => i.classList.remove('active'));
@@ -366,6 +400,7 @@ function configurarEventListeners() {
       document.getElementById('selectedCityName').textContent =
         ciudadSeleccionada === 'todos' ? 'Todos los departamentos' : ciudadSeleccionada;
       document.getElementById('cityModal').style.display = 'none';
+      gruposMostrados = GRUPOS_POR_PAGINA;
       renderizarGrupos();
       actualizarContadoresCiudades();
     });
@@ -379,9 +414,11 @@ function configurarEventListeners() {
     });
   });
 
+  // Logo reset — resetea paginación
   document.getElementById('logoResetBtn')?.addEventListener('click', function() {
     ciudadSeleccionada = 'todos';
     plataformaSeleccionada = 'whatsapp';
+    gruposMostrados = GRUPOS_POR_PAGINA;
     document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
     document.querySelector('.filter-chip[data-platform="whatsapp"]')?.classList.add('active');
     document.getElementById('selectedCityName').textContent = 'Todos los departamentos';
