@@ -155,11 +155,10 @@ async function guardarGrupo(e) {
     mostrarNotificacion('❌ Ingresa un enlace de invitación', 'error');
     return;
   }
-  const pConfig = getPlataforma(datos.plataforma);
-  if (!pConfig.validar(datos.link)) {
-    mostrarNotificacion(`❌ El enlace no parece ser de ${pConfig.label}`, 'error');
-    return;
-  }
+  if (!datos.link.startsWith('http')) {
+  mostrarNotificacion('❌ Ingresa un enlace válido', 'error');
+  return;
+}
 
   try {
     let response;
