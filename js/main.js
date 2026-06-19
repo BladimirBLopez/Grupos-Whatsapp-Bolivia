@@ -393,7 +393,8 @@ function configurarEventListeners() {
 
   // Seleccionar ciudad — resetea paginación
   document.querySelectorAll('.city-item').forEach(item => {
-    item.addEventListener('click', function() {
+    item.addEventListener('click', function(e) {
+      e.stopPropagation();
       document.querySelectorAll('.city-item').forEach(i => i.classList.remove('active'));
       this.classList.add('active');
       ciudadSeleccionada = this.dataset.city;
