@@ -85,7 +85,7 @@ function iniciarPagina() {
 }
 
 // ============================================
-// BANNER GRUPO DESTACADO - BLANCO DORADO PREMIUM
+// BANNER GRUPO DESTACADO - COMPACTO BLANCO/DORADO
 // ============================================
 function mostrarGrupoDestacado() {
   const banner = document.getElementById('grupoDestacadoFijo');
@@ -101,192 +101,90 @@ function mostrarGrupoDestacado() {
   banner.innerHTML = `
     <div style="
       position: relative;
-      border-radius: 22px;
+      border-radius: 18px;
       overflow: hidden;
-      margin-bottom: 1.2rem;
+      margin-bottom: 1rem;
       background: #ffffff;
-      border: 2.5px solid #E8B923;
-      box-shadow:
-        0 0 0 5px rgba(232,185,35,0.12),
-        0 12px 40px rgba(232,185,35,0.2),
-        0 4px 16px rgba(0,0,0,0.08);
+      border: 2px solid #E8B923;
+      box-shadow: 0 0 0 4px rgba(232,185,35,0.1), 0 8px 28px rgba(232,185,35,0.18), 0 2px 10px rgba(0,0,0,0.06);
     ">
-
-      <!-- Franja superior dorada -->
+      <!-- Franja dorada superior -->
       <div style="
         background: linear-gradient(90deg, #B8860B, #FFD700, #F5A623, #FFD700, #B8860B);
-        padding: 9px 16px;
+        padding: 7px 14px;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
+        gap: 7px;
       ">
-        <i class="fas fa-crown" style="color:#fff; font-size:0.85rem; filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));"></i>
-        <span style="
-          font-size: 0.65rem;
-          font-weight: 900;
-          letter-spacing: 3px;
-          color: #fff;
-          text-transform: uppercase;
-          text-shadow: 0 1px 3px rgba(0,0,0,0.25);
-        ">Grupo destacado de la semana</span>
-        <i class="fas fa-crown" style="color:#fff; font-size:0.85rem; filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));"></i>
+        <i class="fas fa-crown" style="color:#fff; font-size:0.75rem;"></i>
+        <span style="font-size:0.6rem; font-weight:900; letter-spacing:3px; color:#fff; text-transform:uppercase;">
+          Grupo destacado de la semana
+        </span>
+        <i class="fas fa-crown" style="color:#fff; font-size:0.75rem;"></i>
       </div>
 
-      <!-- Línea decorativa dorada fina -->
-      <div style="height: 3px; background: linear-gradient(90deg, transparent, #FFD70055, #FFD700, #FFD70055, transparent);"></div>
+      <!-- Cuerpo compacto -->
+      <div style="padding: 0.85rem 1rem;">
 
-      <!-- Cuerpo -->
-      <div style="padding: 1.2rem 1.3rem 1.4rem;">
-
-        <!-- Nombre + badge plataforma -->
-        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:0.5rem;">
-          <h3 style="
-            margin: 0;
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: #0f1f2e;
-            line-height: 1.25;
-            flex: 1;
-          ">${destacado.nombre}</h3>
-          <span style="
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background: ${color}18;
-            color: ${color};
-            border: 1.5px solid ${color}60;
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 20px;
-            white-space: nowrap;
-            flex-shrink: 0;
-          ">
-            <i class="${icono}"></i> ${label}
-          </span>
+        <!-- Nombre + badges en una fila -->
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; margin-bottom:0.4rem; flex-wrap:wrap;">
+          <h3 style="margin:0; font-size:1rem; font-weight:800; color:#0f1f2e; flex:1;">${destacado.nombre}</h3>
+          <div style="display:flex; gap:5px; align-items:center; flex-shrink:0;">
+            <span style="
+              background: linear-gradient(135deg, #B8860B, #FFD700);
+              color:#fff; font-size:0.6rem; font-weight:800;
+              padding:3px 8px; border-radius:20px;
+              display:inline-flex; align-items:center; gap:3px;
+            "><i class="fas fa-star"></i> DESTACADO</span>
+            <span style="
+              background:${color}18; color:${color};
+              border:1.5px solid ${color}55;
+              font-size:0.6rem; font-weight:700;
+              padding:3px 8px; border-radius:20px;
+              display:inline-flex; align-items:center; gap:3px;
+            "><i class="${icono}"></i> ${label}</span>
+          </div>
         </div>
 
-        <!-- Badge DESTACADO -->
-        <div style="margin-bottom: 0.7rem;">
-          <span style="
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background: linear-gradient(135deg, #B8860B, #FFD700);
-            color: #fff;
-            font-size: 0.65rem;
-            font-weight: 800;
-            padding: 3px 10px;
-            border-radius: 20px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            box-shadow: 0 2px 8px rgba(232,185,35,0.4);
-          ">
-            <i class="fas fa-star"></i> Verificado & Destacado
-          </span>
-        </div>
-
-        <!-- Descripción -->
+        <!-- Descripción (compacta, 2 líneas máx) -->
         ${destacado.descripcion ? `
         <p style="
-          margin: 0 0 0.9rem;
-          font-size: 0.82rem;
-          color: #5a7080;
-          line-height: 1.5;
-          padding: 0.6rem 0.8rem;
-          background: #f8fafc;
-          border-radius: 10px;
-          border-left: 3px solid #E8B923;
+          margin:0 0 0.5rem;
+          font-size:0.78rem; color:#5a7080; line-height:1.4;
+          display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
         ">${destacado.descripcion}</p>` : ''}
 
-        <!-- Ciudad + badge caliente -->
-        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px; margin-bottom:1rem;">
-          <span style="
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #e65100;
-          ">
+        <!-- Ciudad + badge fuego -->
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:4px; margin-bottom:0.5rem;">
+          <span style="font-size:0.78rem; font-weight:700; color:#e65100;">
             <i class="fas fa-map-marker-alt"></i> ${destacado.ubicacion || 'Bolivia'}
           </span>
           <span style="
-            background: linear-gradient(135deg, #ff6b35, #f7931e);
-            color: white;
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 20px;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            box-shadow: 0 2px 8px rgba(255,107,53,0.35);
+            background:linear-gradient(135deg,#ff6b35,#f7931e);
+            color:#fff; font-size:0.68rem; font-weight:700;
+            padding:2px 9px; border-radius:20px;
+            box-shadow:0 2px 6px rgba(255,107,53,0.3);
           ">🔥 +50 miembros/semana</span>
         </div>
 
-        <!-- Stats en cajitas -->
-        <div style="
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 0.6rem;
-          margin-bottom: 1.1rem;
-        ">
-          <div style="
-            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
-            border: 1px solid #bbf7d0;
-            border-radius: 12px;
-            padding: 0.7rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-          ">
-            <i class="fas fa-users" style="color:#16a34a; font-size:1rem;"></i>
-            <div>
-              <div style="font-size:1rem; font-weight:800; color:#0f1f2e;">${destacado.miembros || 0}</div>
-              <div style="font-size:0.62rem; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">Miembros</div>
-            </div>
-          </div>
-          <div style="
-            background: linear-gradient(135deg, #fffbeb, #fef3c7);
-            border: 1px solid #fde68a;
-            border-radius: 12px;
-            padding: 0.7rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-          ">
-            <i class="fas fa-chart-line" style="color:#d97706; font-size:1rem;"></i>
-            <div>
-              <div style="font-size:1rem; font-weight:800; color:#0f1f2e;">${destacado.activos || 0}</div>
-              <div style="font-size:0.62rem; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">Activos</div>
-            </div>
-          </div>
+        <!-- Stats inline -->
+        <div style="font-size:0.78rem; color:#555; margin-bottom:0.75rem;">
+          👥 ${destacado.miembros || 0} &nbsp;·&nbsp; 📈 ${destacado.activos || 0}
         </div>
 
-        <!-- Botón unirse -->
+        <!-- Botón -->
         <a href="${destacado.link}" target="_blank" rel="noopener noreferrer" style="
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          background: linear-gradient(135deg, ${color}, ${color}dd);
-          color: white;
-          padding: 14px 20px;
-          border-radius: 14px;
-          font-weight: 800;
-          font-size: 1rem;
-          text-decoration: none;
-          box-shadow: 0 6px 24px ${color}55;
-          letter-spacing: 0.2px;
+          display:inline-flex; align-items:center; gap:7px;
+          background:linear-gradient(135deg, ${color}, ${color}cc);
+          color:#fff; padding:9px 20px; border-radius:50px;
+          font-weight:800; font-size:0.88rem; text-decoration:none;
+          box-shadow:0 4px 16px ${color}44;
         "
-        onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 8px 30px ${color}77';"
-        onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 6px 24px ${color}55';"
+        onmouseover="this.style.transform='scale(1.02)';"
+        onmouseout="this.style.transform='scale(1)';"
         >
-          <i class="${icono}" style="font-size:1.2rem;"></i>
-          Unirme ahora
-          <i class="fas fa-arrow-right" style="font-size:0.85rem; opacity:0.85;"></i>
+          <i class="${icono}"></i> Unirme ahora
         </a>
 
       </div>
