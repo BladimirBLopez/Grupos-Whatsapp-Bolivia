@@ -95,7 +95,7 @@ function iniciarPagina() {
 }
 
 // ============================================
-// BANNER GRUPO DESTACADO
+// BANNER GRUPO DESTACADO - DISEÑO PREMIUM
 // ============================================
 function mostrarGrupoDestacado() {
   const banner = document.getElementById('grupoDestacadoFijo');
@@ -103,38 +103,175 @@ function mostrarGrupoDestacado() {
   const destacado = gruposData.find(g => g.destacado === true);
   if (!destacado) { banner.innerHTML = ''; return; }
 
-  const plat     = destacado.plataforma || 'whatsapp';
-  const icono    = iconoPlataforma(plat);
-  const color    = colorPlataforma(plat);
-  const label    = labelPlataforma(plat);
+  const plat  = destacado.plataforma || 'whatsapp';
+  const icono = iconoPlataforma(plat);
+  const color = colorPlataforma(plat);
+  const label = labelPlataforma(plat);
 
   banner.innerHTML = `
-    <div style="border:2px solid #F5A623;border-radius:16px;overflow:hidden;margin-bottom:1rem;box-shadow:0 2px 12px rgba(245,166,35,0.2);">
-      <div style="background:#F5A623;padding:8px 14px;text-align:center;">
-        <span style="font-size:0.75rem;font-weight:800;letter-spacing:2px;color:#fff;">👑 GRUPO DESTACADO DE LA SEMANA</span>
+    <div style="
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 1.2rem;
+      background: linear-gradient(135deg, #0f2027, #1a3a2a, #0f2027);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.06);
+    ">
+      <!-- Glow de fondo -->
+      <div style="
+        position: absolute;
+        top: -40px; right: -40px;
+        width: 180px; height: 180px;
+        background: radial-gradient(circle, ${color}55 0%, transparent 70%);
+        pointer-events: none;
+      "></div>
+
+      <!-- Header con corona -->
+      <div style="
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 16px;
+        background: linear-gradient(90deg, transparent, rgba(255,215,0,0.12), transparent);
+        border-bottom: 1px solid rgba(255,215,0,0.2);
+      ">
+        <i class="fas fa-crown" style="color:#FFD700; font-size:0.8rem;"></i>
+        <span style="
+          font-size: 0.65rem;
+          font-weight: 800;
+          letter-spacing: 3px;
+          color: #FFD700;
+          text-transform: uppercase;
+        ">Grupo destacado de la semana</span>
+        <i class="fas fa-crown" style="color:#FFD700; font-size:0.8rem;"></i>
       </div>
-      <div style="background:#fffdf0;padding:1rem 1.2rem;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;flex-wrap:wrap;gap:6px;">
-          <div style="font-weight:700;font-size:1rem;color:#1a1a1a;">${destacado.nombre}</div>
-          <div style="display:flex;gap:6px;align-items:center;">
-            <span style="background:#F5A623;color:#fff;font-size:0.65rem;font-weight:700;padding:3px 8px;border-radius:20px;">⭐ DESTACADO</span>
-            <span style="border:1.5px solid ${color};color:${color};font-size:0.65rem;font-weight:700;padding:3px 8px;border-radius:20px;">
-              <i class="${icono}"></i> ${label}
-            </span>
+
+      <!-- Cuerpo -->
+      <div style="padding: 1.1rem 1.3rem 1.3rem;">
+
+        <!-- Nombre + badge plataforma -->
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:0.6rem;">
+          <h3 style="
+            margin: 0;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.2;
+            flex: 1;
+          ">${destacado.nombre}</h3>
+          <span style="
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: ${color}22;
+            color: ${color};
+            border: 1px solid ${color}55;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            white-space: nowrap;
+            flex-shrink: 0;
+          ">
+            <i class="${icono}"></i> ${label}
+          </span>
+        </div>
+
+        <!-- Descripción -->
+        ${destacado.descripcion ? `
+        <p style="
+          margin: 0 0 0.8rem;
+          font-size: 0.8rem;
+          color: rgba(255,255,255,0.55);
+          line-height: 1.4;
+        ">${destacado.descripcion}</p>` : ''}
+
+        <!-- Ciudad + badge caliente -->
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px; margin-bottom:0.9rem;">
+          <span style="
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: ${color};
+          ">
+            <i class="fas fa-map-marker-alt"></i> ${destacado.ubicacion || 'Bolivia'}
+          </span>
+          <span style="
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+          ">🔥 +50 miembros/semana</span>
+        </div>
+
+        <!-- Separador -->
+        <div style="height:1px; background:rgba(255,255,255,0.08); margin-bottom:0.9rem;"></div>
+
+        <!-- Stats -->
+        <div style="display:flex; gap:1.5rem; margin-bottom:1rem;">
+          <div style="display:flex; align-items:center; gap:6px;">
+            <div style="
+              width: 30px; height: 30px;
+              background: rgba(255,255,255,0.07);
+              border-radius: 8px;
+              display: flex; align-items: center; justify-content: center;
+            ">
+              <i class="fas fa-users" style="color:rgba(255,255,255,0.5); font-size:0.75rem;"></i>
+            </div>
+            <div>
+              <div style="font-size:0.95rem; font-weight:800; color:#fff;">${destacado.miembros || 0}</div>
+              <div style="font-size:0.62rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:0.5px;">Miembros</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <div style="
+              width: 30px; height: 30px;
+              background: rgba(255,255,255,0.07);
+              border-radius: 8px;
+              display: flex; align-items: center; justify-content: center;
+            ">
+              <i class="fas fa-chart-line" style="color:rgba(255,255,255,0.5); font-size:0.75rem;"></i>
+            </div>
+            <div>
+              <div style="font-size:0.95rem; font-weight:800; color:#fff;">${destacado.activos || 0}</div>
+              <div style="font-size:0.62rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:0.5px;">Activos</div>
+            </div>
           </div>
         </div>
-        ${destacado.descripcion ? `<div style="font-size:0.82rem;color:#555;margin-bottom:0.5rem;">${destacado.descripcion}</div>` : ''}
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;flex-wrap:wrap;gap:6px;">
-          <span style="font-size:0.8rem;color:#25D366;font-weight:600;">📍 ${destacado.ubicacion}</span>
-          <span style="background:#fff3e0;color:#e65100;font-size:0.75rem;font-weight:700;padding:3px 10px;border-radius:20px;">🔥 +50 miembros/semana</span>
-        </div>
-        <div style="font-size:0.8rem;color:#555;margin-bottom:0.8rem;">
-          👥 ${destacado.miembros} &nbsp;·&nbsp; 📈 ${destacado.activos}
-        </div>
-        <a href="${destacado.link}" target="_blank" rel="noopener noreferrer"
-           style="display:inline-flex;align-items:center;gap:6px;background:${color};color:white;padding:9px 20px;border-radius:50px;font-weight:700;font-size:0.85rem;text-decoration:none;">
-          <i class="${icono}"></i> Unirme ahora
+
+        <!-- Botón unirse -->
+        <a href="${destacado.link}" target="_blank" rel="noopener noreferrer" style="
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          background: linear-gradient(135deg, ${color}, ${color}cc);
+          color: white;
+          padding: 13px 20px;
+          border-radius: 14px;
+          font-weight: 800;
+          font-size: 0.95rem;
+          text-decoration: none;
+          box-shadow: 0 4px 20px ${color}55;
+          transition: all 0.2s;
+          letter-spacing: 0.2px;
+        "
+        onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 6px 28px ${color}88';"
+        onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 20px ${color}55';"
+        >
+          <i class="${icono}" style="font-size:1.1rem;"></i>
+          Unirme ahora
+          <i class="fas fa-arrow-right" style="font-size:0.8rem; opacity:0.8;"></i>
         </a>
+
       </div>
     </div>
   `;
