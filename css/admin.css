@@ -590,3 +590,103 @@ body {
   background: #25D366;
   border-radius: 10px;
 }
+/* ============================================
+   MULTI-PLATAFORMA - Estilos adicionales
+   ============================================ */
+
+/* Filtros de plataforma en la toolbar */
+.filtro-plataforma {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.btn-plataforma {
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1.5px solid #dde3e9;
+  background: #fff;
+  color: #6b7f8e;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.btn-plataforma:hover { border-color: #aab; background: #f5f7fa; }
+.btn-plataforma.activo { background: #1a2b3c; color: #fff; border-color: #1a2b3c; }
+.btn-plataforma.whatsapp.activo  { background: #25D366; border-color: #25D366; }
+.btn-plataforma.telegram.activo  { background: #229ED9; border-color: #229ED9; }
+.btn-plataforma.facebook.activo  { background: #1877F2; border-color: #1877F2; }
+.btn-plataforma.discord.activo   { background: #5865F2; border-color: #5865F2; }
+
+/* Badge de plataforma en la tabla */
+.badge-plataforma {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Selector visual de plataforma en el modal */
+.selector-plataforma {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.opcion-plataforma {
+  cursor: pointer;
+  position: relative;
+}
+
+.opcion-plataforma input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.opcion-plataforma span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  border-radius: 20px;
+  border: 1.5px solid #dde3e9;
+  background: #fff;
+  color: #6b7f8e;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.opcion-plataforma input:checked + span {
+  color: #fff;
+  border-color: transparent;
+}
+
+.opcion-plataforma.whatsapp input:checked + span { background: #25D366; }
+.opcion-plataforma.telegram  input:checked + span { background: #229ED9; }
+.opcion-plataforma.facebook  input:checked + span { background: #1877F2; }
+.opcion-plataforma.discord   input:checked + span { background: #5865F2; }
+.opcion-plataforma.otro      input:checked + span { background: #6b7f8e; }
+
+.opcion-plataforma:hover span {
+  border-color: #aab;
+  background: #f5f7fa;
+}
+
+/* Dos columnas para miembros/activos */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
