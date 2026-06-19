@@ -45,26 +45,18 @@ function labelPlataforma(plataforma) {
 // CARGAR GRUPOS DESDE LA API
 // ============================================
 async function cargarGrupos() {
-  console.log('🔄 Cargando grupos...');
-  
   try {
     const response = await fetch('/api/grupos');
-    
     if (response.ok) {
       const data = await response.json();
       gruposData = data.grupos || [];
-      console.log(`✅ ${gruposData.length} grupos cargados desde la API`);
     } else {
-      console.warn('⚠️ Fallback a JSON local');
       const localResponse = await fetch('data/grupos.json');
       const data = await localResponse.json();
       gruposData = data.grupos || [];
     }
-    
     iniciarPagina();
-    
   } catch (error) {
-    console.error('❌ Error al cargar grupos:', error);
     try {
       const localResponse = await fetch('data/grupos.json');
       const data = await localResponse.json();
@@ -86,8 +78,6 @@ async function cargarGrupos() {
 // INICIAR PÁGINA
 // ============================================
 function iniciarPagina() {
-  console.log('🚀 Iniciando página con', gruposData.length, 'grupos');
-
   mostrarGrupoDestacado();
   actualizarContadoresCiudades();
   renderizarGrupos();
@@ -95,7 +85,7 @@ function iniciarPagina() {
 }
 
 // ============================================
-// BANNER GRUPO DESTACADO - DISEÑO PREMIUM
+// BANNER GRUPO DESTACADO - BLANCO DORADO PREMIUM
 // ============================================
 function mostrarGrupoDestacado() {
   const banner = document.getElementById('grupoDestacadoFijo');
@@ -111,62 +101,61 @@ function mostrarGrupoDestacado() {
   banner.innerHTML = `
     <div style="
       position: relative;
-      border-radius: 20px;
+      border-radius: 22px;
       overflow: hidden;
       margin-bottom: 1.2rem;
-      background: linear-gradient(135deg, #0f2027, #1a3a2a, #0f2027);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.06);
+      background: #ffffff;
+      border: 2.5px solid #E8B923;
+      box-shadow:
+        0 0 0 5px rgba(232,185,35,0.12),
+        0 12px 40px rgba(232,185,35,0.2),
+        0 4px 16px rgba(0,0,0,0.08);
     ">
-      <!-- Glow de fondo -->
-      <div style="
-        position: absolute;
-        top: -40px; right: -40px;
-        width: 180px; height: 180px;
-        background: radial-gradient(circle, ${color}55 0%, transparent 70%);
-        pointer-events: none;
-      "></div>
 
-      <!-- Header con corona -->
+      <!-- Franja superior dorada -->
       <div style="
+        background: linear-gradient(90deg, #B8860B, #FFD700, #F5A623, #FFD700, #B8860B);
+        padding: 9px 16px;
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 8px;
-        padding: 10px 16px;
-        background: linear-gradient(90deg, transparent, rgba(255,215,0,0.12), transparent);
-        border-bottom: 1px solid rgba(255,215,0,0.2);
       ">
-        <i class="fas fa-crown" style="color:#FFD700; font-size:0.8rem;"></i>
+        <i class="fas fa-crown" style="color:#fff; font-size:0.85rem; filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));"></i>
         <span style="
           font-size: 0.65rem;
-          font-weight: 800;
+          font-weight: 900;
           letter-spacing: 3px;
-          color: #FFD700;
+          color: #fff;
           text-transform: uppercase;
+          text-shadow: 0 1px 3px rgba(0,0,0,0.25);
         ">Grupo destacado de la semana</span>
-        <i class="fas fa-crown" style="color:#FFD700; font-size:0.8rem;"></i>
+        <i class="fas fa-crown" style="color:#fff; font-size:0.85rem; filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));"></i>
       </div>
 
+      <!-- Línea decorativa dorada fina -->
+      <div style="height: 3px; background: linear-gradient(90deg, transparent, #FFD70055, #FFD700, #FFD70055, transparent);"></div>
+
       <!-- Cuerpo -->
-      <div style="padding: 1.1rem 1.3rem 1.3rem;">
+      <div style="padding: 1.2rem 1.3rem 1.4rem;">
 
         <!-- Nombre + badge plataforma -->
-        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:0.6rem;">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:0.5rem;">
           <h3 style="
             margin: 0;
-            font-size: 1.15rem;
+            font-size: 1.2rem;
             font-weight: 800;
-            color: #ffffff;
-            line-height: 1.2;
+            color: #0f1f2e;
+            line-height: 1.25;
             flex: 1;
           ">${destacado.nombre}</h3>
           <span style="
             display: inline-flex;
             align-items: center;
             gap: 5px;
-            background: ${color}22;
+            background: ${color}18;
             color: ${color};
-            border: 1px solid ${color}55;
+            border: 1.5px solid ${color}60;
             font-size: 0.7rem;
             font-weight: 700;
             padding: 4px 10px;
@@ -178,24 +167,48 @@ function mostrarGrupoDestacado() {
           </span>
         </div>
 
-        <!-- Descripción -->
-        ${destacado.descripcion ? `
-        <p style="
-          margin: 0 0 0.8rem;
-          font-size: 0.8rem;
-          color: rgba(255,255,255,0.55);
-          line-height: 1.4;
-        ">${destacado.descripcion}</p>` : ''}
-
-        <!-- Ciudad + badge caliente -->
-        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px; margin-bottom:0.9rem;">
+        <!-- Badge DESTACADO -->
+        <div style="margin-bottom: 0.7rem;">
           <span style="
             display: inline-flex;
             align-items: center;
             gap: 5px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            color: ${color};
+            background: linear-gradient(135deg, #B8860B, #FFD700);
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 8px rgba(232,185,35,0.4);
+          ">
+            <i class="fas fa-star"></i> Verificado & Destacado
+          </span>
+        </div>
+
+        <!-- Descripción -->
+        ${destacado.descripcion ? `
+        <p style="
+          margin: 0 0 0.9rem;
+          font-size: 0.82rem;
+          color: #5a7080;
+          line-height: 1.5;
+          padding: 0.6rem 0.8rem;
+          background: #f8fafc;
+          border-radius: 10px;
+          border-left: 3px solid #E8B923;
+        ">${destacado.descripcion}</p>` : ''}
+
+        <!-- Ciudad + badge caliente -->
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px; margin-bottom:1rem;">
+          <span style="
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #e65100;
           ">
             <i class="fas fa-map-marker-alt"></i> ${destacado.ubicacion || 'Bolivia'}
           </span>
@@ -204,45 +217,50 @@ function mostrarGrupoDestacado() {
             color: white;
             font-size: 0.7rem;
             font-weight: 700;
-            padding: 3px 10px;
+            padding: 4px 12px;
             border-radius: 20px;
             display: inline-flex;
             align-items: center;
             gap: 4px;
+            box-shadow: 0 2px 8px rgba(255,107,53,0.35);
           ">🔥 +50 miembros/semana</span>
         </div>
 
-        <!-- Separador -->
-        <div style="height:1px; background:rgba(255,255,255,0.08); margin-bottom:0.9rem;"></div>
-
-        <!-- Stats -->
-        <div style="display:flex; gap:1.5rem; margin-bottom:1rem;">
-          <div style="display:flex; align-items:center; gap:6px;">
-            <div style="
-              width: 30px; height: 30px;
-              background: rgba(255,255,255,0.07);
-              border-radius: 8px;
-              display: flex; align-items: center; justify-content: center;
-            ">
-              <i class="fas fa-users" style="color:rgba(255,255,255,0.5); font-size:0.75rem;"></i>
-            </div>
+        <!-- Stats en cajitas -->
+        <div style="
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 0.6rem;
+          margin-bottom: 1.1rem;
+        ">
+          <div style="
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border: 1px solid #bbf7d0;
+            border-radius: 12px;
+            padding: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          ">
+            <i class="fas fa-users" style="color:#16a34a; font-size:1rem;"></i>
             <div>
-              <div style="font-size:0.95rem; font-weight:800; color:#fff;">${destacado.miembros || 0}</div>
-              <div style="font-size:0.62rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:0.5px;">Miembros</div>
+              <div style="font-size:1rem; font-weight:800; color:#0f1f2e;">${destacado.miembros || 0}</div>
+              <div style="font-size:0.62rem; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">Miembros</div>
             </div>
           </div>
-          <div style="display:flex; align-items:center; gap:6px;">
-            <div style="
-              width: 30px; height: 30px;
-              background: rgba(255,255,255,0.07);
-              border-radius: 8px;
-              display: flex; align-items: center; justify-content: center;
-            ">
-              <i class="fas fa-chart-line" style="color:rgba(255,255,255,0.5); font-size:0.75rem;"></i>
-            </div>
+          <div style="
+            background: linear-gradient(135deg, #fffbeb, #fef3c7);
+            border: 1px solid #fde68a;
+            border-radius: 12px;
+            padding: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          ">
+            <i class="fas fa-chart-line" style="color:#d97706; font-size:1rem;"></i>
             <div>
-              <div style="font-size:0.95rem; font-weight:800; color:#fff;">${destacado.activos || 0}</div>
-              <div style="font-size:0.62rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:0.5px;">Activos</div>
+              <div style="font-size:1rem; font-weight:800; color:#0f1f2e;">${destacado.activos || 0}</div>
+              <div style="font-size:0.62rem; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">Activos</div>
             </div>
           </div>
         </div>
@@ -253,23 +271,22 @@ function mostrarGrupoDestacado() {
           align-items: center;
           justify-content: center;
           gap: 8px;
-          background: linear-gradient(135deg, ${color}, ${color}cc);
+          background: linear-gradient(135deg, ${color}, ${color}dd);
           color: white;
-          padding: 13px 20px;
+          padding: 14px 20px;
           border-radius: 14px;
           font-weight: 800;
-          font-size: 0.95rem;
+          font-size: 1rem;
           text-decoration: none;
-          box-shadow: 0 4px 20px ${color}55;
-          transition: all 0.2s;
+          box-shadow: 0 6px 24px ${color}55;
           letter-spacing: 0.2px;
         "
-        onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 6px 28px ${color}88';"
-        onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 20px ${color}55';"
+        onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 8px 30px ${color}77';"
+        onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 6px 24px ${color}55';"
         >
-          <i class="${icono}" style="font-size:1.1rem;"></i>
+          <i class="${icono}" style="font-size:1.2rem;"></i>
           Unirme ahora
-          <i class="fas fa-arrow-right" style="font-size:0.8rem; opacity:0.8;"></i>
+          <i class="fas fa-arrow-right" style="font-size:0.85rem; opacity:0.85;"></i>
         </a>
 
       </div>
@@ -383,7 +400,6 @@ const ADMIN_CREDENTIALS = {
 // CONFIGURAR EVENT LISTENERS
 // ============================================
 function configurarEventListeners() {
-  // --- Botón Admin ---
   document.getElementById('btnAdminLogin')?.addEventListener('click', function() {
     document.getElementById('loginModal').classList.add('show');
     document.getElementById('loginForm').reset();
@@ -391,17 +407,14 @@ function configurarEventListeners() {
     document.getElementById('loginUser').focus();
   });
 
-  // --- Cerrar modal login ---
   document.getElementById('closeLoginBtn')?.addEventListener('click', function() {
     document.getElementById('loginModal').classList.remove('show');
   });
 
-  // --- Cerrar login clic fuera ---
   document.getElementById('loginModal')?.addEventListener('click', function(e) {
     if (e.target === this) this.classList.remove('show');
   });
 
-  // --- Enviar login ---
   document.getElementById('loginForm')?.addEventListener('submit', function(e) {
     e.preventDefault();
     const user = document.getElementById('loginUser').value.trim();
@@ -426,7 +439,6 @@ function configurarEventListeners() {
     }, 800);
   });
 
-  // --- Filtros de plataforma ---
   document.querySelectorAll('.filter-chip').forEach(chip => {
     chip.addEventListener('click', function() {
       document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
@@ -436,22 +448,18 @@ function configurarEventListeners() {
     });
   });
 
-  // --- Abrir modal ciudades ---
   document.getElementById('openCityModalBtn')?.addEventListener('click', function() {
     document.getElementById('cityModal').style.display = 'flex';
   });
 
-  // --- Cerrar modal ciudades ---
   document.getElementById('closeCityModalBtn')?.addEventListener('click', function() {
     document.getElementById('cityModal').style.display = 'none';
   });
 
-  // --- Cerrar ciudades clic fuera ---
   document.getElementById('cityModal')?.addEventListener('click', function(e) {
     if (e.target === this) this.style.display = 'none';
   });
 
-  // --- Seleccionar ciudad ---
   document.querySelectorAll('.city-item').forEach(item => {
     item.addEventListener('click', function() {
       document.querySelectorAll('.city-item').forEach(i => i.classList.remove('active'));
@@ -465,7 +473,6 @@ function configurarEventListeners() {
     });
   });
 
-  // --- Buscador de ciudades ---
   document.getElementById('citySearchInput')?.addEventListener('input', function() {
     const busqueda = this.value.toLowerCase().trim();
     document.querySelectorAll('.city-item').forEach(item => {
@@ -474,7 +481,6 @@ function configurarEventListeners() {
     });
   });
 
-  // --- Logo reset ---
   document.getElementById('logoResetBtn')?.addEventListener('click', function() {
     ciudadSeleccionada = 'todos';
     plataformaSeleccionada = 'whatsapp';
@@ -490,6 +496,5 @@ function configurarEventListeners() {
 // INICIALIZAR
 // ============================================
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('🚀 Qigrupos Bolivia iniciado');
   cargarGrupos();
 });
