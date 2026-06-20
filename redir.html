@@ -19,11 +19,10 @@
       padding: 1rem;
     }
 
-    /* ── Card central ── */
     .card {
       background: #fff;
       border-radius: 24px;
-      padding: 2rem 1.5rem;
+      padding: 1.5rem 1.5rem;
       max-width: 360px;
       width: 100%;
       text-align: center;
@@ -36,47 +35,45 @@
       to   { transform: scale(1);    opacity: 1; }
     }
 
-    /* ── Ícono plataforma ── */
     .plat-icon {
-      width: 64px;
-      height: 64px;
-      border-radius: 18px;
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 1rem;
-      font-size: 1.8rem;
+      margin: 0 auto 0.8rem;
+      font-size: 1.6rem;
       color: #fff;
     }
 
-    /* ── Nombre del grupo ── */
     .grupo-nombre {
       font-family: 'Poppins', sans-serif;
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 700;
       color: #0f1f2e;
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.2rem;
       line-height: 1.3;
     }
 
     .grupo-sub {
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       color: #8ba0ae;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
     }
 
-    /* ── Contador circular ── */
+    /* Contador circular */
     .contador-wrap {
       position: relative;
-      width: 90px;
-      height: 90px;
-      margin: 0 auto 1.5rem;
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1rem;
     }
 
     .contador-wrap svg {
       transform: rotate(-90deg);
-      width: 90px;
-      height: 90px;
+      width: 80px;
+      height: 80px;
     }
 
     .contador-wrap svg circle {
@@ -92,50 +89,18 @@
       position: absolute;
       top: 50%; left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 1.6rem;
+      font-size: 1.5rem;
       font-weight: 800;
       color: #0f1f2e;
     }
 
-    /* ── Mensaje ── */
-    .msg {
-      font-size: 0.82rem;
-      color: #6b7f8e;
-      margin-bottom: 1.5rem;
-      line-height: 1.5;
-    }
-
-    /* ── Botón unirse (oculto hasta llegar a 0) ── */
-    .btn-unirse {
-      display: none;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      padding: 14px;
-      border-radius: 50px;
-      font-weight: 800;
-      font-size: 1rem;
-      color: #fff;
-      text-decoration: none;
-      box-shadow: 0 6px 20px rgba(37,211,102,0.4);
-      animation: fadeIn 0.5s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .btn-unirse.visible { display: flex; }
-
-    /* ── Progreso barra ── */
+    /* Barra progreso */
     .barra-wrap {
       background: #f0f4f8;
       border-radius: 10px;
-      height: 6px;
+      height: 5px;
       overflow: hidden;
-      margin-bottom: 1rem;
+      margin-bottom: 0.8rem;
     }
 
     .barra-prog {
@@ -145,10 +110,63 @@
       transition: width 1s linear;
     }
 
-    /* ── Footer ── */
+    /* Banner Adsterra */
+    .banner-wrap {
+      margin: 0.8rem auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8fafc;
+      border-radius: 12px;
+      overflow: hidden;
+      min-height: 60px;
+      border: 1px solid #eef2f5;
+    }
+
+    .banner-label {
+      font-size: 0.6rem;
+      color: #bcc8d4;
+      text-align: center;
+      margin-bottom: 3px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Mensaje */
+    .msg {
+      font-size: 0.78rem;
+      color: #6b7f8e;
+      margin-bottom: 0.8rem;
+      line-height: 1.5;
+    }
+
+    /* Botón unirse */
+    .btn-unirse {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 13px;
+      border-radius: 50px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: #fff;
+      text-decoration: none;
+      box-shadow: 0 6px 20px rgba(37,211,102,0.4);
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .btn-unirse.visible { display: flex; }
+
     .footer-card {
-      margin-top: 1.2rem;
-      font-size: 0.7rem;
+      margin-top: 1rem;
+      font-size: 0.68rem;
       color: #bcc8d4;
       display: flex;
       align-items: center;
@@ -156,7 +174,6 @@
       gap: 5px;
     }
 
-    /* ── Volver ── */
     .volver {
       position: fixed;
       top: 16px;
@@ -197,10 +214,10 @@
 
   <!-- Contador circular -->
   <div class="contador-wrap">
-    <svg viewBox="0 0 90 90">
-      <circle class="circle-bg"   cx="45" cy="45" r="39"/>
-      <circle class="circle-prog" cx="45" cy="45" r="39"
-              stroke-dasharray="245"
+    <svg viewBox="0 0 80 80">
+      <circle class="circle-bg"   cx="40" cy="40" r="34"/>
+      <circle class="circle-prog" cx="40" cy="40" r="34"
+              stroke-dasharray="214"
               stroke-dashoffset="0"
               id="circleAnim"/>
     </svg>
@@ -219,6 +236,21 @@
     Por favor espera <strong id="msgSeg">5</strong> segundos
   </p>
 
+  <!-- ══ BANNER ADSTERRA 300x250 ══ -->
+  <div class="banner-label">Publicidad</div>
+  <div class="banner-wrap">
+    <script>
+      atOptions = {
+        'key' : '7b6f252aac7e74b49fe910c265acd519',
+        'format' : 'iframe',
+        'height' : 250,
+        'width' : 300,
+        'params' : {}
+      };
+    </script>
+    <script src="https://www.highperformanceformat.com/7b6f252aac7e74b49fe910c265acd519/invoke.js"></script>
+  </div>
+
   <!-- Botón (aparece al llegar a 0) -->
   <a href="#" class="btn-unirse" id="btnUnirse">
     <i class="fab fa-whatsapp" id="btnIcono"></i>
@@ -234,7 +266,6 @@
 <script src="https://pl29813678.effectivecpmnetwork.com/85/ed/63/85ed635c7bee052567a3c49453aa5df3.js"></script>
 
 <script>
-  // ── Colores e íconos por plataforma ──
   const PLATAFORMAS = {
     whatsapp: { color: '#25D366', icon: 'fab fa-whatsapp' },
     telegram:  { color: '#229ED9', icon: 'fab fa-telegram' },
@@ -243,60 +274,53 @@
     otro:      { color: '#8ba0ae', icon: 'fas fa-link' }
   };
 
-  // ── Leer parámetros de la URL ──
-  const params   = new URLSearchParams(window.location.search);
-  const url      = params.get('url')      || '#';
-  const nombre   = params.get('nombre')   || 'Grupo';
-  const plat     = (params.get('plat')    || 'whatsapp').toLowerCase();
-
+  const params = new URLSearchParams(window.location.search);
+  const url    = params.get('url')    || '#';
+  const nombre = params.get('nombre') || 'Grupo';
+  const plat   = (params.get('plat') || 'whatsapp').toLowerCase();
   const config = PLATAFORMAS[plat] || PLATAFORMAS.otro;
 
-  // ── Aplicar plataforma ──
+  // Aplicar plataforma
   const platIcon = document.getElementById('platIcon');
-  platIcon.style.background = `linear-gradient(135deg, ${config.color}, ${config.color}cc)`;
+  platIcon.style.background  = `linear-gradient(135deg, ${config.color}, ${config.color}cc)`;
+  platIcon.style.boxShadow   = `0 6px 20px ${config.color}55`;
   platIcon.querySelector('i').className = config.icon;
-  platIcon.style.boxShadow = `0 8px 24px ${config.color}55`;
 
   document.getElementById('grupoNombre').textContent = decodeURIComponent(nombre);
 
-  const btnUnirse  = document.getElementById('btnUnirse');
-  btnUnirse.href   = url;
+  const btnUnirse = document.getElementById('btnUnirse');
+  btnUnirse.href  = url;
   btnUnirse.style.background = `linear-gradient(135deg, ${config.color}, ${config.color}bb)`;
+  btnUnirse.style.boxShadow  = `0 6px 20px ${config.color}44`;
   document.getElementById('btnIcono').className = config.icon;
 
-  const circle  = document.getElementById('circleAnim');
+  const circle = document.getElementById('circleAnim');
   circle.style.stroke = config.color;
   document.querySelector('.barra-prog').style.background =
     `linear-gradient(90deg, ${config.color}, ${config.color}99)`;
 
-  // ── Contador ──
-  const TOTAL   = 5;
-  const CIRC    = 245; // 2 * π * r ≈ 245
-  let segundos  = TOTAL;
+  // Contador
+  const TOTAL  = 5;
+  const CIRC   = 214;
+  let segundos = TOTAL;
 
-  const numEl   = document.getElementById('contadorNum');
-  const segEl   = document.getElementById('msgSeg');
-  const barraEl = document.getElementById('barraProg');
-  const msgEl   = document.getElementById('msgTexto');
+  const numEl  = document.getElementById('contadorNum');
+  const segEl  = document.getElementById('msgSeg');
+  const barraEl= document.getElementById('barraProg');
+  const msgEl  = document.getElementById('msgTexto');
 
   function tick() {
     segundos--;
-    numEl.textContent  = segundos;
-    segEl.textContent  = segundos;
-
-    // Círculo SVG
-    const offset = CIRC * (segundos / TOTAL);
-    circle.style.strokeDashoffset = offset;
-
-    // Barra
+    numEl.textContent = segundos;
+    segEl.textContent = segundos;
+    circle.style.strokeDashoffset = CIRC * (segundos / TOTAL);
     barraEl.style.width = (segundos / TOTAL * 100) + '%';
 
     if (segundos <= 0) {
       clearInterval(timer);
-      // Mostrar botón
-      numEl.textContent = '✓';
-      numEl.style.fontSize = '1.2rem';
-      numEl.style.color = config.color;
+      numEl.textContent  = '✓';
+      numEl.style.fontSize = '1.1rem';
+      numEl.style.color  = config.color;
       msgEl.innerHTML = `<i class="fas fa-check-circle" style="color:${config.color};"></i> ¡Listo! Ya puedes unirte al grupo`;
       btnUnirse.classList.add('visible');
     }
