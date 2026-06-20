@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accediendo al grupo...</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Poppins:wght@700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f2027, #1a3a2a, #0f2027);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      padding: 1rem;
+    }
+
+    /* ── Card central ── */
+    .card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 2rem 1.5rem;
+      max-width: 360px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.85); opacity: 0; }
+      to   { transform: scale(1);    opacity: 1; }
+    }
+
+    /* ── Ícono plataforma ── */
+    .plat-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      font-size: 1.8rem;
+      color: #fff;
+    }
+
+    /* ── Nombre del grupo ── */
+    .grupo-nombre {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #0f1f2e;
+      margin-bottom: 0.3rem;
+      line-height: 1.3;
+    }
+
+    .grupo-sub {
+      font-size: 0.78rem;
+      color: #8ba0ae;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── Contador circular ── */
+    .contador-wrap {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 1.5rem;
+    }
+
+    .contador-wrap svg {
+      transform: rotate(-90deg);
+      width: 90px;
+      height: 90px;
+    }
+
+    .contador-wrap svg circle {
+      fill: none;
+      stroke-width: 6;
+      stroke-linecap: round;
+    }
+
+    .circle-bg   { stroke: #f0f4f8; }
+    .circle-prog { stroke: #25D366; transition: stroke-dashoffset 1s linear; }
+
+    .contador-num {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #0f1f2e;
+    }
+
+    /* ── Mensaje ── */
+    .msg {
+      font-size: 0.82rem;
+      color: #6b7f8e;
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    /* ── Botón unirse (oculto hasta llegar a 0) ── */
+    .btn-unirse {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 14px;
+      border-radius: 50px;
+      font-weight: 800;
+      font-size: 1rem;
+      color: #fff;
+      text-decoration: none;
+      box-shadow: 0 6px 20px rgba(37,211,102,0.4);
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .btn-unirse.visible { display: flex; }
+
+    /* ── Progreso barra ── */
+    .barra-wrap {
+      background: #f0f4f8;
+      border-radius: 10px;
+      height: 6px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+
+    .barra-prog {
+      height: 100%;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #25D366, #128C7E);
+      transition: width 1s linear;
+    }
+
+    /* ── Footer ── */
+    .footer-card {
+      margin-top: 1.2rem;
+      font-size: 0.7rem;
+      color: #bcc8d4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    /* ── Volver ── */
+    .volver {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 8px 14px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      backdrop-filter: blur(8px);
+      text-decoration: none;
+    }
+    .volver:hover { background: rgba(255,255,255,0.2); }
+  </style>
+</head>
+<body>
+
+<a href="javascript:history.back()" class="volver">
+  <i class="fas fa-arrow-left"></i> Volver
+</a>
+
+<div class="card">
+
+  <!-- Ícono plataforma -->
+  <div class="plat-icon" id="platIcon">
+    <i class="fab fa-whatsapp"></i>
+  </div>
+
+  <!-- Nombre del grupo -->
+  <div class="grupo-nombre" id="grupoNombre">Cargando grupo...</div>
+  <div class="grupo-sub">Preparando tu acceso seguro</div>
+
+  <!-- Contador circular -->
+  <div class="contador-wrap">
+    <svg viewBox="0 0 90 90">
+      <circle class="circle-bg"   cx="45" cy="45" r="39"/>
+      <circle class="circle-prog" cx="45" cy="45" r="39"
+              stroke-dasharray="245"
+              stroke-dashoffset="0"
+              id="circleAnim"/>
+    </svg>
+    <div class="contador-num" id="contadorNum">5</div>
+  </div>
+
+  <!-- Barra de progreso -->
+  <div class="barra-wrap">
+    <div class="barra-prog" id="barraProg" style="width:100%;"></div>
+  </div>
+
+  <!-- Mensaje -->
+  <p class="msg" id="msgTexto">
+    <i class="fas fa-shield-alt" style="color:#25D366;"></i>
+    Verificando enlace seguro...<br>
+    Por favor espera <strong id="msgSeg">5</strong> segundos
+  </p>
+
+  <!-- Botón (aparece al llegar a 0) -->
+  <a href="#" class="btn-unirse" id="btnUnirse">
+    <i class="fab fa-whatsapp" id="btnIcono"></i>
+    Unirme al grupo ahora
+  </a>
+
+  <div class="footer-card">
+    <i class="fas fa-lock"></i> Qigrupos Bolivia &mdash; Enlace verificado
+  </div>
+</div>
+
+<!-- Social Bar Adsterra -->
+<script src="https://pl29813678.effectivecpmnetwork.com/85/ed/63/85ed635c7bee052567a3c49453aa5df3.js"></script>
+
+<script>
+  // ── Colores e íconos por plataforma ──
+  const PLATAFORMAS = {
+    whatsapp: { color: '#25D366', icon: 'fab fa-whatsapp' },
+    telegram:  { color: '#229ED9', icon: 'fab fa-telegram' },
+    facebook:  { color: '#1877F2', icon: 'fab fa-facebook' },
+    discord:   { color: '#5865F2', icon: 'fab fa-discord' },
+    otro:      { color: '#8ba0ae', icon: 'fas fa-link' }
+  };
+
+  // ── Leer parámetros de la URL ──
+  const params   = new URLSearchParams(window.location.search);
+  const url      = params.get('url')      || '#';
+  const nombre   = params.get('nombre')   || 'Grupo';
+  const plat     = (params.get('plat')    || 'whatsapp').toLowerCase();
+
+  const config = PLATAFORMAS[plat] || PLATAFORMAS.otro;
+
+  // ── Aplicar plataforma ──
+  const platIcon = document.getElementById('platIcon');
+  platIcon.style.background = `linear-gradient(135deg, ${config.color}, ${config.color}cc)`;
+  platIcon.querySelector('i').className = config.icon;
+  platIcon.style.boxShadow = `0 8px 24px ${config.color}55`;
+
+  document.getElementById('grupoNombre').textContent = decodeURIComponent(nombre);
+
+  const btnUnirse  = document.getElementById('btnUnirse');
+  btnUnirse.href   = url;
+  btnUnirse.style.background = `linear-gradient(135deg, ${config.color}, ${config.color}bb)`;
+  document.getElementById('btnIcono').className = config.icon;
+
+  const circle  = document.getElementById('circleAnim');
+  circle.style.stroke = config.color;
+  document.querySelector('.barra-prog').style.background =
+    `linear-gradient(90deg, ${config.color}, ${config.color}99)`;
+
+  // ── Contador ──
+  const TOTAL   = 5;
+  const CIRC    = 245; // 2 * π * r ≈ 245
+  let segundos  = TOTAL;
+
+  const numEl   = document.getElementById('contadorNum');
+  const segEl   = document.getElementById('msgSeg');
+  const barraEl = document.getElementById('barraProg');
+  const msgEl   = document.getElementById('msgTexto');
+
+  function tick() {
+    segundos--;
+    numEl.textContent  = segundos;
+    segEl.textContent  = segundos;
+
+    // Círculo SVG
+    const offset = CIRC * (segundos / TOTAL);
+    circle.style.strokeDashoffset = offset;
+
+    // Barra
+    barraEl.style.width = (segundos / TOTAL * 100) + '%';
+
+    if (segundos <= 0) {
+      clearInterval(timer);
+      // Mostrar botón
+      numEl.textContent = '✓';
+      numEl.style.fontSize = '1.2rem';
+      numEl.style.color = config.color;
+      msgEl.innerHTML = `<i class="fas fa-check-circle" style="color:${config.color};"></i> ¡Listo! Ya puedes unirte al grupo`;
+      btnUnirse.classList.add('visible');
+    }
+  }
+
+  const timer = setInterval(tick, 1000);
+</script>
+</body>
+</html>

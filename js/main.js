@@ -43,6 +43,15 @@ function labelPlataforma(plataforma) {
   return labels[(plataforma || 'whatsapp').toLowerCase()] || 'WhatsApp';
 }
 
+// ── Construir URL de redirección ──
+function redirUrl(grupo) {
+  const base   = '/redir.html';
+  const url    = encodeURIComponent(grupo.link || '#');
+  const nombre = encodeURIComponent(grupo.nombre || 'Grupo');
+  const plat   = encodeURIComponent((grupo.plataforma || 'whatsapp').toLowerCase());
+  return `${base}?url=${url}&nombre=${nombre}&plat=${plat}`;
+}
+
 // ============================================
 // CARGAR GRUPOS DESDE LA API
 // ============================================
@@ -99,6 +108,7 @@ function mostrarGrupoDestacado() {
   const icono = iconoPlataforma(plat);
   const color = colorPlataforma(plat);
   const label = labelPlataforma(plat);
+  const redir = redirUrl(destacado);
 
   banner.innerHTML = `
     <div style="
@@ -168,7 +178,7 @@ function mostrarGrupoDestacado() {
           👥 ${destacado.miembros || 0} &nbsp;·&nbsp; 📈 ${destacado.activos || 0}
         </div>
 
-        <a href="${destacado.link}" target="_blank" rel="noopener noreferrer" style="
+        <a href="${redir}" style="
           display:inline-flex; align-items:center; gap:7px;
           background:linear-gradient(135deg, ${color}, ${color}cc);
           color:#fff; padding:9px 20px; border-radius:50px;
@@ -207,7 +217,7 @@ function renderizarGrupos() {
   }
 
   const gruposOrdenados = gruposFiltrados.filter(g => g.destacado !== true);
-  const total = gruposOrdenados.length;
+  const total    = gruposOrdenados.length;
   const visibles = gruposOrdenados.slice(0, gruposMostrados);
 
   const resultCount = document.getElementById('resultCount');
@@ -227,6 +237,7 @@ function renderizarGrupos() {
     const icono = iconoPlataforma(plat);
     const color = colorPlataforma(plat);
     const label = labelPlataforma(plat);
+    const redir = redirUrl(grupo);
 
     return `
     <div class="grupo-card">
@@ -244,8 +255,7 @@ function renderizarGrupos() {
         <span class="stat-item"><i class="fas fa-users"></i> ${grupo.miembros || 0} miembros</span>
         <span class="stat-item"><i class="fas fa-chart-line"></i> ${grupo.activos || 0} activos</span>
       </div>
-      <a href="${grupo.link || '#'}" target="_blank" rel="noopener noreferrer"
-         class="join-btn" style="background:${color};">
+      <a href="${redir}" class="join-btn" style="background:${color};">
         <i class="${icono}"></i> Unirse al grupo
       </a>
     </div>`;
@@ -255,17 +265,10 @@ function renderizarGrupos() {
   const botonVerMas = hayMas ? `
     <div style="text-align:center; margin-top:1rem;">
       <button id="btnVerMas" style="
-        background:#fff;
-        border: 2px solid #25D366;
-        color: #25D366;
-        font-weight: 700;
-        font-size: 0.9rem;
-        padding: 10px 28px;
-        border-radius: 50px;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
+        background:#fff; border: 2px solid #25D366; color: #25D366;
+        font-weight: 700; font-size: 0.9rem; padding: 10px 28px;
+        border-radius: 50px; cursor: pointer;
+        display: inline-flex; align-items: center; gap: 7px;
         box-shadow: 0 2px 10px rgba(37,211,102,0.15);
       "
       onmouseover="this.style.background='#25D366'; this.style.color='#fff';"
@@ -290,12 +293,10 @@ function renderizarGrupos() {
 
 // ============================================
 // ACTUALIZAR CONTADORES DE CIUDADES
-// (respeta el filtro de plataforma activo)
 // ============================================
 function actualizarContadoresCiudades() {
   const ciudades = ['todos', 'Santa Cruz', 'La Paz', 'Cochabamba', 'Sucre', 'Tarija', 'Potosí', 'Oruro', 'Beni', 'Pando'];
 
-  // Filtrar por plataforma activa antes de contar
   const gruposFiltradosPorPlataforma = plataformaSeleccionada === 'todos'
     ? gruposData
     : gruposData.filter(g =>
@@ -314,7 +315,6 @@ function actualizarContadoresCiudades() {
     if (element) element.textContent = count;
   });
 
-  // Badge del botón selector de ciudad
   const badge = document.getElementById('selectedCityCount');
   if (badge) {
     const count = ciudadSeleccionada === 'todos'
@@ -377,7 +377,6 @@ function configurarEventListeners() {
     }, 800);
   });
 
-  // Filtros plataforma — resetea paginación y contadores
   document.querySelectorAll('.filter-chip').forEach(chip => {
     chip.addEventListener('click', function() {
       document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
@@ -401,7 +400,6 @@ function configurarEventListeners() {
     if (e.target === this) this.style.display = 'none';
   });
 
-  // Seleccionar ciudad — resetea paginación + stopPropagation
   document.querySelectorAll('.city-item').forEach(item => {
     item.addEventListener('click', function(e) {
       e.stopPropagation();
@@ -425,7 +423,6 @@ function configurarEventListeners() {
     });
   });
 
-  // Logo reset — resetea todo
   document.getElementById('logoResetBtn')?.addEventListener('click', function() {
     ciudadSeleccionada = 'todos';
     plataformaSeleccionada = 'whatsapp';
