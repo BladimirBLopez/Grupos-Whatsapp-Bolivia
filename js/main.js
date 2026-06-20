@@ -251,7 +251,6 @@ function renderizarGrupos() {
     </div>`;
   }).join('');
 
-  // Botón "Ver más" si quedan grupos
   const hayMas = gruposMostrados < total;
   const botonVerMas = hayMas ? `
     <div style="text-align:center; margin-top:1rem;">
@@ -268,7 +267,6 @@ function renderizarGrupos() {
         align-items: center;
         gap: 7px;
         box-shadow: 0 2px 10px rgba(37,211,102,0.15);
-        transition: all 0.2s;
       "
       onmouseover="this.style.background='#25D366'; this.style.color='#fff';"
       onmouseout="this.style.background='#fff'; this.style.color='#25D366';"
@@ -280,13 +278,11 @@ function renderizarGrupos() {
 
   container.innerHTML = tarjetas + botonVerMas;
 
-  // Evento del botón ver más
   document.getElementById('btnVerMas')?.addEventListener('click', () => {
     gruposMostrados += GRUPOS_POR_PAGINA;
     renderizarGrupos();
-    // Scroll suave al nuevo contenido
     const cards = container.querySelectorAll('.grupo-card');
-    if (cards.length > 0) {
+    if (cards.length >= GRUPOS_POR_PAGINA) {
       cards[cards.length - GRUPOS_POR_PAGINA]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   });
@@ -294,25 +290,38 @@ function renderizarGrupos() {
 
 // ============================================
 // ACTUALIZAR CONTADORES DE CIUDADES
+// (respeta el filtro de plataforma activo)
 // ============================================
 function actualizarContadoresCiudades() {
   const ciudades = ['todos', 'Santa Cruz', 'La Paz', 'Cochabamba', 'Sucre', 'Tarija', 'Potosí', 'Oruro', 'Beni', 'Pando'];
 
+  // Filtrar por plataforma activa antes de contar
+  const gruposFiltradosPorPlataforma = plataformaSeleccionada === 'todos'
+    ? gruposData
+    : gruposData.filter(g =>
+        (g.plataforma || 'whatsapp').toLowerCase() === plataformaSeleccionada.toLowerCase()
+      );
+
   ciudades.forEach(ciudad => {
-    let count = ciudad === 'todos'
-      ? gruposData.length
-      : gruposData.filter(g => g.ubicacion && g.ubicacion.toLowerCase() === ciudad.toLowerCase()).length;
+    const count = ciudad === 'todos'
+      ? gruposFiltradosPorPlataforma.length
+      : gruposFiltradosPorPlataforma.filter(g =>
+          g.ubicacion && g.ubicacion.toLowerCase() === ciudad.toLowerCase()
+        ).length;
 
     const elementId = ciudad === 'todos' ? 'modalTotalCount' : `modal${ciudad.replace(/ /g, '')}Count`;
     const element = document.getElementById(elementId);
     if (element) element.textContent = count;
   });
 
+  // Badge del botón selector de ciudad
   const badge = document.getElementById('selectedCityCount');
   if (badge) {
     const count = ciudadSeleccionada === 'todos'
-      ? gruposData.length
-      : gruposData.filter(g => g.ubicacion && g.ubicacion.toLowerCase() === ciudadSeleccionada.toLowerCase()).length;
+      ? gruposFiltradosPorPlataforma.length
+      : gruposFiltradosPorPlataforma.filter(g =>
+          g.ubicacion && g.ubicacion.toLowerCase() === ciudadSeleccionada.toLowerCase()
+        ).length;
     badge.textContent = `(${count})`;
   }
 }
@@ -368,7 +377,7 @@ function configurarEventListeners() {
     }, 800);
   });
 
-  // Filtros plataforma — resetea paginación
+  // Filtros plataforma — resetea paginación y contadores
   document.querySelectorAll('.filter-chip').forEach(chip => {
     chip.addEventListener('click', function() {
       document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
@@ -376,6 +385,7 @@ function configurarEventListeners() {
       plataformaSeleccionada = this.dataset.platform;
       gruposMostrados = GRUPOS_POR_PAGINA;
       renderizarGrupos();
+      actualizarContadoresCiudades();
     });
   });
 
@@ -391,7 +401,7 @@ function configurarEventListeners() {
     if (e.target === this) this.style.display = 'none';
   });
 
-  // Seleccionar ciudad — resetea paginación
+  // Seleccionar ciudad — resetea paginación + stopPropagation
   document.querySelectorAll('.city-item').forEach(item => {
     item.addEventListener('click', function(e) {
       e.stopPropagation();
@@ -415,7 +425,7 @@ function configurarEventListeners() {
     });
   });
 
-  // Logo reset — resetea paginación
+  // Logo reset — resetea todo
   document.getElementById('logoResetBtn')?.addEventListener('click', function() {
     ciudadSeleccionada = 'todos';
     plataformaSeleccionada = 'whatsapp';
