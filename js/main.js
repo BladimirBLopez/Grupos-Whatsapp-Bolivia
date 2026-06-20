@@ -43,13 +43,68 @@ function labelPlataforma(plataforma) {
   return labels[(plataforma || 'whatsapp').toLowerCase()] || 'WhatsApp';
 }
 
-// ── Construir URL de redirección ──
 function redirUrl(grupo) {
-  const base   = '/redir.html';
   const url    = encodeURIComponent(grupo.link || '#');
   const nombre = encodeURIComponent(grupo.nombre || 'Grupo');
   const plat   = encodeURIComponent((grupo.plataforma || 'whatsapp').toLowerCase());
-  return `${base}?url=${url}&nombre=${nombre}&plat=${plat}`;
+  const id     = encodeURIComponent(grupo.id || '');
+  return `/redir.html?url=${url}&nombre=${nombre}&plat=${plat}&id=${id}`;
+}
+
+// ============================================
+// REGISTRAR VISITA
+// ============================================
+async function registrarVisita(id) {
+  if (!id) return;
+  try {
+    await fetch('/api/grupos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ accion: 'visita', id })
+    });
+  } catch (e) {}
+}
+
+// ============================================
+// REPORTAR LINK CAÍDO
+// ============================================
+async function reportarLink(id, nombre) {
+  if (!id) return;
+  const confirmado = confirm(`¿Reportar el enlace de "${nombre}" como caído o inválido?`);
+  if (!confirmado) return;
+
+  try {
+    const res = await fetch('/api/grupos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ accion: 'reporte', id })
+    });
+    if (res.ok) mostrarToast('⚠️ Reporte enviado, gracias por avisar');
+  } catch (e) {
+    mostrarToast('❌ Error al enviar reporte');
+  }
+}
+
+// ============================================
+// TOAST NOTIFICACIÓN
+// ============================================
+function mostrarToast(msg) {
+  let toast = document.getElementById('toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'toast';
+    toast.style.cssText = `
+      position:fixed; bottom:80px; left:50%; transform:translateX(-50%);
+      background:#1a2c3e; color:#fff; padding:10px 20px;
+      border-radius:50px; font-size:0.82rem; font-weight:600;
+      z-index:9999; opacity:0; transition:opacity 0.3s;
+      white-space:nowrap; box-shadow:0 4px 16px rgba(0,0,0,0.2);
+    `;
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  setTimeout(() => { toast.style.opacity = '0'; }, 3000);
 }
 
 // ============================================
@@ -90,13 +145,14 @@ async function cargarGrupos() {
 // ============================================
 function iniciarPagina() {
   mostrarGrupoDestacado();
+  mostrarTopVisitados();
   actualizarContadoresCiudades();
   renderizarGrupos();
   configurarEventListeners();
 }
 
 // ============================================
-// BANNER GRUPO DESTACADO - COMPACTO BLANCO/DORADO
+// BANNER GRUPO DESTACADO
 // ============================================
 function mostrarGrupoDestacado() {
   const banner = document.getElementById('grupoDestacadoFijo');
@@ -111,86 +167,80 @@ function mostrarGrupoDestacado() {
   const redir = redirUrl(destacado);
 
   banner.innerHTML = `
-    <div style="
-      position: relative;
-      border-radius: 18px;
-      overflow: hidden;
-      margin-bottom: 1rem;
-      background: #ffffff;
-      border: 2px solid #E8B923;
-      box-shadow: 0 0 0 4px rgba(232,185,35,0.1), 0 8px 28px rgba(232,185,35,0.18), 0 2px 10px rgba(0,0,0,0.06);
-    ">
-      <div style="
-        background: linear-gradient(90deg, #B8860B, #FFD700, #F5A623, #FFD700, #B8860B);
-        padding: 7px 14px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 7px;
-      ">
-        <i class="fas fa-crown" style="color:#fff; font-size:0.75rem;"></i>
-        <span style="font-size:0.6rem; font-weight:900; letter-spacing:3px; color:#fff; text-transform:uppercase;">
-          Grupo destacado de la semana
-        </span>
-        <i class="fas fa-crown" style="color:#fff; font-size:0.75rem;"></i>
+    <div style="position:relative;border-radius:18px;overflow:hidden;margin-bottom:1rem;background:#ffffff;border:2px solid #E8B923;box-shadow:0 0 0 4px rgba(232,185,35,0.1),0 8px 28px rgba(232,185,35,0.18),0 2px 10px rgba(0,0,0,0.06);">
+      <div style="background:linear-gradient(90deg,#B8860B,#FFD700,#F5A623,#FFD700,#B8860B);padding:7px 14px;display:flex;align-items:center;justify-content:center;gap:7px;">
+        <i class="fas fa-crown" style="color:#fff;font-size:0.75rem;"></i>
+        <span style="font-size:0.6rem;font-weight:900;letter-spacing:3px;color:#fff;text-transform:uppercase;">Grupo destacado de la semana</span>
+        <i class="fas fa-crown" style="color:#fff;font-size:0.75rem;"></i>
       </div>
-
-      <div style="padding: 0.85rem 1rem;">
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; margin-bottom:0.4rem; flex-wrap:wrap;">
-          <h3 style="margin:0; font-size:1rem; font-weight:800; color:#0f1f2e; flex:1;">${destacado.nombre}</h3>
-          <div style="display:flex; gap:5px; align-items:center; flex-shrink:0;">
-            <span style="
-              background: linear-gradient(135deg, #B8860B, #FFD700);
-              color:#fff; font-size:0.6rem; font-weight:800;
-              padding:3px 8px; border-radius:20px;
-              display:inline-flex; align-items:center; gap:3px;
-            "><i class="fas fa-star"></i> DESTACADO</span>
-            <span style="
-              background:${color}18; color:${color};
-              border:1.5px solid ${color}55;
-              font-size:0.6rem; font-weight:700;
-              padding:3px 8px; border-radius:20px;
-              display:inline-flex; align-items:center; gap:3px;
-            "><i class="${icono}"></i> ${label}</span>
+      <div style="padding:0.85rem 1rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:0.4rem;flex-wrap:wrap;">
+          <h3 style="margin:0;font-size:1rem;font-weight:800;color:#0f1f2e;flex:1;">${destacado.nombre}</h3>
+          <div style="display:flex;gap:5px;align-items:center;flex-shrink:0;">
+            <span style="background:linear-gradient(135deg,#B8860B,#FFD700);color:#fff;font-size:0.6rem;font-weight:800;padding:3px 8px;border-radius:20px;display:inline-flex;align-items:center;gap:3px;">
+              <i class="fas fa-star"></i> DESTACADO
+            </span>
+            <span style="background:${color}18;color:${color};border:1.5px solid ${color}55;font-size:0.6rem;font-weight:700;padding:3px 8px;border-radius:20px;display:inline-flex;align-items:center;gap:3px;">
+              <i class="${icono}"></i> ${label}
+            </span>
           </div>
         </div>
-
-        ${destacado.descripcion ? `
-        <p style="
-          margin:0 0 0.5rem;
-          font-size:0.78rem; color:#5a7080; line-height:1.4;
-          display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
-        ">${destacado.descripcion}</p>` : ''}
-
-        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:4px; margin-bottom:0.5rem;">
-          <span style="font-size:0.78rem; font-weight:700; color:#e65100;">
-            <i class="fas fa-map-marker-alt"></i> ${destacado.ubicacion || 'Bolivia'}
-          </span>
-          <span style="
-            background:linear-gradient(135deg,#ff6b35,#f7931e);
-            color:#fff; font-size:0.68rem; font-weight:700;
-            padding:2px 9px; border-radius:20px;
-            box-shadow:0 2px 6px rgba(255,107,53,0.3);
-          ">🔥 +50 miembros/semana</span>
+        ${destacado.descripcion ? `<p style="margin:0 0 0.5rem;font-size:0.78rem;color:#5a7080;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${destacado.descripcion}</p>` : ''}
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px;margin-bottom:0.5rem;">
+          <span style="font-size:0.78rem;font-weight:700;color:#e65100;"><i class="fas fa-map-marker-alt"></i> ${destacado.ubicacion || 'Bolivia'}</span>
+          <span style="background:linear-gradient(135deg,#ff6b35,#f7931e);color:#fff;font-size:0.68rem;font-weight:700;padding:2px 9px;border-radius:20px;">🔥 +50 miembros/semana</span>
         </div>
-
-        <div style="font-size:0.78rem; color:#555; margin-bottom:0.75rem;">
-          👥 ${destacado.miembros || 0} &nbsp;·&nbsp; 📈 ${destacado.activos || 0}
-        </div>
-
-        <a href="${redir}" style="
-          display:inline-flex; align-items:center; gap:7px;
-          background:linear-gradient(135deg, ${color}, ${color}cc);
-          color:#fff; padding:9px 20px; border-radius:50px;
-          font-weight:800; font-size:0.88rem; text-decoration:none;
-          box-shadow:0 4px 16px ${color}44;
-        "
-        onmouseover="this.style.transform='scale(1.02)';"
-        onmouseout="this.style.transform='scale(1)';"
-        >
+        <div style="font-size:0.78rem;color:#555;margin-bottom:0.75rem;">👥 ${destacado.miembros || 0} &nbsp;·&nbsp; 📈 ${destacado.activos || 0}</div>
+        <a href="${redir}" onclick="registrarVisita('${destacado.id}')" style="display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,${color},${color}cc);color:#fff;padding:9px 20px;border-radius:50px;font-weight:800;font-size:0.88rem;text-decoration:none;box-shadow:0 4px 16px ${color}44;">
           <i class="${icono}"></i> Unirme ahora
         </a>
       </div>
+    </div>
+  `;
+}
+
+// ============================================
+// TOP 3 MÁS VISITADOS
+// ============================================
+function mostrarTopVisitados() {
+  const container = document.getElementById('topVisitados');
+  if (!container) return;
+
+  const top = [...gruposData]
+    .filter(g => !g.destacado && (g.visitas || 0) > 0)
+    .sort((a, b) => (b.visitas || 0) - (a.visitas || 0))
+    .slice(0, 3);
+
+  if (top.length === 0) {
+    container.style.display = 'none';
+    return;
+  }
+
+  container.style.display = 'block';
+  const medallas = ['🥇', '🥈', '🥉'];
+
+  container.innerHTML = `
+    <div style="background:linear-gradient(135deg,#fff8e1,#fffde7);border:1.5px solid #FFD700;border-radius:16px;padding:0.8rem 1rem;margin-bottom:1rem;">
+      <div style="font-size:0.75rem;font-weight:800;color:#B8860B;margin-bottom:0.7rem;display:flex;align-items:center;gap:6px;">
+        <i class="fas fa-fire" style="color:#ff6b35;"></i> Grupos más visitados
+      </div>
+      ${top.map((g, i) => {
+        const color = colorPlataforma(g.plataforma);
+        const icono = iconoPlataforma(g.plataforma);
+        return `
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0;${i < top.length - 1 ? 'border-bottom:1px solid rgba(0,0,0,0.05);' : ''}">
+          <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0;">
+            <span style="font-size:1rem;">${medallas[i]}</span>
+            <span style="font-size:0.78rem;font-weight:700;color:#1a2c3e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;">${g.nombre}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <span style="font-size:0.65rem;color:#8ba0ae;"><i class="fas fa-eye"></i> ${g.visitas || 0}</span>
+            <a href="${redirUrl(g)}" onclick="registrarVisita('${g.id}')" style="background:${color};color:#fff;font-size:0.65rem;font-weight:700;padding:3px 10px;border-radius:20px;text-decoration:none;display:inline-flex;align-items:center;gap:3px;">
+              <i class="${icono}"></i> Unirse
+            </a>
+          </div>
+        </div>`;
+      }).join('')}
     </div>
   `;
 }
@@ -226,27 +276,33 @@ function renderizarGrupos() {
   if (total === 0) {
     container.innerHTML = `
       <div class="empty-message">
-        <i class="fas fa-search" style="font-size:2rem; display:block; margin-bottom:0.5rem;"></i>
+        <i class="fas fa-search" style="font-size:2rem;display:block;margin-bottom:0.5rem;"></i>
         No se encontraron grupos para esta búsqueda
       </div>`;
     return;
   }
 
   const tarjetas = visibles.map(grupo => {
-    const plat  = grupo.plataforma || 'whatsapp';
-    const icono = iconoPlataforma(plat);
-    const color = colorPlataforma(plat);
-    const label = labelPlataforma(plat);
-    const redir = redirUrl(grupo);
+    const plat     = grupo.plataforma || 'whatsapp';
+    const icono    = iconoPlataforma(plat);
+    const color    = colorPlataforma(plat);
+    const label    = labelPlataforma(plat);
+    const redir    = redirUrl(grupo);
+    const reportes = grupo.reportes || 0;
+    const nombreSeguro = (grupo.nombre || '').replace(/'/g, "\\'");
 
     return `
-    <div class="grupo-card">
+    <div class="grupo-card" ${reportes >= 3 ? 'style="border-color:#ffcccc;"' : ''}>
       <div class="card-header">
         <h3>${grupo.nombre || 'Sin nombre'}</h3>
-        <span class="badge-whatsapp" style="background:${color}20; color:${color}; border:1px solid ${color}40;">
+        <span class="badge-whatsapp" style="background:${color}20;color:${color};border:1px solid ${color}40;">
           <i class="${icono}"></i> ${label}
         </span>
       </div>
+      ${reportes >= 3 ? `
+      <div style="margin:0 0.8rem 0.3rem;background:#fff3f3;border-radius:8px;padding:4px 8px;font-size:0.65rem;color:#e74c3c;font-weight:600;">
+        ⚠️ Link posiblemente caído (${reportes} reportes)
+      </div>` : ''}
       ${grupo.descripcion ? `<div class="descripcion">${grupo.descripcion}</div>` : ''}
       <div class="ubicacion">
         <i class="fas fa-map-marker-alt"></i> ${grupo.ubicacion || 'Ubicación no especificada'}
@@ -254,26 +310,30 @@ function renderizarGrupos() {
       <div class="stats">
         <span class="stat-item"><i class="fas fa-users"></i> ${grupo.miembros || 0} miembros</span>
         <span class="stat-item"><i class="fas fa-chart-line"></i> ${grupo.activos || 0} activos</span>
+        <span class="stat-item"><i class="fas fa-eye"></i> ${grupo.visitas || 0} visitas</span>
       </div>
-      <a href="${redir}" class="join-btn" style="background:${color};">
-        <i class="${icono}"></i> Unirse al grupo
-      </a>
+      <div style="display:flex;gap:0.5rem;margin:0 0.7rem 0.7rem;">
+        <a href="${redir}" onclick="registrarVisita('${grupo.id}')"
+           class="join-btn" style="background:${color};flex:1;margin:0;">
+          <i class="${icono}"></i> Unirse al grupo
+        </a>
+        <button onclick="reportarLink('${grupo.id}', '${nombreSeguro}')"
+          style="background:#fff;border:1.5px solid #e0e0e0;color:#8ba0ae;border-radius:50px;padding:0 12px;font-size:0.7rem;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all 0.2s;white-space:nowrap;"
+          onmouseover="this.style.borderColor='#e74c3c';this.style.color='#e74c3c';"
+          onmouseout="this.style.borderColor='#e0e0e0';this.style.color='#8ba0ae';"
+          title="Reportar link caído">
+          <i class="fas fa-flag"></i>
+        </button>
+      </div>
     </div>`;
   }).join('');
 
   const hayMas = gruposMostrados < total;
   const botonVerMas = hayMas ? `
-    <div style="text-align:center; margin-top:1rem;">
-      <button id="btnVerMas" style="
-        background:#fff; border: 2px solid #25D366; color: #25D366;
-        font-weight: 700; font-size: 0.9rem; padding: 10px 28px;
-        border-radius: 50px; cursor: pointer;
-        display: inline-flex; align-items: center; gap: 7px;
-        box-shadow: 0 2px 10px rgba(37,211,102,0.15);
-      "
-      onmouseover="this.style.background='#25D366'; this.style.color='#fff';"
-      onmouseout="this.style.background='#fff'; this.style.color='#25D366';"
-      >
+    <div style="text-align:center;margin-top:1rem;">
+      <button id="btnVerMas" style="background:#fff;border:2px solid #25D366;color:#25D366;font-weight:700;font-size:0.9rem;padding:10px 28px;border-radius:50px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;box-shadow:0 2px 10px rgba(37,211,102,0.15);"
+        onmouseover="this.style.background='#25D366';this.style.color='#fff';"
+        onmouseout="this.style.background='#fff';this.style.color='#25D366';">
         <i class="fas fa-chevron-down"></i>
         Ver más grupos (${total - gruposMostrados} restantes)
       </button>
@@ -358,7 +418,7 @@ function configurarEventListeners() {
     const user = document.getElementById('loginUser').value.trim();
     const pass = document.getElementById('loginPass').value.trim();
     const error = document.getElementById('loginError');
-    const btn = document.getElementById('loginSubmitBtn');
+    const btn   = document.getElementById('loginSubmitBtn');
 
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';

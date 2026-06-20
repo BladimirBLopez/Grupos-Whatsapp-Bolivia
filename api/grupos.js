@@ -26,7 +26,7 @@ export default async function handler(req, res) {
     const db = client.db('grupos_db');
     const col = db.collection('grupos');
 
-    // ── GET: obtener todos (con filtro opcional por plataforma) ─────
+    // ── GET: obtener todos ──────────────────────────────────────────
     if (req.method === 'GET') {
       const { plataforma } = req.query;
       const filtro = plataforma && PLATAFORMAS_VALIDAS.includes(plataforma)
@@ -42,10 +42,29 @@ export default async function handler(req, res) {
       return res.status(200).json({ grupos: data });
     }
 
-    // ── POST: crear grupo ───────────────────────────────────────────
+    // ── POST: crear grupo / registrar visita / reportar ─────────────
     if (req.method === 'POST') {
-      const { grupo } = req.body;
+      const { grupo, accion, id } = req.body;
 
+      // Sumar visita
+      if (accion === 'visita' && id) {
+        await col.updateOne(
+          { _id: new ObjectId(id) },
+          { $inc: { visitas: 1 } }
+        );
+        return res.status(200).json({ success: true });
+      }
+
+      // Reportar link caído
+      if (accion === 'reporte' && id) {
+        await col.updateOne(
+          { _id: new ObjectId(id) },
+          { $inc: { reportes: 1 } }
+        );
+        return res.status(200).json({ success: true });
+      }
+
+      // Crear grupo normal
       if (!grupo?.nombre || !grupo?.link) {
         return res.status(400).json({ error: 'Faltan nombre o link' });
       }
@@ -61,6 +80,8 @@ export default async function handler(req, res) {
         plataforma:  PLATAFORMAS_VALIDAS.includes(grupo.plataforma)
                        ? grupo.plataforma
                        : 'whatsapp',
+        visitas:     0,
+        reportes:    0,
         fecha:       new Date().toISOString()
       };
 
@@ -78,8 +99,8 @@ export default async function handler(req, res) {
 
       const { _id, id: ignoredId, fecha, ...camposLimpios } = datos || {};
 
-      if (camposLimpios.miembros  !== undefined) camposLimpios.miembros  = Number(camposLimpios.miembros);
-      if (camposLimpios.activos   !== undefined) camposLimpios.activos   = Number(camposLimpios.activos);
+      if (camposLimpios.miembros !== undefined)   camposLimpios.miembros  = Number(camposLimpios.miembros);
+      if (camposLimpios.activos !== undefined)    camposLimpios.activos   = Number(camposLimpios.activos);
       if (camposLimpios.plataforma !== undefined &&
           !PLATAFORMAS_VALIDAS.includes(camposLimpios.plataforma)) {
         camposLimpios.plataforma = 'otro';

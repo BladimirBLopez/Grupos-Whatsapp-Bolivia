@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -35,21 +36,15 @@
     .login-modal {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background: rgba(0,0,0,0.7);
       z-index: 9999;
       align-items: center;
       justify-content: center;
       backdrop-filter: blur(5px);
     }
-    
-    .login-modal.show {
-      display: flex;
-    }
-    
+    .login-modal.show { display: flex; }
     .login-modal-content {
       background: white;
       border-radius: 24px;
@@ -60,127 +55,23 @@
       animation: slideUp 0.4s ease;
       position: relative;
     }
-    
-    .login-modal-content .logo {
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-    
-    .login-modal-content .logo i {
-      font-size: 2.5rem;
-      color: #25D366;
-      display: block;
-      margin-bottom: 0.3rem;
-    }
-    
-    .login-modal-content .logo h2 {
-      font-family: 'Poppins', sans-serif;
-      font-size: 1.5rem;
-      background: linear-gradient(135deg, #075E54, #25D366);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    
-    .login-modal-content .logo p {
-      color: #8ba0ae;
-      font-size: 0.8rem;
-      -webkit-text-fill-color: #8ba0ae;
-    }
-    
-    .login-modal-content .form-group {
-      margin-bottom: 1rem;
-    }
-    
-    .login-modal-content .form-group label {
-      display: block;
-      font-weight: 600;
-      font-size: 0.8rem;
-      color: #1a2c3e;
-      margin-bottom: 4px;
-    }
-    
-    .login-modal-content .form-group label i {
-      margin-right: 6px;
-      color: #25D366;
-    }
-    
-    .login-modal-content .form-group input {
-      width: 100%;
-      padding: 10px 14px;
-      border: 2px solid #e0e0e0;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      font-family: 'Inter', sans-serif;
-      transition: border-color 0.2s;
-    }
-    
-    .login-modal-content .form-group input:focus {
-      outline: none;
-      border-color: #25D366;
-      box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
-    }
-    
-    .login-modal-content .btn-login {
-      width: 100%;
-      padding: 11px;
-      border: none;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #25D366, #128C7E);
-      color: white;
-      font-weight: 700;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-family: 'Inter', sans-serif;
-      margin-top: 0.5rem;
-    }
-    
-    .login-modal-content .btn-login:hover {
-      transform: scale(1.02);
-      box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
-    }
-    
-    .login-modal-content .btn-login:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-    
-    .login-modal-content .error-msg {
-      color: #dc3545;
-      font-size: 0.8rem;
-      text-align: center;
-      margin-top: 0.8rem;
-      display: none;
-    }
-    
-    .login-modal-content .error-msg.show {
-      display: block;
-    }
-    
-    .login-modal-content .close-login {
-      position: absolute;
-      top: 12px;
-      right: 16px;
-      background: none;
-      border: none;
-      font-size: 1.6rem;
-      cursor: pointer;
-      color: #8ba0ae;
-      transition: color 0.2s;
-    }
-    
-    .login-modal-content .close-login:hover {
-      color: #1a2c3e;
-    }
-    
-    .login-modal-content .footer-text {
-      text-align: center;
-      margin-top: 1rem;
-      font-size: 0.65rem;
-      color: #8ba0ae;
-    }
-    
+    .login-modal-content .logo { text-align: center; margin-bottom: 1.5rem; }
+    .login-modal-content .logo i { font-size: 2.5rem; color: #25D366; display: block; margin-bottom: 0.3rem; }
+    .login-modal-content .logo h2 { font-family: 'Poppins', sans-serif; font-size: 1.5rem; background: linear-gradient(135deg, #075E54, #25D366); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .login-modal-content .logo p { color: #8ba0ae; font-size: 0.8rem; -webkit-text-fill-color: #8ba0ae; }
+    .login-modal-content .form-group { margin-bottom: 1rem; }
+    .login-modal-content .form-group label { display: block; font-weight: 600; font-size: 0.8rem; color: #1a2c3e; margin-bottom: 4px; }
+    .login-modal-content .form-group label i { margin-right: 6px; color: #25D366; }
+    .login-modal-content .form-group input { width: 100%; padding: 10px 14px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 0.95rem; font-family: 'Inter', sans-serif; transition: border-color 0.2s; }
+    .login-modal-content .form-group input:focus { outline: none; border-color: #25D366; box-shadow: 0 0 0 3px rgba(37,211,102,0.1); }
+    .login-modal-content .btn-login { width: 100%; padding: 11px; border: none; border-radius: 10px; background: linear-gradient(135deg, #25D366, #128C7E); color: white; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.3s; font-family: 'Inter', sans-serif; margin-top: 0.5rem; }
+    .login-modal-content .btn-login:hover { transform: scale(1.02); box-shadow: 0 4px 20px rgba(37,211,102,0.4); }
+    .login-modal-content .btn-login:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .login-modal-content .error-msg { color: #dc3545; font-size: 0.8rem; text-align: center; margin-top: 0.8rem; display: none; }
+    .login-modal-content .error-msg.show { display: block; }
+    .login-modal-content .close-login { position: absolute; top: 12px; right: 16px; background: none; border: none; font-size: 1.6rem; cursor: pointer; color: #8ba0ae; transition: color 0.2s; }
+    .login-modal-content .close-login:hover { color: #1a2c3e; }
+    .login-modal-content .footer-text { text-align: center; margin-top: 1rem; font-size: 0.65rem; color: #8ba0ae; }
     @keyframes slideUp {
       from { transform: translateY(30px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
@@ -197,7 +88,6 @@
       <p>Compra & Venta | Grupos exclusivos</p>
     </div>
     <div class="nav-links">
-      <!-- BOTÓN ADMIN - Ahora abre modal de login -->
       <button class="nav-btn publish-btn" id="btnAdminLogin" style="text-decoration:none; border:none; cursor:pointer;">
         <i class="fas fa-crown"></i> Admin
       </button>
@@ -214,6 +104,9 @@
     <div class="filter-chip" data-platform="discord"><i class="fab fa-discord"></i> Discord</div>
     <div class="filter-chip" data-platform="facebook"><i class="fab fa-facebook"></i> Facebook</div>
   </div>
+
+  <!-- Top más visitados -->
+  <div id="topVisitados" style="display:none;"></div>
 
   <!-- Selector de ciudad -->
   <div class="city-selector-btn" id="openCityModalBtn">
@@ -238,123 +131,32 @@
 
   <!-- Grid grupos -->
   <div id="gruposContainer" class="grupos-grid"></div>
-  
-  <!-- Banner sitios -->
-<!-- ============================================ -->
-<!-- BANNER TIKTOK DOWN FREE - VERSIÓN FINAL      -->
-<!-- ============================================ -->
-<a href="https://tikdown-free.vercel.app/" 
-   target="_blank" 
-   rel="noopener noreferrer" 
-   style="
-     display: flex;
-     align-items: center;
-     justify-content: space-between;
-     flex-wrap: wrap;
-     gap: 0.6rem 1rem;
-     background: linear-gradient(145deg, #1a1a2e, #16213e);
-     border-radius: 18px;
-     padding: 0.9rem 1.5rem;
-     margin: 1.2rem 0;
-     border: 1px solid rgba(255, 0, 80, 0.25);
-     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.6);
-     text-decoration: none;
-     color: white;
-     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-     transition: all 0.25s ease;
-   "
-   onmouseover="this.style.borderColor='#ff0050'; this.style.boxShadow='0 8px 32px rgba(255,0,80,0.25)'"
-   onmouseout="this.style.borderColor='rgba(255,0,80,0.25)'; this.style.boxShadow='0 8px 28px rgba(0,0,0,0.6)'"
->
 
-  <!-- ===== LADO IZQUIERDO ===== -->
-  <div style="
-    display: flex;
-    align-items: center;
-    gap: 0.9rem;
-    flex: 1 1 180px;
-  ">
-    <!-- Icono -->
-    <div style="
-      background: linear-gradient(135deg, #ff0050, #cc0038);
-      width: 44px;
-      height: 44px;
-      min-width: 44px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      box-shadow: 0 4px 14px rgba(255, 0, 80, 0.3);
-      flex-shrink: 0;
-    ">
-      🎵
-    </div>
-
-    <!-- Texto -->
-    <div style="
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      line-height: 1.3;
-    ">
-      <div style="
-        font-weight: 700;
-        font-size: 1.15rem;
-        letter-spacing: -0.01em;
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 0.2rem;
-      ">
-        <span style="color: #ffffff;">Tik</span>
-        <span style="color: #ff4d7a;">Down</span>
-        <span style="font-weight: 400; opacity: 0.5; font-size: 0.8rem; margin-left: 0.1rem;">Free</span>
-      </div>
-      <div style="
-        font-size: 0.78rem;
-        opacity: 0.6;
-        font-weight: 400;
-        margin-top: 0.05rem;
-      ">
-        Descarga videos y MP3 de TikTok sin marca de agua
+  <!-- Banner TikDown -->
+  <a href="https://tikdown-free.vercel.app/" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.6rem 1rem;background:linear-gradient(145deg,#1a1a2e,#16213e);border-radius:18px;padding:0.9rem 1.5rem;margin:1.2rem 0;border:1px solid rgba(255,0,80,0.25);box-shadow:0 8px 28px rgba(0,0,0,0.6);text-decoration:none;color:white;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;transition:all 0.25s ease;"
+    onmouseover="this.style.borderColor='#ff0050'; this.style.boxShadow='0 8px 32px rgba(255,0,80,0.25)'"
+    onmouseout="this.style.borderColor='rgba(255,0,80,0.25)'; this.style.boxShadow='0 8px 28px rgba(0,0,0,0.6)'">
+    <div style="display:flex;align-items:center;gap:0.9rem;flex:1 1 180px;">
+      <div style="background:linear-gradient(135deg,#ff0050,#cc0038);width:44px;height:44px;min-width:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 4px 14px rgba(255,0,80,0.3);flex-shrink:0;">🎵</div>
+      <div style="display:flex;flex-direction:column;justify-content:center;line-height:1.3;">
+        <div style="font-weight:700;font-size:1.15rem;letter-spacing:-0.01em;display:flex;align-items:center;flex-wrap:wrap;gap:0.2rem;">
+          <span style="color:#ffffff;">Tik</span><span style="color:#ff4d7a;">Down</span>
+          <span style="font-weight:400;opacity:0.5;font-size:0.8rem;margin-left:0.1rem;">Free</span>
+        </div>
+        <div style="font-size:0.78rem;opacity:0.6;font-weight:400;margin-top:0.05rem;">Descarga videos y MP3 de TikTok sin marca de agua</div>
       </div>
     </div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:0.4rem;background:linear-gradient(135deg,#ff0050,#d90044);padding:0.45rem 1.3rem;border-radius:60px;font-weight:600;font-size:0.82rem;color:white;box-shadow:0 4px 16px rgba(255,0,80,0.3);flex-shrink:0;white-space:nowrap;cursor:pointer;"
+      onmouseover="this.style.background='linear-gradient(135deg,#ff1a5e,#e00048)'"
+      onmouseout="this.style.background='linear-gradient(135deg,#ff0050,#d90044)'">
+      <span>Visitar sitio</span><span style="font-size:1rem;line-height:1;">→</span>
+    </div>
+  </a>
+
+  <!-- Footer -->
+  <div class="footer-note">
+    <i class="fab fa-whatsapp"></i> Grupos verificados de compra y venta Bolivia
   </div>
-
-  <!-- ===== BOTÓN CTA ===== -->
-  <div style="
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    background: linear-gradient(135deg, #ff0050, #d90044);
-    padding: 0.45rem 1.3rem;
-    border-radius: 60px;
-    font-weight: 600;
-    font-size: 0.82rem;
-    color: white;
-    box-shadow: 0 4px 16px rgba(255, 0, 80, 0.3);
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-    letter-spacing: 0.02em;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    white-space: nowrap;
-    cursor: pointer;
-  "
-  onmouseover="this.style.background='linear-gradient(135deg, #ff1a5e, #e00048)'; this.style.boxShadow='0 6px 22px rgba(255,0,80,0.45)'; this.style.transform='scale(1.03)';"
-  onmouseout="this.style.background='linear-gradient(135deg, #ff0050, #d90044)'; this.style.boxShadow='0 4px 16px rgba(255,0,80,0.3)'; this.style.transform='scale(1)';"
-  >
-    <span>Visitar sitio</span>
-    <span style="font-size: 1rem; line-height: 1;">→</span>
-  </div>
-
-</a>
-
-<!-- FOOTER -->
-<div class="footer-note">
-  <i class="fab fa-whatsapp"></i> Grupos verificados de compra y venta Bolivia
-</div>
 </div>
 
 <!-- ===== MODAL DE CIUDADES ===== -->
@@ -364,81 +166,49 @@
       <h3><i class="fas fa-map-marker-alt"></i> Seleccionar ciudad</h3>
       <button class="close-city-modal" id="closeCityModalBtn">&times;</button>
     </div>
-    
     <div class="city-search">
       <i class="fas fa-search"></i>
       <input type="text" id="citySearchInput" placeholder="Buscar ciudad...">
     </div>
-    
     <div class="city-list" id="cityList">
       <div class="city-item active" data-city="todos">
-        <div class="city-info">
-          <i class="fas fa-globe-americas"></i>
-          <span>Todos los departamentos</span>
-        </div>
+        <div class="city-info"><i class="fas fa-globe-americas"></i><span>Todos los departamentos</span></div>
         <span class="city-count" id="modalTotalCount">0</span>
       </div>
       <div class="city-item" data-city="Santa Cruz">
-        <div class="city-info">
-          <i class="fas fa-tree"></i>
-          <span>Santa Cruz</span>
-        </div>
+        <div class="city-info"><i class="fas fa-tree"></i><span>Santa Cruz</span></div>
         <span class="city-count" id="modalSantaCruzCount">0</span>
       </div>
       <div class="city-item" data-city="La Paz">
-        <div class="city-info">
-          <i class="fas fa-mountain"></i>
-          <span>La Paz</span>
-        </div>
+        <div class="city-info"><i class="fas fa-mountain"></i><span>La Paz</span></div>
         <span class="city-count" id="modalLaPazCount">0</span>
       </div>
       <div class="city-item" data-city="Cochabamba">
-        <div class="city-info">
-          <i class="fas fa-cloud-sun"></i>
-          <span>Cochabamba</span>
-        </div>
+        <div class="city-info"><i class="fas fa-cloud-sun"></i><span>Cochabamba</span></div>
         <span class="city-count" id="modalCochabambaCount">0</span>
       </div>
       <div class="city-item" data-city="Sucre">
-        <div class="city-info">
-          <i class="fas fa-landmark"></i>
-          <span>Sucre</span>
-        </div>
+        <div class="city-info"><i class="fas fa-landmark"></i><span>Sucre</span></div>
         <span class="city-count" id="modalSucreCount">0</span>
       </div>
       <div class="city-item" data-city="Tarija">
-        <div class="city-info">
-          <i class="fas fa-wine-bottle"></i>
-          <span>Tarija</span>
-        </div>
+        <div class="city-info"><i class="fas fa-wine-bottle"></i><span>Tarija</span></div>
         <span class="city-count" id="modalTarijaCount">0</span>
       </div>
       <div class="city-item" data-city="Potosí">
-        <div class="city-info">
-          <i class="fas fa-gem"></i>
-          <span>Potosí</span>
-        </div>
+        <div class="city-info"><i class="fas fa-gem"></i><span>Potosí</span></div>
         <span class="city-count" id="modalPotosiCount">0</span>
       </div>
       <div class="city-item" data-city="Oruro">
-        <div class="city-info">
-          <i class="fas fa-church"></i>
-          <span>Oruro</span>
-        </div>
+        <div class="city-info"><i class="fas fa-church"></i><span>Oruro</span></div>
         <span class="city-count" id="modalOruroCount">0</span>
       </div>
       <div class="city-item" data-city="Beni">
-        <div class="city-info">
-          <i class="fas fa-water"></i>
-          <span>Beni</span>
-        </div>
+        <div class="city-info"><i class="fas fa-water"></i><span>Beni</span></div>
         <span class="city-count" id="modalBeniCount">0</span>
       </div>
       <div class="city-item" data-city="Pando">
-        <div class="city-info">
-          <i class="fas fa-fish"></i>
-          <span>Pando</span>
-        </div>
+        <div class="city-info"><i class="fas fa-fish"></i><span>Pando</span></div>
         <span class="city-count" id="modalPandoCount">0</span>
       </div>
     </div>
@@ -449,63 +219,41 @@
 <div class="login-modal" id="loginModal">
   <div class="login-modal-content">
     <button class="close-login" id="closeLoginBtn">&times;</button>
-    
     <div class="logo">
       <i class="fas fa-crown"></i>
       <h2>Qigrupos Admin</h2>
       <p>Ingresa tus credenciales</p>
     </div>
-    
     <form id="loginForm">
       <div class="form-group">
         <label><i class="fas fa-user"></i> Usuario</label>
         <input type="text" id="loginUser" placeholder="admin" required>
       </div>
-      
       <div class="form-group">
         <label><i class="fas fa-lock"></i> Contraseña</label>
         <input type="password" id="loginPass" placeholder="••••••••" required>
       </div>
-      
       <button type="submit" class="btn-login" id="loginSubmitBtn">
         <i class="fas fa-sign-in-alt"></i> Ingresar
       </button>
-      
       <div class="error-msg" id="loginError">
         <i class="fas fa-exclamation-circle"></i> Usuario o contraseña incorrectos
       </div>
     </form>
-    
     <div class="footer-text">
       <i class="fas fa-shield-alt"></i> Acceso restringido a administradores
     </div>
   </div>
 </div>
+
 <!-- Botón flotante WhatsApp -->
-<a href="https://wa.me/59169356292?text=Hola%2C%20quiero%20destacar%20mi%20grupo%20en%20Qigrupos%20Bolivia" 
-   target="_blank" 
-   rel="noopener noreferrer"
-   style="
-     position:fixed;
-     bottom:24px;
-     right:20px;
-     background:#25D366;
-     color:white;
-     border-radius:50px;
-     padding:12px 20px;
-     font-weight:700;
-     font-size:0.9rem;
-     text-decoration:none;
-     box-shadow:0 4px 20px rgba(37,211,102,0.5);
-     z-index:999;
-     display:flex;
-     align-items:center;
-     gap:8px;
-   ">
+<a href="https://wa.me/59169356292?text=Hola%2C%20quiero%20destacar%20mi%20grupo%20en%20Qigrupos%20Bolivia"
+   target="_blank" rel="noopener noreferrer"
+   style="position:fixed;bottom:24px;right:20px;background:#25D366;color:white;border-radius:50px;padding:12px 20px;font-weight:700;font-size:0.9rem;text-decoration:none;box-shadow:0 4px 20px rgba(37,211,102,0.5);z-index:999;display:flex;align-items:center;gap:8px;">
   <i class="fab fa-whatsapp" style="font-size:1.3rem;"></i> Destacar mi grupo
 </a>
+
 <script src="js/main.js"></script>
-<script src="js/main.js"></script>
-    <script src="https://pl29813678.effectivecpmnetwork.com/85/ed/63/85ed635c7bee052567a3c49453aa5df3.js"></script>
-  </body>
+<script src="https://pl29813678.effectivecpmnetwork.com/85/ed/63/85ed635c7bee052567a3c49453aa5df3.js"></script>
+</body>
 </html>
