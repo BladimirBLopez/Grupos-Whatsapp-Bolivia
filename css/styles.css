@@ -53,7 +53,6 @@ body {
   align-items: center;
 }
 
-/* Botón Publicar grupo en navbar */
 .nav-btn {
   background: white;
   border: none;
@@ -110,14 +109,45 @@ body {
   cursor: pointer;
   transition: all 0.2s;
   color: #2c3f4f;
+  border: 2px solid transparent;
 }
 
 .filter-chip i {
   font-size: 0.8rem;
 }
 
+/* Activo genérico (fallback) */
 .filter-chip.active {
+  color: white;
+  border-color: transparent;
+}
+
+/* Activo por plataforma */
+.filter-chip[data-platform="whatsapp"].active {
   background: #25D366;
+  border-color: #25D366;
+  box-shadow: 0 4px 12px rgba(37,211,102,0.35);
+  color: white;
+}
+
+.filter-chip[data-platform="telegram"].active {
+  background: #229ED9;
+  border-color: #229ED9;
+  box-shadow: 0 4px 12px rgba(34,158,217,0.35);
+  color: white;
+}
+
+.filter-chip[data-platform="facebook"].active {
+  background: #1877F2;
+  border-color: #1877F2;
+  box-shadow: 0 4px 12px rgba(24,119,242,0.35);
+  color: white;
+}
+
+.filter-chip[data-platform="discord"].active {
+  background: #5865F2;
+  border-color: #5865F2;
+  box-shadow: 0 4px 12px rgba(88,101,242,0.35);
   color: white;
 }
 
@@ -340,10 +370,16 @@ body {
   transition: 0.2s;
   border: none;
   cursor: pointer;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 }
 
 .join-btn:hover {
-  background: #20b859;
+  opacity: 0.9;
+  transform: scale(1.01);
 }
 
 .empty-message {
@@ -553,44 +589,59 @@ body {
 /* RESPONSIVE                                   */
 /* ============================================ */
 
+@media (max-width: 768px) {
+  .admin-table th:nth-child(1),
+  .admin-table td:nth-child(1),
+  .admin-table th:nth-child(4),
+  .admin-table td:nth-child(4),
+  .admin-table th:nth-child(5),
+  .admin-table td:nth-child(5) {
+    display: none;
+  }
+
+  .admin-table-container {
+    overflow-x: auto;
+  }
+}
+
 @media (min-width: 700px) {
   .container {
     padding: 1.5rem 2rem;
   }
-  
+
   .logo-area h1 {
     font-size: 1.8rem;
   }
-  
+
   .logo-area p {
     font-size: 0.8rem;
   }
-  
+
   .grupos-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 1.2rem;
   }
-  
+
   .card-header h3 {
     font-size: 1rem;
   }
-  
+
   .modal-city-content {
     border-radius: 28px;
     margin: 2rem auto;
     max-height: 85vh;
     width: 450px;
   }
-  
+
   .modal-city {
     align-items: center;
   }
-  
+
   .city-search {
     margin: 1rem 1.2rem;
   }
-  
+
   .city-item {
     padding: 0.8rem 1rem;
   }
