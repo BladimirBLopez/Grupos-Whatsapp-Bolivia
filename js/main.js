@@ -72,7 +72,6 @@ async function reportarLink(id, nombre) {
   if (!id) return;
   const confirmado = confirm(`¿Reportar el enlace de "${nombre}" como caído o inválido?`);
   if (!confirmado) return;
-
   try {
     const res = await fetch('/api/grupos', {
       method: 'POST',
@@ -145,7 +144,6 @@ async function cargarGrupos() {
 // ============================================
 function iniciarPagina() {
   mostrarGrupoDestacado();
-  mostrarTopVisitados();
   actualizarContadoresCiudades();
   renderizarGrupos();
   configurarEventListeners();
@@ -195,52 +193,6 @@ function mostrarGrupoDestacado() {
           <i class="${icono}"></i> Unirme ahora
         </a>
       </div>
-    </div>
-  `;
-}
-
-// ============================================
-// TOP 3 MÁS VISITADOS
-// ============================================
-function mostrarTopVisitados() {
-  const container = document.getElementById('topVisitados');
-  if (!container) return;
-
-  const top = [...gruposData]
-    .filter(g => !g.destacado && (g.visitas || 0) > 0)
-    .sort((a, b) => (b.visitas || 0) - (a.visitas || 0))
-    .slice(0, 3);
-
-  if (top.length === 0) {
-    container.style.display = 'none';
-    return;
-  }
-
-  container.style.display = 'block';
-  const medallas = ['🥇', '🥈', '🥉'];
-
-  container.innerHTML = `
-    <div style="background:linear-gradient(135deg,#fff8e1,#fffde7);border:1.5px solid #FFD700;border-radius:16px;padding:0.8rem 1rem;margin-bottom:1rem;">
-      <div style="font-size:0.75rem;font-weight:800;color:#B8860B;margin-bottom:0.7rem;display:flex;align-items:center;gap:6px;">
-        <i class="fas fa-fire" style="color:#ff6b35;"></i> Grupos más visitados
-      </div>
-      ${top.map((g, i) => {
-        const color = colorPlataforma(g.plataforma);
-        const icono = iconoPlataforma(g.plataforma);
-        return `
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0;${i < top.length - 1 ? 'border-bottom:1px solid rgba(0,0,0,0.05);' : ''}">
-          <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0;">
-            <span style="font-size:1rem;">${medallas[i]}</span>
-            <span style="font-size:0.78rem;font-weight:700;color:#1a2c3e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;">${g.nombre}</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
-            <span style="font-size:0.65rem;color:#8ba0ae;"><i class="fas fa-eye"></i> ${g.visitas || 0}</span>
-            <a href="${redirUrl(g)}" onclick="registrarVisita('${g.id}')" style="background:${color};color:#fff;font-size:0.65rem;font-weight:700;padding:3px 10px;border-radius:20px;text-decoration:none;display:inline-flex;align-items:center;gap:3px;">
-              <i class="${icono}"></i> Unirse
-            </a>
-          </div>
-        </div>`;
-      }).join('')}
     </div>
   `;
 }
