@@ -2,8 +2,9 @@
 // VARIABLES GLOBALES
 // ============================================
 let gruposData = [];
-let ciudadSeleccionada = 'todos';
-let plataformaSeleccionada = 'whatsapp';
+let ciudadSeleccionada      = 'todos';
+let plataformaSeleccionada  = 'whatsapp';
+let categoriaSeleccionada   = 'todas';
 let gruposMostrados = 5;
 const GRUPOS_POR_PAGINA = 5;
 
@@ -41,6 +42,35 @@ function labelPlataforma(plataforma) {
     otro:      'Otro'
   };
   return labels[(plataforma || 'whatsapp').toLowerCase()] || 'WhatsApp';
+}
+
+// ============================================
+// HELPER: EMOJI POR CATEGORÍA
+// ============================================
+function emojiCategoria(categoria) {
+  const emojis = {
+    'compra-venta': '🛒',
+    'empleos':      '💼',
+    'inmuebles':    '🏠',
+    'transporte':   '🚗',
+    'educacion':    '📚',
+    'deportes':     '⚽',
+    'otro':         '📌'
+  };
+  return emojis[categoria] || '📌';
+}
+
+function labelCategoria(categoria) {
+  const labels = {
+    'compra-venta': 'Compra/Venta',
+    'empleos':      'Empleos',
+    'inmuebles':    'Inmuebles',
+    'transporte':   'Transporte',
+    'educacion':    'Educación',
+    'deportes':     'Deportes',
+    'otro':         'Otro'
+  };
+  return labels[categoria] || 'Otro';
 }
 
 function redirUrl(grupo) {
@@ -206,12 +236,21 @@ function renderizarGrupos() {
 
   let gruposFiltrados = [...gruposData];
 
+  // Filtro plataforma
   if (plataformaSeleccionada !== 'todos') {
     gruposFiltrados = gruposFiltrados.filter(g =>
       (g.plataforma || 'whatsapp').toLowerCase() === plataformaSeleccionada.toLowerCase()
     );
   }
 
+  // Filtro categoría
+  if (categoriaSeleccionada !== 'todas') {
+    gruposFiltrados = gruposFiltrados.filter(g =>
+      (g.categoria || 'compra-venta') === categoriaSeleccionada
+    );
+  }
+
+  // Filtro ciudad
   if (ciudadSeleccionada !== 'todos') {
     gruposFiltrados = gruposFiltrados.filter(g =>
       g.ubicacion && g.ubicacion.toLowerCase() === ciudadSeleccionada.toLowerCase()
@@ -241,6 +280,7 @@ function renderizarGrupos() {
     const label    = labelPlataforma(plat);
     const redir    = redirUrl(grupo);
     const reportes = grupo.reportes || 0;
+    const cat      = grupo.categoria || 'compra-venta';
     const nombreSeguro = (grupo.nombre || '').replace(/'/g, "\\'");
 
     return `
@@ -258,6 +298,7 @@ function renderizarGrupos() {
       ${grupo.descripcion ? `<div class="descripcion">${grupo.descripcion}</div>` : ''}
       <div class="ubicacion">
         <i class="fas fa-map-marker-alt"></i> ${grupo.ubicacion || 'Ubicación no especificada'}
+        <span style="margin-left:auto;font-size:0.65rem;color:#8ba0ae;">${emojiCategoria(cat)} ${labelCategoria(cat)}</span>
       </div>
       <div class="stats">
         <span class="stat-item"><i class="fas fa-users"></i> ${grupo.miembros || 0} miembros</span>
@@ -309,18 +350,18 @@ function renderizarGrupos() {
 function actualizarContadoresCiudades() {
   const ciudades = ['todos', 'Santa Cruz', 'La Paz', 'Cochabamba', 'Sucre', 'Tarija', 'Potosí', 'Oruro', 'Beni', 'Pando'];
 
-  const gruposFiltradosPorPlataforma = plataformaSeleccionada === 'todos'
+  let base = plataformaSeleccionada === 'todos'
     ? gruposData
-    : gruposData.filter(g =>
-        (g.plataforma || 'whatsapp').toLowerCase() === plataformaSeleccionada.toLowerCase()
-      );
+    : gruposData.filter(g => (g.plataforma || 'whatsapp').toLowerCase() === plataformaSeleccionada.toLowerCase());
+
+  if (categoriaSeleccionada !== 'todas') {
+    base = base.filter(g => (g.categoria || 'compra-venta') === categoriaSeleccionada);
+  }
 
   ciudades.forEach(ciudad => {
     const count = ciudad === 'todos'
-      ? gruposFiltradosPorPlataforma.length
-      : gruposFiltradosPorPlataforma.filter(g =>
-          g.ubicacion && g.ubicacion.toLowerCase() === ciudad.toLowerCase()
-        ).length;
+      ? base.length
+      : base.filter(g => g.ubicacion && g.ubicacion.toLowerCase() === ciudad.toLowerCase()).length;
 
     const elementId = ciudad === 'todos' ? 'modalTotalCount' : `modal${ciudad.replace(/ /g, '')}Count`;
     const element = document.getElementById(elementId);
@@ -330,10 +371,8 @@ function actualizarContadoresCiudades() {
   const badge = document.getElementById('selectedCityCount');
   if (badge) {
     const count = ciudadSeleccionada === 'todos'
-      ? gruposFiltradosPorPlataforma.length
-      : gruposFiltradosPorPlataforma.filter(g =>
-          g.ubicacion && g.ubicacion.toLowerCase() === ciudadSeleccionada.toLowerCase()
-        ).length;
+      ? base.length
+      : base.filter(g => g.ubicacion && g.ubicacion.toLowerCase() === ciudadSeleccionada.toLowerCase()).length;
     badge.textContent = `(${count})`;
   }
 }
@@ -367,8 +406,8 @@ function configurarEventListeners() {
 
   document.getElementById('loginForm')?.addEventListener('submit', function(e) {
     e.preventDefault();
-    const user = document.getElementById('loginUser').value.trim();
-    const pass = document.getElementById('loginPass').value.trim();
+    const user  = document.getElementById('loginUser').value.trim();
+    const pass  = document.getElementById('loginPass').value.trim();
     const error = document.getElementById('loginError');
     const btn   = document.getElementById('loginSubmitBtn');
 
@@ -389,11 +428,24 @@ function configurarEventListeners() {
     }, 800);
   });
 
+  // Filtros plataforma
   document.querySelectorAll('.filter-chip').forEach(chip => {
     chip.addEventListener('click', function() {
       document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
       this.classList.add('active');
       plataformaSeleccionada = this.dataset.platform;
+      gruposMostrados = GRUPOS_POR_PAGINA;
+      renderizarGrupos();
+      actualizarContadoresCiudades();
+    });
+  });
+
+  // Filtros categoría
+  document.querySelectorAll('.filter-cat').forEach(cat => {
+    cat.addEventListener('click', function() {
+      document.querySelectorAll('.filter-cat').forEach(c => c.classList.remove('active'));
+      this.classList.add('active');
+      categoriaSeleccionada = this.dataset.category;
       gruposMostrados = GRUPOS_POR_PAGINA;
       renderizarGrupos();
       actualizarContadoresCiudades();
@@ -435,12 +487,16 @@ function configurarEventListeners() {
     });
   });
 
+  // Reset logo
   document.getElementById('logoResetBtn')?.addEventListener('click', function() {
-    ciudadSeleccionada = 'todos';
+    ciudadSeleccionada     = 'todos';
     plataformaSeleccionada = 'whatsapp';
+    categoriaSeleccionada  = 'todas';
     gruposMostrados = GRUPOS_POR_PAGINA;
     document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
     document.querySelector('.filter-chip[data-platform="whatsapp"]')?.classList.add('active');
+    document.querySelectorAll('.filter-cat').forEach(c => c.classList.remove('active'));
+    document.querySelector('.filter-cat[data-category="todas"]')?.classList.add('active');
     document.getElementById('selectedCityName').textContent = 'Todos los departamentos';
     renderizarGrupos();
     actualizarContadoresCiudades();

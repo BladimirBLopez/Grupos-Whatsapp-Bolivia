@@ -15,7 +15,7 @@
   
   <title>Qigrupos Bolivia | Grupos WhatsApp Compra y Venta</title>
   <meta name="description" content="Encuentra los mejores grupos de WhatsApp de compra y venta en Bolivia. Únete a grupos por ciudad: Santa Cruz, La Paz, Cochabamba y más.">
-  <meta name="keywords" content="grupos whatsapp bolivia, compra y venta bolivia">
+  <meta name="keywords" content="grupos whatsapp bolivia, compra y venta bolivia, empleos bolivia, inmuebles bolivia">
   <meta name="author" content="Qigrupos Bolivia">
   <meta name="robots" content="index, follow">
   
@@ -74,6 +74,41 @@
       from { transform: translateY(30px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
+
+    /* Filtros de categoría */
+    .category-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+      justify-content: center;
+    }
+    .filter-cat {
+      background: #f0f4f8;
+      border-radius: 40px;
+      padding: 0.35rem 0.8rem;
+      font-weight: 500;
+      font-size: 0.72rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #2c3f4f;
+      border: 2px solid transparent;
+    }
+    .filter-cat:hover { background: #e2edf2; }
+    .filter-cat.active {
+      background: #1a2c3e;
+      color: #fff;
+      border-color: #1a2c3e;
+    }
+    .filter-cat[data-category="compra-venta"].active  { background: #25D366; border-color: #25D366; }
+    .filter-cat[data-category="empleos"].active       { background: #F59E0B; border-color: #F59E0B; }
+    .filter-cat[data-category="inmuebles"].active     { background: #3B82F6; border-color: #3B82F6; }
+    .filter-cat[data-category="transporte"].active    { background: #8B5CF6; border-color: #8B5CF6; }
+    .filter-cat[data-category="educacion"].active     { background: #EC4899; border-color: #EC4899; }
+    .filter-cat[data-category="deportes"].active      { background: #EF4444; border-color: #EF4444; }
   </style>
 </head>
 <body>
@@ -95,12 +130,23 @@
   <!-- Grupo Destacado -->
   <div id="grupoDestacadoFijo"></div>
 
-  <!-- Filtros redes sociales -->
+  <!-- Filtros plataforma -->
   <div class="social-filters" id="socialFilters">
     <div class="filter-chip active" data-platform="whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</div>
     <div class="filter-chip" data-platform="telegram"><i class="fab fa-telegram"></i> Telegram</div>
     <div class="filter-chip" data-platform="discord"><i class="fab fa-discord"></i> Discord</div>
     <div class="filter-chip" data-platform="facebook"><i class="fab fa-facebook"></i> Facebook</div>
+  </div>
+
+  <!-- Filtros categoría -->
+  <div class="category-filters" id="categoryFilters">
+    <div class="filter-cat active" data-category="todas">🔍 Todas</div>
+    <div class="filter-cat" data-category="compra-venta">🛒 Compra/Venta</div>
+    <div class="filter-cat" data-category="empleos">💼 Empleos</div>
+    <div class="filter-cat" data-category="inmuebles">🏠 Inmuebles</div>
+    <div class="filter-cat" data-category="transporte">🚗 Transporte</div>
+    <div class="filter-cat" data-category="educacion">📚 Educación</div>
+    <div class="filter-cat" data-category="deportes">⚽ Deportes</div>
   </div>
 
   <!-- Selector de ciudad -->
@@ -243,8 +289,9 @@
 <!-- Botón flotante WhatsApp -->
 <a href="https://wa.me/59169356292?text=Hola%2C%20quiero%20destacar%20mi%20grupo%20en%20Qigrupos%20Bolivia"
    target="_blank" rel="noopener noreferrer"
-   style="position:fixed;bottom:24px;right:20px;background:#25D366;color:white;border-radius:50px;padding:12px 20px;font-weight:700;font-size:0.9rem;text-decoration:none;box-shadow:0 4px 20px rgba(37,211,102,0.5);z-index:999;display:flex;align-items:center;gap:8px;">
-  <i class="fab fa-whatsapp" style="font-size:1.3rem;"></i> Destacar mi grupo
+   style="position:fixed;bottom:24px;right:20px;background:#25D366;color:white;border-radius:50%;width:52px;height:52px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,0.5);z-index:999;text-decoration:none;"
+   title="Destacar mi grupo">
+  <i class="fab fa-whatsapp" style="font-size:1.6rem;"></i>
 </a>
 
 <script src="js/main.js"></script>

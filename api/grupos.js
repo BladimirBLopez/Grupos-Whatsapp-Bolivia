@@ -1,6 +1,7 @@
 import { MongoClient, ObjectId } from 'mongodb';
 
 const PLATAFORMAS_VALIDAS = ['whatsapp', 'telegram', 'facebook', 'discord', 'otro'];
+const CATEGORIAS_VALIDAS  = ['compra-venta', 'empleos', 'inmuebles', 'transporte', 'educacion', 'deportes', 'otro'];
 
 let cachedClient = null;
 
@@ -26,12 +27,12 @@ export default async function handler(req, res) {
     const db = client.db('grupos_db');
     const col = db.collection('grupos');
 
-    // ── GET: obtener todos ──────────────────────────────────────────
+    // ── GET ─────────────────────────────────────────────────────────
     if (req.method === 'GET') {
-      const { plataforma } = req.query;
-      const filtro = plataforma && PLATAFORMAS_VALIDAS.includes(plataforma)
-        ? { plataforma }
-        : {};
+      const { plataforma, categoria } = req.query;
+      const filtro = {};
+      if (plataforma && PLATAFORMAS_VALIDAS.includes(plataforma)) filtro.plataforma = plataforma;
+      if (categoria  && CATEGORIAS_VALIDAS.includes(categoria))   filtro.categoria  = categoria;
 
       const grupos = await col.find(filtro).toArray();
       const data = grupos.map(g => ({
@@ -42,29 +43,20 @@ export default async function handler(req, res) {
       return res.status(200).json({ grupos: data });
     }
 
-    // ── POST: crear grupo / registrar visita / reportar ─────────────
+    // ── POST ─────────────────────────────────────────────────────────
     if (req.method === 'POST') {
       const { grupo, accion, id } = req.body;
 
-      // Sumar visita
       if (accion === 'visita' && id) {
-        await col.updateOne(
-          { _id: new ObjectId(id) },
-          { $inc: { visitas: 1 } }
-        );
+        await col.updateOne({ _id: new ObjectId(id) }, { $inc: { visitas: 1 } });
         return res.status(200).json({ success: true });
       }
 
-      // Reportar link caído
       if (accion === 'reporte' && id) {
-        await col.updateOne(
-          { _id: new ObjectId(id) },
-          { $inc: { reportes: 1 } }
-        );
+        await col.updateOne({ _id: new ObjectId(id) }, { $inc: { reportes: 1 } });
         return res.status(200).json({ success: true });
       }
 
-      // Crear grupo normal
       if (!grupo?.nombre || !grupo?.link) {
         return res.status(400).json({ error: 'Faltan nombre o link' });
       }
@@ -77,9 +69,8 @@ export default async function handler(req, res) {
         miembros:    Number(grupo.miembros)  || 0,
         activos:     Number(grupo.activos)   || 0,
         destacado:   Boolean(grupo.destacado),
-        plataforma:  PLATAFORMAS_VALIDAS.includes(grupo.plataforma)
-                       ? grupo.plataforma
-                       : 'whatsapp',
+        plataforma:  PLATAFORMAS_VALIDAS.includes(grupo.plataforma) ? grupo.plataforma : 'whatsapp',
+        categoria:   CATEGORIAS_VALIDAS.includes(grupo.categoria)   ? grupo.categoria  : 'compra-venta',
         visitas:     0,
         reportes:    0,
         fecha:       new Date().toISOString()
@@ -92,28 +83,23 @@ export default async function handler(req, res) {
       });
     }
 
-    // ── PUT: actualizar grupo ───────────────────────────────────────
+    // ── PUT ──────────────────────────────────────────────────────────
     if (req.method === 'PUT') {
       const { id, datos } = req.body;
       if (!id) return res.status(400).json({ error: 'ID requerido' });
 
       const { _id, id: ignoredId, fecha, ...camposLimpios } = datos || {};
 
-      if (camposLimpios.miembros !== undefined)   camposLimpios.miembros  = Number(camposLimpios.miembros);
-      if (camposLimpios.activos !== undefined)    camposLimpios.activos   = Number(camposLimpios.activos);
-      if (camposLimpios.plataforma !== undefined &&
-          !PLATAFORMAS_VALIDAS.includes(camposLimpios.plataforma)) {
-        camposLimpios.plataforma = 'otro';
-      }
+      if (camposLimpios.miembros   !== undefined) camposLimpios.miembros   = Number(camposLimpios.miembros);
+      if (camposLimpios.activos    !== undefined) camposLimpios.activos    = Number(camposLimpios.activos);
+      if (camposLimpios.plataforma !== undefined && !PLATAFORMAS_VALIDAS.includes(camposLimpios.plataforma)) camposLimpios.plataforma = 'otro';
+      if (camposLimpios.categoria  !== undefined && !CATEGORIAS_VALIDAS.includes(camposLimpios.categoria))  camposLimpios.categoria  = 'otro';
 
-      await col.updateOne(
-        { _id: new ObjectId(id) },
-        { $set: camposLimpios }
-      );
+      await col.updateOne({ _id: new ObjectId(id) }, { $set: camposLimpios });
       return res.status(200).json({ success: true });
     }
 
-    // ── DELETE: eliminar grupo ──────────────────────────────────────
+    // ── DELETE ───────────────────────────────────────────────────────
     if (req.method === 'DELETE') {
       const { id } = req.body;
       if (!id) return res.status(400).json({ error: 'ID requerido' });

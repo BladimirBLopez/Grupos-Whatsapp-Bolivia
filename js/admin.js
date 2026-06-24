@@ -6,13 +6,37 @@ let grupoAEliminar = null;
 let filtroPlataformaActual = 'todas';
 
 // ============================================
+// CATEGORÍAS CONFIG
+// ============================================
+const CATEGORIAS = {
+  'compra-venta': { label: 'Compra/Venta', emoji: '🛒', color: '#25D366' },
+  'empleos':      { label: 'Empleos',      emoji: '💼', color: '#F59E0B' },
+  'inmuebles':    { label: 'Inmuebles',     emoji: '🏠', color: '#3B82F6' },
+  'transporte':   { label: 'Transporte',    emoji: '🚗', color: '#8B5CF6' },
+  'educacion':    { label: 'Educación',     emoji: '📚', color: '#EC4899' },
+  'deportes':     { label: 'Deportes',      emoji: '⚽', color: '#EF4444' },
+  'otro':         { label: 'Otro',          emoji: '📌', color: '#8ba0ae' }
+};
+
+function getCategoria(key) {
+  return CATEGORIAS[key] || CATEGORIAS['otro'];
+}
+
+function badgeCategoria(key) {
+  const c = getCategoria(key);
+  return `<span style="background:${c.color}20;color:${c.color};border:1px solid ${c.color}40;border-radius:20px;padding:2px 8px;font-size:0.65rem;font-weight:600;">
+    ${c.emoji} ${c.label}
+  </span>`;
+}
+
+// ============================================
 // PLATAFORMAS CONFIG
 // ============================================
 const PLATAFORMAS = {
-  whatsapp: { label: 'WhatsApp', icon: 'fab fa-whatsapp', color: '#25D366', validar: link => link.includes('chat.whatsapp.com') || link.includes('whatsapp.com') },
-  telegram:  { label: 'Telegram',  icon: 'fab fa-telegram',  color: '#229ED9', validar: link => link.includes('t.me') || link.includes('telegram') },
-  facebook:  { label: 'Facebook',  icon: 'fab fa-facebook',  color: '#1877F2', validar: link => link.includes('facebook.com') || link.includes('fb.com') },
-  discord:   { label: 'Discord',   icon: 'fab fa-discord',   color: '#5865F2', validar: link => link.includes('discord.gg') || link.includes('discord.com') },
+  whatsapp: { label: 'WhatsApp', icon: 'fab fa-whatsapp', color: '#25D366', validar: link => link.startsWith('http') },
+  telegram:  { label: 'Telegram',  icon: 'fab fa-telegram',  color: '#229ED9', validar: link => link.startsWith('http') },
+  facebook:  { label: 'Facebook',  icon: 'fab fa-facebook',  color: '#1877F2', validar: link => link.startsWith('http') },
+  discord:   { label: 'Discord',   icon: 'fab fa-discord',   color: '#5865F2', validar: link => link.startsWith('http') },
   otro:      { label: 'Otro',      icon: 'fas fa-link',      color: '#8ba0ae', validar: link => link.startsWith('http') }
 };
 
@@ -63,7 +87,7 @@ function renderizarTabla() {
   if (datos.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="7" style="text-align:center; padding:2rem; color:#8ba0ae;">
+        <td colspan="8" style="text-align:center; padding:2rem; color:#8ba0ae;">
           <i class="fas fa-inbox" style="font-size:1.5rem; display:block; margin-bottom:0.5rem;"></i>
           No hay grupos registrados
         </td>
@@ -72,7 +96,7 @@ function renderizarTabla() {
   }
 
   tbody.innerHTML = datos.map(grupo => {
-    const idStr = grupo.id || '';
+    const idStr    = grupo.id || '';
     const grupoJSON = JSON.stringify(grupo).replace(/"/g, '&quot;');
     return `
     <tr data-id="${idStr}">
@@ -84,6 +108,7 @@ function renderizarTabla() {
         </div>
       </td>
       <td>${badgePlataforma(grupo.plataforma || 'whatsapp')}</td>
+      <td>${badgeCategoria(grupo.categoria || 'compra-venta')}</td>
       <td><span class="ciudad-badge">${grupo.ubicacion || 'N/A'}</span></td>
       <td>${grupo.miembros || 0}</td>
       <td>
@@ -114,9 +139,9 @@ function renderizarTabla() {
 // ESTADÍSTICAS
 // ============================================
 function actualizarEstadisticas() {
-  const total = gruposData.length;
+  const total     = gruposData.length;
   const destacados = gruposData.filter(g => g.destacado).length;
-  const ciudades = new Set(gruposData.map(g => g.ubicacion).filter(Boolean)).size;
+  const ciudades  = new Set(gruposData.map(g => g.ubicacion).filter(Boolean)).size;
 
   const elTotal    = document.getElementById('totalGrupos');
   const elDest     = document.getElementById('totalDestacados');
@@ -135,6 +160,7 @@ async function guardarGrupo(e) {
 
   const id = document.getElementById('editId').value;
   const plataformaSeleccionada = document.querySelector('input[name="plataforma"]:checked')?.value || 'whatsapp';
+  const categoriaSeleccionada  = document.querySelector('input[name="categoria"]:checked')?.value  || 'compra-venta';
 
   const datos = {
     nombre:      document.getElementById('fNombre').value.trim(),
@@ -142,23 +168,20 @@ async function guardarGrupo(e) {
     ubicacion:   document.getElementById('fCiudad').value,
     link:        document.getElementById('fEnlace').value.trim(),
     miembros:    parseInt(document.getElementById('fMiembros').value) || 0,
-    activos:     parseInt(document.getElementById('fActivos').value) || 0,
+    activos:     parseInt(document.getElementById('fActivos').value)  || 0,
     destacado:   document.getElementById('fDestacado').checked,
-    plataforma:  plataformaSeleccionada
+    plataforma:  plataformaSeleccionada,
+    categoria:   categoriaSeleccionada
   };
 
   if (!datos.nombre || datos.nombre.length < 3) {
     mostrarNotificacion('❌ El nombre debe tener al menos 3 caracteres', 'error');
     return;
   }
-  if (!datos.link) {
-    mostrarNotificacion('❌ Ingresa un enlace de invitación', 'error');
+  if (!datos.link || !datos.link.startsWith('http')) {
+    mostrarNotificacion('❌ Ingresa un enlace válido', 'error');
     return;
   }
-  if (!datos.link.startsWith('http')) {
-  mostrarNotificacion('❌ Ingresa un enlace válido', 'error');
-  return;
-}
 
   try {
     let response;
@@ -248,25 +271,32 @@ function abrirModal(grupo = null) {
 
   form.reset();
   document.getElementById('editId').value = '';
-  // resetear radio buttons
   document.querySelector('input[name="plataforma"][value="whatsapp"]').checked = true;
+  document.querySelector('input[name="categoria"][value="compra-venta"]').checked = true;
   actualizarHintEnlace('whatsapp');
 
   if (grupo) {
     titulo.innerHTML = '<i class="fas fa-edit"></i> Editar Grupo';
-    document.getElementById('editId').value      = grupo.id || '';
-    document.getElementById('fNombre').value      = grupo.nombre      || '';
+    document.getElementById('editId').value       = grupo.id        || '';
+    document.getElementById('fNombre').value      = grupo.nombre    || '';
     document.getElementById('fDescripcion').value = grupo.descripcion || '';
-    document.getElementById('fCiudad').value      = grupo.ubicacion   || '';
-    document.getElementById('fEnlace').value      = grupo.link        || '';
-    document.getElementById('fMiembros').value    = grupo.miembros    || 0;
-    document.getElementById('fActivos').value     = grupo.activos     || 0;
+    document.getElementById('fCiudad').value      = grupo.ubicacion || '';
+    document.getElementById('fEnlace').value      = grupo.link      || '';
+    document.getElementById('fMiembros').value    = grupo.miembros  || 0;
+    document.getElementById('fActivos').value     = grupo.activos   || 0;
     document.getElementById('fDestacado').checked = Boolean(grupo.destacado);
 
-    const plat = grupo.plataforma || 'whatsapp';
+    // Plataforma
+    const plat  = grupo.plataforma || 'whatsapp';
     const radio = document.querySelector(`input[name="plataforma"][value="${plat}"]`);
     if (radio) radio.checked = true;
     actualizarHintEnlace(plat);
+
+    // Categoría
+    const cat      = grupo.categoria || 'compra-venta';
+    const radioCat = document.querySelector(`input[name="categoria"][value="${cat}"]`);
+    if (radioCat) radioCat.checked = true;
+
   } else {
     titulo.innerHTML = '<i class="fas fa-plus-circle"></i> Nuevo Grupo';
   }
@@ -303,9 +333,9 @@ const HINTS = {
 };
 
 function actualizarHintEnlace(plataforma) {
-  const hint = document.getElementById('enlaceHint');
+  const hint  = document.getElementById('enlaceHint');
   const input = document.getElementById('fEnlace');
-  if (hint) hint.textContent = HINTS[plataforma] || HINTS.otro;
+  if (hint)  hint.textContent  = HINTS[plataforma] || HINTS.otro;
   if (input) input.placeholder = HINTS[plataforma] || HINTS.otro;
 }
 
@@ -343,29 +373,18 @@ function mostrarNotificacion(mensaje, tipo = 'success') {
 document.addEventListener('DOMContentLoaded', () => {
   cargarGrupos();
 
-  // Botón nuevo grupo
   document.getElementById('btnNuevoGrupo')?.addEventListener('click', () => abrirModal());
-
-  // Cerrar modal con X
   document.getElementById('closeModalBtn')?.addEventListener('click', cerrarModal);
   document.getElementById('cancelModalBtn')?.addEventListener('click', cerrarModal);
-
-  // Confirmar eliminar
   document.getElementById('confirmDeleteBtn')?.addEventListener('click', eliminarGrupo);
   document.getElementById('cancelConfirmBtn')?.addEventListener('click', cerrarConfirmacion);
-
-  // Formulario guardar
   document.getElementById('formGrupo')?.addEventListener('submit', guardarGrupo);
-
-  // Buscar
   document.getElementById('searchGrupos')?.addEventListener('input', e => filtrarGruposAdmin(e.target.value));
 
-  // Cambio de plataforma en radios → actualizar hint enlace
   document.querySelectorAll('input[name="plataforma"]').forEach(radio => {
     radio.addEventListener('change', () => actualizarHintEnlace(radio.value));
   });
 
-  // Filtros de plataforma en la tabla
   document.querySelectorAll('.btn-plataforma').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.btn-plataforma').forEach(b => b.classList.remove('activo'));

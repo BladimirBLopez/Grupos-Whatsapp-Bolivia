@@ -50,25 +50,17 @@
     </div>
   </div>
 
-  <!-- Botones de acción + Filtro de plataforma -->
+  <!-- Botones de acción + Filtros -->
   <div class="admin-actions">
     <button class="btn-primary" id="btnNuevoGrupo">
       <i class="fas fa-plus-circle"></i> Nuevo Grupo
     </button>
     <div class="filtro-plataforma">
       <button class="btn-plataforma activo" data-plataforma="todas">Todas</button>
-      <button class="btn-plataforma whatsapp" data-plataforma="whatsapp">
-        <i class="fab fa-whatsapp"></i> WhatsApp
-      </button>
-      <button class="btn-plataforma telegram" data-plataforma="telegram">
-        <i class="fab fa-telegram"></i> Telegram
-      </button>
-      <button class="btn-plataforma facebook" data-plataforma="facebook">
-        <i class="fab fa-facebook"></i> Facebook
-      </button>
-      <button class="btn-plataforma discord" data-plataforma="discord">
-        <i class="fab fa-discord"></i> Discord
-      </button>
+      <button class="btn-plataforma whatsapp" data-plataforma="whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+      <button class="btn-plataforma telegram" data-plataforma="telegram"><i class="fab fa-telegram"></i> Telegram</button>
+      <button class="btn-plataforma facebook" data-plataforma="facebook"><i class="fab fa-facebook"></i> Facebook</button>
+      <button class="btn-plataforma discord" data-plataforma="discord"><i class="fab fa-discord"></i> Discord</button>
     </div>
   </div>
 
@@ -86,20 +78,19 @@
           <th>ID</th>
           <th>Nombre</th>
           <th>Plataforma</th>
+          <th>Categoría</th>
           <th>Ciudad</th>
           <th>Miembros</th>
           <th>Destacado</th>
           <th>Acciones</th>
         </tr>
       </thead>
-      <tbody id="adminGruposBody">
-        <!-- Los grupos se cargarán aquí -->
-      </tbody>
+      <tbody id="adminGruposBody"></tbody>
     </table>
   </div>
 </div>
 
-<!-- ====== MODAL PARA CREAR/EDITAR GRUPO ====== -->
+<!-- ====== MODAL CREAR/EDITAR ====== -->
 <div id="modalGrupo" class="admin-modal" style="display:none;">
   <div class="admin-modal-content">
     <div class="admin-modal-header">
@@ -110,7 +101,7 @@
     <form id="formGrupo">
       <input type="hidden" id="editId" value="">
       
-      <!-- PLATAFORMA (selector visual) -->
+      <!-- PLATAFORMA -->
       <div class="form-group">
         <label><i class="fas fa-mobile-alt"></i> Plataforma *</label>
         <div class="selector-plataforma">
@@ -133,6 +124,41 @@
           <label class="opcion-plataforma otro">
             <input type="radio" name="plataforma" value="otro">
             <span><i class="fas fa-link"></i> Otro</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- CATEGORÍA -->
+      <div class="form-group">
+        <label><i class="fas fa-th-large"></i> Categoría *</label>
+        <div class="selector-categoria">
+          <label class="opcion-categoria">
+            <input type="radio" name="categoria" value="compra-venta" checked>
+            <span>🛒 Compra/Venta</span>
+          </label>
+          <label class="opcion-categoria">
+            <input type="radio" name="categoria" value="empleos">
+            <span>💼 Empleos</span>
+          </label>
+          <label class="opcion-categoria">
+            <input type="radio" name="categoria" value="inmuebles">
+            <span>🏠 Inmuebles</span>
+          </label>
+          <label class="opcion-categoria">
+            <input type="radio" name="categoria" value="transporte">
+            <span>🚗 Transporte</span>
+          </label>
+          <label class="opcion-categoria">
+            <input type="radio" name="categoria" value="educacion">
+            <span>📚 Educación</span>
+          </label>
+          <label class="opcion-categoria">
+            <input type="radio" name="categoria" value="deportes">
+            <span>⚽ Deportes</span>
+          </label>
+          <label class="opcion-categoria">
+            <input type="radio" name="categoria" value="otro">
+            <span>📌 Otro</span>
           </label>
         </div>
       </div>
@@ -199,7 +225,7 @@
   </div>
 </div>
 
-<!-- ====== MODAL DE CONFIRMACIÓN ====== -->
+<!-- ====== MODAL CONFIRMACIÓN ====== -->
 <div id="modalConfirmacion" class="admin-modal" style="display:none;">
   <div class="admin-modal-content" style="max-width:400px; text-align:center;">
     <div style="font-size:3rem; margin-bottom:1rem;">⚠️</div>
