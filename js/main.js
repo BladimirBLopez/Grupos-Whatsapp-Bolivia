@@ -196,7 +196,7 @@ function mostrarGrupoDestacado() {
 
   banner.innerHTML = `
     <div style="position:relative;border-radius:18px;overflow:hidden;margin-bottom:1rem;background:#ffffff;border:2px solid #E8B923;box-shadow:0 0 0 4px rgba(232,185,35,0.1),0 8px 28px rgba(232,185,35,0.18),0 2px 10px rgba(0,0,0,0.06);">
-      <div style="background:linear-gradient(90deg,#B8860B,#FFD700,#F5A623,#FFD700,#B8860B);padding:7px 14px;display:flex;align-items:center;justify-content:center;gap:7px;">
+      <div style="background:linear-gradient(90deg,#8B6B2E,#B08D57,#D4AF37,#B08D57,#8B6B2E);padding:7px 14px;display:flex;align-items:center;justify-content:center;gap:7px;">
         <i class="fas fa-crown" style="color:#fff;font-size:0.75rem;"></i>
         <span style="font-size:0.6rem;font-weight:900;letter-spacing:3px;color:#fff;text-transform:uppercase;">Grupo destacado de la semana</span>
         <i class="fas fa-crown" style="color:#fff;font-size:0.75rem;"></i>
