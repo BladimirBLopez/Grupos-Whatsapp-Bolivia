@@ -31,6 +31,7 @@
   <link rel="stylesheet" href="css/styles.css">
   
   <style>
+    /* ===== MODAL LOGIN ===== */
     .login-modal {
       display: none;
       position: fixed;
@@ -75,40 +76,50 @@
       to { transform: translateY(0); opacity: 1; }
     }
 
-    /* Filtros de categoría */
+    /* ===== FILTROS CATEGORÍA - SCROLL HORIZONTAL ===== */
     .category-filters {
       display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
+      flex-wrap: nowrap;
+      gap: 0.5rem;
       margin-bottom: 1rem;
-      justify-content: center;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 2px;
     }
+
+    .category-filters::-webkit-scrollbar {
+      display: none;
+    }
+
     .filter-cat {
+      flex-shrink: 0;
       background: #f0f4f8;
       border-radius: 40px;
-      padding: 0.35rem 0.8rem;
-      font-weight: 500;
-      font-size: 0.72rem;
+      padding: 0.4rem 0.9rem;
+      font-weight: 600;
+      font-size: 0.75rem;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 5px;
       cursor: pointer;
       transition: all 0.2s;
       color: #2c3f4f;
       border: 2px solid transparent;
+      white-space: nowrap;
     }
+
     .filter-cat:hover { background: #e2edf2; }
-    .filter-cat.active {
-      background: #1a2c3e;
-      color: #fff;
-      border-color: #1a2c3e;
-    }
-    .filter-cat[data-category="compra-venta"].active  { background: #25D366; border-color: #25D366; }
-    .filter-cat[data-category="empleos"].active       { background: #F59E0B; border-color: #F59E0B; }
-    .filter-cat[data-category="inmuebles"].active     { background: #3B82F6; border-color: #3B82F6; }
-    .filter-cat[data-category="transporte"].active    { background: #8B5CF6; border-color: #8B5CF6; }
-    .filter-cat[data-category="educacion"].active     { background: #EC4899; border-color: #EC4899; }
-    .filter-cat[data-category="deportes"].active      { background: #EF4444; border-color: #EF4444; }
+
+    .filter-cat.active { color: #fff; border-color: transparent; }
+
+    .filter-cat[data-category="todas"].active    { background: #1a2c3e; }
+    .filter-cat[data-category="compra-venta"].active { background: #25D366; box-shadow: 0 3px 10px rgba(37,211,102,0.35); }
+    .filter-cat[data-category="empleos"].active  { background: #F59E0B; box-shadow: 0 3px 10px rgba(245,158,11,0.35); }
+    .filter-cat[data-category="inmuebles"].active { background: #3B82F6; box-shadow: 0 3px 10px rgba(59,130,246,0.35); }
+    .filter-cat[data-category="transporte"].active { background: #8B5CF6; box-shadow: 0 3px 10px rgba(139,92,246,0.35); }
+    .filter-cat[data-category="educacion"].active { background: #EC4899; box-shadow: 0 3px 10px rgba(236,72,153,0.35); }
+    .filter-cat[data-category="deportes"].active  { background: #EF4444; box-shadow: 0 3px 10px rgba(239,68,68,0.35); }
   </style>
 </head>
 <body>
@@ -138,9 +149,8 @@
     <div class="filter-chip" data-platform="facebook"><i class="fab fa-facebook"></i> Facebook</div>
   </div>
 
-  <!-- Filtros categoría -->
-  <!--
-   <div class="category-filters" id="categoryFilters">
+  <!-- Filtros categoría - scroll horizontal -->
+  <div class="category-filters" id="categoryFilters">
     <div class="filter-cat active" data-category="todas">🔍 Todas</div>
     <div class="filter-cat" data-category="compra-venta">🛒 Compra/Venta</div>
     <div class="filter-cat" data-category="empleos">💼 Empleos</div>
@@ -149,8 +159,7 @@
     <div class="filter-cat" data-category="educacion">📚 Educación</div>
     <div class="filter-cat" data-category="deportes">⚽ Deportes</div>
   </div>
-  -->
-  
+
   <!-- Selector de ciudad -->
   <div class="city-selector-btn" id="openCityModalBtn">
     <div class="city-selected">
@@ -291,8 +300,8 @@
 <!-- Botón flotante WhatsApp -->
 <a href="https://wa.me/59169356292?text=Hola%2C%20quiero%20destacar%20mi%20grupo%20en%20Qigrupos%20Bolivia"
    target="_blank" rel="noopener noreferrer"
-   style="position:fixed;bottom:24px;right:20px;background:#25D366;color:white;border-radius:50%;width:52px;height:52px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,0.5);z-index:999;text-decoration:none;"
-   title="Destacar mi grupo">
+   title="Destacar mi grupo"
+   style="position:fixed;bottom:24px;right:20px;background:#25D366;color:white;border-radius:50%;width:52px;height:52px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,0.5);z-index:999;text-decoration:none;">
   <i class="fab fa-whatsapp" style="font-size:1.6rem;"></i>
 </a>
 
