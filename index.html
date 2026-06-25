@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
   
-  <!-- GOOGLE ANALYTICS -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-E20HT1VNFK"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -13,154 +12,124 @@
     gtag('config', 'G-E20HT1VNFK');
   </script>
   
-  <title>Qigrupos Bolivia | Grupos WhatsApp Compra y Venta</title>
-  <meta name="description" content="Encuentra los mejores grupos de WhatsApp de compra y venta en Bolivia. Únete a grupos por ciudad: Santa Cruz, La Paz, Cochabamba y más.">
-  <meta name="keywords" content="grupos whatsapp bolivia, compra y venta bolivia, empleos bolivia, inmuebles bolivia">
+  <title>Qigrupos Bolivia | Grupos WhatsApp, Telegram y más</title>
+  <meta name="description" content="Encuentra los mejores grupos de WhatsApp, Telegram, Facebook y Discord en Bolivia. Únete a grupos por ciudad y categoría.">
+  <meta name="keywords" content="grupos whatsapp bolivia, grupos telegram bolivia, compra venta bolivia, empleos bolivia">
   <meta name="author" content="Qigrupos Bolivia">
   <meta name="robots" content="index, follow">
-  
-  <meta property="og:title" content="Qigrupos Bolivia | Grupos WhatsApp de Compra y Venta">
-  <meta property="og:description" content="Únete a grupos de WhatsApp de compra y venta en Bolivia. Filtra por ciudad.">
+  <meta property="og:title" content="Qigrupos Bolivia | Directorio de Grupos">
+  <meta property="og:description" content="Encuentra y únete a grupos de Bolivia por ciudad y categoría.">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="es_ES">
   
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇧🇴</text></svg>">
-  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
-  
+
   <style>
     /* ===== MODAL LOGIN ===== */
-    .login-modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.7);
-      z-index: 9999;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(5px);
-    }
-    .login-modal.show { display: flex; }
-    .login-modal-content {
-      background: white;
-      border-radius: 24px;
-      padding: 2.5rem 2rem;
-      max-width: 380px;
-      width: 90%;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-      animation: slideUp 0.4s ease;
-      position: relative;
-    }
-    .login-modal-content .logo { text-align: center; margin-bottom: 1.5rem; }
-    .login-modal-content .logo i { font-size: 2.5rem; color: #25D366; display: block; margin-bottom: 0.3rem; }
-    .login-modal-content .logo h2 { font-family: 'Poppins', sans-serif; font-size: 1.5rem; background: linear-gradient(135deg, #075E54, #25D366); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .login-modal-content .logo p { color: #8ba0ae; font-size: 0.8rem; -webkit-text-fill-color: #8ba0ae; }
-    .login-modal-content .form-group { margin-bottom: 1rem; }
-    .login-modal-content .form-group label { display: block; font-weight: 600; font-size: 0.8rem; color: #1a2c3e; margin-bottom: 4px; }
-    .login-modal-content .form-group label i { margin-right: 6px; color: #25D366; }
-    .login-modal-content .form-group input { width: 100%; padding: 10px 14px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 0.95rem; font-family: 'Inter', sans-serif; transition: border-color 0.2s; }
-    .login-modal-content .form-group input:focus { outline: none; border-color: #25D366; box-shadow: 0 0 0 3px rgba(37,211,102,0.1); }
-    .login-modal-content .btn-login { width: 100%; padding: 11px; border: none; border-radius: 10px; background: linear-gradient(135deg, #25D366, #128C7E); color: white; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.3s; font-family: 'Inter', sans-serif; margin-top: 0.5rem; }
-    .login-modal-content .btn-login:hover { transform: scale(1.02); box-shadow: 0 4px 20px rgba(37,211,102,0.4); }
-    .login-modal-content .btn-login:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-    .login-modal-content .error-msg { color: #dc3545; font-size: 0.8rem; text-align: center; margin-top: 0.8rem; display: none; }
-    .login-modal-content .error-msg.show { display: block; }
-    .login-modal-content .close-login { position: absolute; top: 12px; right: 16px; background: none; border: none; font-size: 1.6rem; cursor: pointer; color: #8ba0ae; transition: color 0.2s; }
-    .login-modal-content .close-login:hover { color: #1a2c3e; }
-    .login-modal-content .footer-text { text-align: center; margin-top: 1rem; font-size: 0.65rem; color: #8ba0ae; }
-    @keyframes slideUp {
-      from { transform: translateY(30px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-
-    /* ===== FILTROS CATEGORÍA - SCROLL HORIZONTAL ===== */
-    .category-filters {
-      display: flex;
-      flex-wrap: nowrap;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-      overflow-x: auto;
-      scrollbar-width: none;
-      -webkit-overflow-scrolling: touch;
-      padding-bottom: 2px;
-    }
-
-    .category-filters::-webkit-scrollbar {
-      display: none;
-    }
-
-    .filter-cat {
-      flex-shrink: 0;
-      background: #f0f4f8;
-      border-radius: 40px;
-      padding: 0.4rem 0.9rem;
-      font-weight: 600;
-      font-size: 0.75rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      cursor: pointer;
-      transition: all 0.2s;
-      color: #2c3f4f;
-      border: 2px solid transparent;
-      white-space: nowrap;
-    }
-
-    .filter-cat:hover { background: #e2edf2; }
-
-    .filter-cat.active { color: #fff; border-color: transparent; }
-
-    .filter-cat[data-category="todas"].active    { background: #1a2c3e; }
-    .filter-cat[data-category="compra-venta"].active { background: #25D366; box-shadow: 0 3px 10px rgba(37,211,102,0.35); }
-    .filter-cat[data-category="empleos"].active  { background: #F59E0B; box-shadow: 0 3px 10px rgba(245,158,11,0.35); }
-    .filter-cat[data-category="inmuebles"].active { background: #3B82F6; box-shadow: 0 3px 10px rgba(59,130,246,0.35); }
-    .filter-cat[data-category="transporte"].active { background: #8B5CF6; box-shadow: 0 3px 10px rgba(139,92,246,0.35); }
-    .filter-cat[data-category="educacion"].active { background: #EC4899; box-shadow: 0 3px 10px rgba(236,72,153,0.35); }
-    .filter-cat[data-category="deportes"].active  { background: #EF4444; box-shadow: 0 3px 10px rgba(239,68,68,0.35); }
+    .login-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; align-items:center; justify-content:center; backdrop-filter:blur(5px); }
+    .login-modal.show { display:flex; }
+    .login-modal-content { background:white; border-radius:24px; padding:2.5rem 2rem; max-width:380px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.4); animation:slideUp 0.4s ease; position:relative; }
+    .login-modal-content .logo { text-align:center; margin-bottom:1.5rem; }
+    .login-modal-content .logo i { font-size:2.5rem; color:#25D366; display:block; margin-bottom:0.3rem; }
+    .login-modal-content .logo h2 { font-family:'Poppins',sans-serif; font-size:1.5rem; background:linear-gradient(135deg,#075E54,#25D366); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .login-modal-content .logo p { color:#8ba0ae; font-size:0.8rem; -webkit-text-fill-color:#8ba0ae; }
+    .login-modal-content .form-group { margin-bottom:1rem; }
+    .login-modal-content .form-group label { display:block; font-weight:600; font-size:0.8rem; color:#1a2c3e; margin-bottom:4px; }
+    .login-modal-content .form-group label i { margin-right:6px; color:#25D366; }
+    .login-modal-content .form-group input { width:100%; padding:10px 14px; border:2px solid #e0e0e0; border-radius:10px; font-size:0.95rem; font-family:'Inter',sans-serif; transition:border-color 0.2s; }
+    .login-modal-content .form-group input:focus { outline:none; border-color:#25D366; box-shadow:0 0 0 3px rgba(37,211,102,0.1); }
+    .login-modal-content .btn-login { width:100%; padding:11px; border:none; border-radius:10px; background:linear-gradient(135deg,#25D366,#128C7E); color:white; font-weight:700; font-size:0.95rem; cursor:pointer; font-family:'Inter',sans-serif; margin-top:0.5rem; }
+    .login-modal-content .error-msg { color:#dc3545; font-size:0.8rem; text-align:center; margin-top:0.8rem; display:none; }
+    .login-modal-content .error-msg.show { display:block; }
+    .login-modal-content .close-login { position:absolute; top:12px; right:16px; background:none; border:none; font-size:1.6rem; cursor:pointer; color:#8ba0ae; }
+    .login-modal-content .footer-text { text-align:center; margin-top:1rem; font-size:0.65rem; color:#8ba0ae; }
+    @keyframes slideUp { from { transform:translateY(30px); opacity:0; } to { transform:translateY(0); opacity:1; } }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <!-- Navbar -->
+
+  <!-- ===== NAVBAR ===== -->
   <div class="navbar">
-    <div class="logo-area" id="logoResetBtn" style="cursor: pointer;">
-      <h1><i class="fas fa-users" style="color:#25D366;"></i> Qigrupos <span style="color:#2c3e4e;">Bolivia</span></h1>
-      <p>Compra & Venta | Grupos exclusivos</p>
+    <div class="logo-area" id="logoResetBtn" style="cursor:pointer;">
+      <h1>
+        <span class="logo-q">Q</span>
+        Qigrupos <span style="color:#25D366;">Bolivia</span>
+      </h1>
+      <p>Directorio de grupos &middot; Bolivia</p>
     </div>
     <div class="nav-links">
-      <button class="nav-btn publish-btn" id="btnAdminLogin" style="text-decoration:none; border:none; cursor:pointer;">
+      <button class="nav-btn publish-btn" id="btnAdminLogin">
         <i class="fas fa-crown"></i> Admin
       </button>
     </div>
   </div>
 
-  <!-- Grupo Destacado -->
+  <!-- ===== HERO ===== -->
+  <div class="hero">
+    <div class="hero-counter">
+      <span class="dot"></span>
+      <span id="heroCount">0</span> grupos activos ahora
+    </div>
+    <h2>Grupos de <span>Bolivia</span></h2>
+    <p>Encuentra, únete y descubre los mejores grupos</p>
+  </div>
+
+  <!-- ===== BUSCADOR ===== -->
+  <div class="search-bar">
+    <i class="fas fa-search"></i>
+    <input type="text" id="searchInput" placeholder="Busca grupos de Bolivia...">
+    <button class="btn-buscar" id="btnBuscar">Buscar</button>
+  </div>
+
+  <!-- ===== GRUPO DESTACADO ===== -->
   <div id="grupoDestacadoFijo"></div>
 
-  <!-- Filtros plataforma -->
-  <div class="social-filters" id="socialFilters">
+  <!-- ===== CATEGORÍAS CIRCULARES ===== -->
+  <div class="categorias-scroll" id="categoriasScroll">
+    <div class="cat-item active" data-cat="todas">
+      <div class="cat-icon">🔍</div>
+      <span class="cat-label">Todas</span>
+    </div>
+    <div class="cat-item" data-cat="compra-venta">
+      <div class="cat-icon">🛒</div>
+      <span class="cat-label">Compra/Venta</span>
+    </div>
+    <div class="cat-item" data-cat="empleos">
+      <div class="cat-icon">💼</div>
+      <span class="cat-label">Empleos</span>
+    </div>
+    <div class="cat-item" data-cat="inmuebles">
+      <div class="cat-icon">🏠</div>
+      <span class="cat-label">Inmuebles</span>
+    </div>
+    <div class="cat-item" data-cat="transporte">
+      <div class="cat-icon">🚗</div>
+      <span class="cat-label">Transporte</span>
+    </div>
+    <div class="cat-item" data-cat="educacion">
+      <div class="cat-icon">📚</div>
+      <span class="cat-label">Educación</span>
+    </div>
+    <div class="cat-item" data-cat="deportes">
+      <div class="cat-icon">⚽</div>
+      <span class="cat-label">Deportes</span>
+    </div>
+  </div>
+
+  <!-- ===== FILTROS PLATAFORMA ===== -->
+  <div class="plataforma-filtros" id="plataformaFiltros">
     <div class="filter-chip active" data-platform="whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</div>
     <div class="filter-chip" data-platform="telegram"><i class="fab fa-telegram"></i> Telegram</div>
     <div class="filter-chip" data-platform="discord"><i class="fab fa-discord"></i> Discord</div>
     <div class="filter-chip" data-platform="facebook"><i class="fab fa-facebook"></i> Facebook</div>
   </div>
 
-  <!-- Filtros categoría - scroll horizontal -->
-  <div class="category-filters" id="categoryFilters">
-    <div class="filter-cat active" data-category="todas">🔍 Todas</div>
-    <div class="filter-cat" data-category="compra-venta">🛒 Compra/Venta</div>
-    <div class="filter-cat" data-category="empleos">💼 Empleos</div>
-    <div class="filter-cat" data-category="inmuebles">🏠 Inmuebles</div>
-    <div class="filter-cat" data-category="transporte">🚗 Transporte</div>
-    <div class="filter-cat" data-category="educacion">📚 Educación</div>
-    <div class="filter-cat" data-category="deportes">⚽ Deportes</div>
-  </div>
-
-  <!-- Selector de ciudad -->
+  <!-- ===== SELECTOR CIUDAD ===== -->
   <div class="city-selector-btn" id="openCityModalBtn">
     <div class="city-selected">
       <i class="fas fa-map-marker-alt"></i>
@@ -170,47 +139,60 @@
     <i class="fas fa-chevron-down"></i>
   </div>
 
-  <!-- Banner Bolivia -->
-  <div class="bolivia-banner">
-    <div><strong>🇧🇴 Grupos compra y venta Bolivia</strong></div>
-    <span>➕ Seguro</span>
-  </div>
-
-  <!-- Contador de resultados -->
+  <!-- ===== CONTADOR ===== -->
   <div class="results-counter">
     <i class="fas fa-users"></i> <span id="resultCount">0</span> grupos encontrados
   </div>
 
-  <!-- Grid grupos -->
+  <!-- ===== GRID GRUPOS ===== -->
   <div id="gruposContainer" class="grupos-grid"></div>
 
-  <!-- Banner TikDown -->
+  <!-- ===== BANNER TIKDOWN ===== -->
   <a href="https://tikdown-free.vercel.app/" target="_blank" rel="noopener noreferrer"
-    style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.6rem 1rem;background:linear-gradient(145deg,#1a1a2e,#16213e);border-radius:18px;padding:0.9rem 1.5rem;margin:1.2rem 0;border:1px solid rgba(255,0,80,0.25);box-shadow:0 8px 28px rgba(0,0,0,0.6);text-decoration:none;color:white;transition:all 0.25s ease;"
-    onmouseover="this.style.borderColor='#ff0050';"
-    onmouseout="this.style.borderColor='rgba(255,0,80,0.25)';">
-    <div style="display:flex;align-items:center;gap:0.9rem;flex:1 1 180px;">
-      <div style="background:linear-gradient(135deg,#ff0050,#cc0038);width:44px;height:44px;min-width:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">🎵</div>
-      <div style="display:flex;flex-direction:column;justify-content:center;line-height:1.3;">
-        <div style="font-weight:700;font-size:1.15rem;display:flex;align-items:center;gap:0.2rem;">
-          <span style="color:#ffffff;">Tik</span><span style="color:#ff4d7a;">Down</span>
+    style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.6rem 1rem;background:linear-gradient(145deg,#1a1a2e,#16213e);border-radius:18px;padding:0.9rem 1.5rem;margin:1.2rem 0;border:1px solid rgba(255,0,80,0.25);box-shadow:0 8px 28px rgba(0,0,0,0.4);text-decoration:none;color:white;">
+    <div style="display:flex;align-items:center;gap:0.9rem;flex:1;">
+      <div style="background:linear-gradient(135deg,#ff0050,#cc0038);width:44px;height:44px;min-width:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;">🎵</div>
+      <div>
+        <div style="font-weight:700;font-size:1rem;display:flex;gap:0.2rem;">
+          <span style="color:#fff;">Tik</span><span style="color:#ff4d7a;">Down</span>
           <span style="font-weight:400;opacity:0.5;font-size:0.8rem;">Free</span>
         </div>
-        <div style="font-size:0.78rem;opacity:0.6;">Descarga videos y MP3 de TikTok sin marca de agua</div>
+        <div style="font-size:0.75rem;opacity:0.6;">Descarga videos y MP3 sin marca de agua</div>
       </div>
     </div>
-    <div style="background:linear-gradient(135deg,#ff0050,#d90044);padding:0.45rem 1.3rem;border-radius:60px;font-weight:600;font-size:0.82rem;color:white;white-space:nowrap;">
-      Visitar sitio →
-    </div>
+    <div style="background:linear-gradient(135deg,#ff0050,#d90044);padding:0.4rem 1.1rem;border-radius:60px;font-weight:600;font-size:0.8rem;color:white;white-space:nowrap;">Visitar →</div>
   </a>
 
-  <!-- Footer -->
-  <div class="footer-note">
-    <i class="fab fa-whatsapp"></i> Grupos verificados de compra y venta Bolivia
-  </div>
+  <div class="footer-note">🇧🇴 Qigrupos Bolivia &mdash; Grupos verificados</div>
 </div>
 
-<!-- MODAL DE CIUDADES -->
+<!-- ===== NAVBAR INFERIOR ===== -->
+<nav class="bottom-nav">
+  <a class="bottom-nav-item active" id="navInicio" href="#">
+    <i class="fas fa-home"></i>
+    <span>Inicio</span>
+  </a>
+  <a class="bottom-nav-item" id="navBuscar" href="#" onclick="document.getElementById('searchInput').focus(); return false;">
+    <i class="fas fa-search"></i>
+    <span>Buscar</span>
+  </a>
+  <a class="bottom-nav-item" id="navAnadir"
+     href="https://wa.me/59169356292?text=Hola%2C%20quiero%20agregar%20mi%20grupo%20en%20Qigrupos%20Bolivia"
+     target="_blank" rel="noopener noreferrer">
+    <div class="add-btn"><i class="fas fa-plus"></i></div>
+    <span>Añadir</span>
+  </a>
+  <a class="bottom-nav-item" id="navCiudad" href="#" onclick="document.getElementById('openCityModalBtn').click(); return false;">
+    <i class="fas fa-map-marker-alt"></i>
+    <span>Ciudad</span>
+  </a>
+  <a class="bottom-nav-item" id="navAdmin" href="#" onclick="document.getElementById('btnAdminLogin').click(); return false;">
+    <i class="fas fa-crown"></i>
+    <span>Admin</span>
+  </a>
+</nav>
+
+<!-- ===== MODAL CIUDADES ===== -->
 <div id="cityModal" class="modal-city">
   <div class="modal-city-content">
     <div class="modal-city-header">
@@ -222,51 +204,21 @@
       <input type="text" id="citySearchInput" placeholder="Buscar ciudad...">
     </div>
     <div class="city-list" id="cityList">
-      <div class="city-item active" data-city="todos">
-        <div class="city-info"><i class="fas fa-globe-americas"></i><span>Todos los departamentos</span></div>
-        <span class="city-count" id="modalTotalCount">0</span>
-      </div>
-      <div class="city-item" data-city="Santa Cruz">
-        <div class="city-info"><i class="fas fa-tree"></i><span>Santa Cruz</span></div>
-        <span class="city-count" id="modalSantaCruzCount">0</span>
-      </div>
-      <div class="city-item" data-city="La Paz">
-        <div class="city-info"><i class="fas fa-mountain"></i><span>La Paz</span></div>
-        <span class="city-count" id="modalLaPazCount">0</span>
-      </div>
-      <div class="city-item" data-city="Cochabamba">
-        <div class="city-info"><i class="fas fa-cloud-sun"></i><span>Cochabamba</span></div>
-        <span class="city-count" id="modalCochabambaCount">0</span>
-      </div>
-      <div class="city-item" data-city="Sucre">
-        <div class="city-info"><i class="fas fa-landmark"></i><span>Sucre</span></div>
-        <span class="city-count" id="modalSucreCount">0</span>
-      </div>
-      <div class="city-item" data-city="Tarija">
-        <div class="city-info"><i class="fas fa-wine-bottle"></i><span>Tarija</span></div>
-        <span class="city-count" id="modalTarijaCount">0</span>
-      </div>
-      <div class="city-item" data-city="Potosí">
-        <div class="city-info"><i class="fas fa-gem"></i><span>Potosí</span></div>
-        <span class="city-count" id="modalPotosiCount">0</span>
-      </div>
-      <div class="city-item" data-city="Oruro">
-        <div class="city-info"><i class="fas fa-church"></i><span>Oruro</span></div>
-        <span class="city-count" id="modalOruroCount">0</span>
-      </div>
-      <div class="city-item" data-city="Beni">
-        <div class="city-info"><i class="fas fa-water"></i><span>Beni</span></div>
-        <span class="city-count" id="modalBeniCount">0</span>
-      </div>
-      <div class="city-item" data-city="Pando">
-        <div class="city-info"><i class="fas fa-fish"></i><span>Pando</span></div>
-        <span class="city-count" id="modalPandoCount">0</span>
-      </div>
+      <div class="city-item active" data-city="todos"><div class="city-info"><i class="fas fa-globe-americas"></i><span>Todos los departamentos</span></div><span class="city-count" id="modalTotalCount">0</span></div>
+      <div class="city-item" data-city="Santa Cruz"><div class="city-info"><i class="fas fa-tree"></i><span>Santa Cruz</span></div><span class="city-count" id="modalSantaCruzCount">0</span></div>
+      <div class="city-item" data-city="La Paz"><div class="city-info"><i class="fas fa-mountain"></i><span>La Paz</span></div><span class="city-count" id="modalLaPazCount">0</span></div>
+      <div class="city-item" data-city="Cochabamba"><div class="city-info"><i class="fas fa-cloud-sun"></i><span>Cochabamba</span></div><span class="city-count" id="modalCochabambaCount">0</span></div>
+      <div class="city-item" data-city="Sucre"><div class="city-info"><i class="fas fa-landmark"></i><span>Sucre</span></div><span class="city-count" id="modalSucreCount">0</span></div>
+      <div class="city-item" data-city="Tarija"><div class="city-info"><i class="fas fa-wine-bottle"></i><span>Tarija</span></div><span class="city-count" id="modalTarijaCount">0</span></div>
+      <div class="city-item" data-city="Potosí"><div class="city-info"><i class="fas fa-gem"></i><span>Potosí</span></div><span class="city-count" id="modalPotosiCount">0</span></div>
+      <div class="city-item" data-city="Oruro"><div class="city-info"><i class="fas fa-church"></i><span>Oruro</span></div><span class="city-count" id="modalOruroCount">0</span></div>
+      <div class="city-item" data-city="Beni"><div class="city-info"><i class="fas fa-water"></i><span>Beni</span></div><span class="city-count" id="modalBeniCount">0</span></div>
+      <div class="city-item" data-city="Pando"><div class="city-info"><i class="fas fa-fish"></i><span>Pando</span></div><span class="city-count" id="modalPandoCount">0</span></div>
     </div>
   </div>
 </div>
 
-<!-- MODAL DE LOGIN -->
+<!-- ===== MODAL LOGIN ===== -->
 <div class="login-modal" id="loginModal">
   <div class="login-modal-content">
     <button class="close-login" id="closeLoginBtn">&times;</button>
@@ -291,19 +243,9 @@
         <i class="fas fa-exclamation-circle"></i> Usuario o contraseña incorrectos
       </div>
     </form>
-    <div class="footer-text">
-      <i class="fas fa-shield-alt"></i> Acceso restringido a administradores
-    </div>
+    <div class="footer-text"><i class="fas fa-shield-alt"></i> Acceso restringido a administradores</div>
   </div>
 </div>
-
-<!-- Botón flotante WhatsApp -->
-<a href="https://wa.me/59169356292?text=Hola%2C%20quiero%20destacar%20mi%20grupo%20en%20Qigrupos%20Bolivia"
-   target="_blank" rel="noopener noreferrer"
-   title="Destacar mi grupo"
-   style="position:fixed;bottom:24px;right:20px;background:#25D366;color:white;border-radius:50%;width:52px;height:52px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,0.5);z-index:999;text-decoration:none;">
-  <i class="fab fa-whatsapp" style="font-size:1.6rem;"></i>
-</a>
 
 <script src="js/main.js"></script>
 <script src="https://pl29813678.effectivecpmnetwork.com/85/ed/63/85ed635c7bee052567a3c49453aa5df3.js"></script>
