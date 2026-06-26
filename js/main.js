@@ -26,10 +26,27 @@ function labelPlataforma(p) {
 // HELPERS: CATEGORÍA
 // ============================================
 function emojiCategoria(c) {
-  return { 'compra-venta':'🛒', 'empleos':'💼', 'inmuebles':'🏠', 'transporte':'🚗', 'educacion':'📚', 'deportes':'⚽', 'otro':'📌' }[c] || '📌';
+  return { 'compra-venta':'🛒', 
+  'empleos':'💼',
+  'inmuebles':'🏠',
+  'ropa':'👕',
+  'educacion':'📚', 
+  'deportes':'⚽', 
+  'otro':'📌'
+  }
+  [c] || '📌';
 }
 function labelCategoria(c) {
-  return { 'compra-venta':'Compra/Venta', 'empleos':'Empleos', 'inmuebles':'Inmuebles', 'transporte':'Transporte', 'educacion':'Educación', 'deportes':'Deportes', 'otro':'Otro' }[c] || 'Otro';
+  return { 
+  'compra-venta':'Compra/Venta',
+  'empleos':'Empleos',
+  'inmuebles':'Inmuebles', 
+  'ropa':'Ropas', 
+  'educacion':'Educación',
+  'deportes':'Deportes', 
+  'otro':'Otro'
+  }
+  [c] || 'Otro';
 }
 
 // ============================================
