@@ -29,8 +29,8 @@ function emojiCategoria(c) {
   return { 'compra-venta':'🛒', 
   'empleos':'💼',
   'inmuebles':'🏠',
-  'ropa':'👕',
-  'citas':'❤️', 
+  'ropa':'🚗',
+  'educacion':'📚', 
   'deportes':'⚽', 
   'otro':'📌'
   }
@@ -42,7 +42,7 @@ function labelCategoria(c) {
   'empleos':'Empleos',
   'inmuebles':'Inmuebles', 
   'ropa':'Ropas', 
-  'citas':'Citas/Amigos',
+  'educacion':'Educación',
   'deportes':'Deportes', 
   'otro':'Otro'
   }
