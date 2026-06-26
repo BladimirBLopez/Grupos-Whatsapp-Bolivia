@@ -84,16 +84,13 @@ async function cargarGrupos() {
   try {
     const res = await fetch('/api/grupos');
     if (res.ok) {
-      const data = await res.json();
-      gruposData = data.grupos || [];
+      gruposData = (await res.json()).grupos || [];
     } else {
-      const local = await fetch('data/grupos.json');
-      gruposData = (await local.json()).grupos || [];
+      gruposData = (await (await fetch('data/grupos.json')).json()).grupos || [];
     }
   } catch(e) {
     try {
-      const local = await fetch('data/grupos.json');
-      gruposData = (await local.json()).grupos || [];
+      gruposData = (await (await fetch('data/grupos.json')).json()).grupos || [];
     } catch(e2) {
       document.getElementById('gruposContainer').innerHTML = `<div class="empty-message"><i class="fas fa-exclamation-triangle"></i> Error al cargar grupos</div>`;
       return;
@@ -151,7 +148,7 @@ function mostrarGrupoDestacado() {
             <span style="background:${color}18;color:${color};border:1.5px solid ${color}55;font-size:0.6rem;font-weight:700;padding:3px 8px;border-radius:20px;display:inline-flex;align-items:center;gap:3px;"><i class="${icono}"></i> ${label}</span>
           </div>
         </div>
-        ${d.descripcion ? `<p style="margin:0 0 0.5rem;font-size:0.78rem;color:#5a7080;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${d.descripcion}</p>` : ''}
+        ${d.descripcion?`<p style="margin:0 0 0.5rem;font-size:0.78rem;color:#5a7080;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${d.descripcion}</p>`:''}
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px;margin-bottom:0.5rem;">
           <span style="font-size:0.78rem;font-weight:700;color:#e65100;"><i class="fas fa-map-marker-alt"></i> ${d.ubicacion||'Bolivia'}</span>
           <span style="background:linear-gradient(135deg,#ff6b35,#f7931e);color:#fff;font-size:0.68rem;font-weight:700;padding:2px 9px;border-radius:20px;">🔥 +50 miembros/semana</span>
@@ -165,6 +162,16 @@ function mostrarGrupoDestacado() {
 }
 
 // ============================================
+// BUSCAR (función central)
+// ============================================
+function ejecutarBusqueda() {
+  const input = document.getElementById('searchInput');
+  busquedaActual  = input ? input.value : '';
+  gruposMostrados = GRUPOS_POR_PAGINA;
+  renderizarGrupos();
+}
+
+// ============================================
 // RENDERIZAR GRUPOS
 // ============================================
 function renderizarGrupos() {
@@ -173,19 +180,15 @@ function renderizarGrupos() {
 
   let lista = [...gruposData];
 
-  // Filtro plataforma
   if (plataformaSeleccionada !== 'todos') {
     lista = lista.filter(g => (g.plataforma||'whatsapp').toLowerCase() === plataformaSeleccionada.toLowerCase());
   }
-  // Filtro categoría
   if (categoriaSeleccionada !== 'todas') {
     lista = lista.filter(g => (g.categoria||'compra-venta') === categoriaSeleccionada);
   }
-  // Filtro ciudad
   if (ciudadSeleccionada !== 'todos') {
     lista = lista.filter(g => g.ubicacion && g.ubicacion.toLowerCase() === ciudadSeleccionada.toLowerCase());
   }
-  // Búsqueda
   if (busquedaActual.trim()) {
     const q = busquedaActual.toLowerCase();
     lista = lista.filter(g =>
@@ -280,7 +283,8 @@ function actualizarContadoresCiudades() {
   }
 
   ['todos','Santa Cruz','La Paz','Cochabamba','Sucre','Tarija','Potosí','Oruro','Beni','Pando'].forEach(ciudad => {
-    const count = ciudad === 'todos' ? base.length : base.filter(g => g.ubicacion && g.ubicacion.toLowerCase() === ciudad.toLowerCase()).length;
+    const count = ciudad === 'todos' ? base.length
+      : base.filter(g => g.ubicacion && g.ubicacion.toLowerCase() === ciudad.toLowerCase()).length;
     const id = ciudad === 'todos' ? 'modalTotalCount' : `modal${ciudad.replace(/ /g,'')}Count`;
     const el = document.getElementById(id);
     if (el) el.textContent = count;
@@ -336,8 +340,11 @@ function configurarEventListeners() {
     document.getElementById('loginError').classList.remove('show');
     document.getElementById('loginUser').focus();
   });
-  document.getElementById('closeLoginBtn')?.addEventListener('click', () => document.getElementById('loginModal').classList.remove('show'));
-  document.getElementById('loginModal')?.addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.classList.remove('show'); });
+  document.getElementById('closeLoginBtn')?.addEventListener('click', () =>
+    document.getElementById('loginModal').classList.remove('show'));
+  document.getElementById('loginModal')?.addEventListener('click', e => {
+    if (e.target === e.currentTarget) e.currentTarget.classList.remove('show');
+  });
   document.getElementById('loginForm')?.addEventListener('submit', e => {
     e.preventDefault();
     const user = document.getElementById('loginUser').value.trim();
@@ -358,17 +365,24 @@ function configurarEventListeners() {
     }, 800);
   });
 
-  // Buscador
-  const searchInput = document.getElementById('searchInput');
-  const btnBuscar   = document.getElementById('btnBuscar');
-  const buscar = () => {
-    busquedaActual  = searchInput?.value || '';
-    gruposMostrados = GRUPOS_POR_PAGINA;
-    renderizarGrupos();
-  };
-  searchInput?.addEventListener('input', buscar);
-  btnBuscar?.addEventListener('click', buscar);
-  searchInput?.addEventListener('keydown', e => { if (e.key === 'Enter') buscar(); });
+  // Buscador — input en tiempo real
+  document.getElementById('searchInput')?.addEventListener('input', ejecutarBusqueda);
+
+  // Botón Buscar — clic directo
+  document.getElementById('btnBuscar')?.addEventListener('click', ejecutarBusqueda);
+
+  // Enter en el buscador
+  document.getElementById('searchInput')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') ejecutarBusqueda();
+  });
+
+  // Navbar inferior buscar
+  document.getElementById('navBuscar')?.addEventListener('click', e => {
+    e.preventDefault();
+    document.getElementById('searchInput')?.focus();
+    document.querySelectorAll('.bottom-nav-item').forEach(i => i.classList.remove('active'));
+    document.getElementById('navBuscar').classList.add('active');
+  });
 
   // Filtros plataforma
   document.querySelectorAll('.filter-chip').forEach(chip => {
@@ -395,9 +409,13 @@ function configurarEventListeners() {
   });
 
   // Modal ciudades
-  document.getElementById('openCityModalBtn')?.addEventListener('click', () => document.getElementById('cityModal').style.display = 'flex');
-  document.getElementById('closeCityModalBtn')?.addEventListener('click', () => document.getElementById('cityModal').style.display = 'none');
-  document.getElementById('cityModal')?.addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.style.display = 'none'; });
+  document.getElementById('openCityModalBtn')?.addEventListener('click', () =>
+    document.getElementById('cityModal').style.display = 'flex');
+  document.getElementById('closeCityModalBtn')?.addEventListener('click', () =>
+    document.getElementById('cityModal').style.display = 'none');
+  document.getElementById('cityModal')?.addEventListener('click', e => {
+    if (e.target === e.currentTarget) e.currentTarget.style.display = 'none';
+  });
 
   document.querySelectorAll('.city-item').forEach(item => {
     item.addEventListener('click', e => {
@@ -405,7 +423,8 @@ function configurarEventListeners() {
       document.querySelectorAll('.city-item').forEach(i => i.classList.remove('active'));
       item.classList.add('active');
       ciudadSeleccionada = item.dataset.city;
-      document.getElementById('selectedCityName').textContent = ciudadSeleccionada === 'todos' ? 'Todos los departamentos' : ciudadSeleccionada;
+      document.getElementById('selectedCityName').textContent =
+        ciudadSeleccionada === 'todos' ? 'Todos los departamentos' : ciudadSeleccionada;
       document.getElementById('cityModal').style.display = 'none';
       gruposMostrados = GRUPOS_POR_PAGINA;
       renderizarGrupos();
@@ -420,7 +439,7 @@ function configurarEventListeners() {
     });
   });
 
-  // Navbar inferior — marcar activo
+  // Navbar inferior
   document.querySelectorAll('.bottom-nav-item').forEach(item => {
     item.addEventListener('click', () => {
       document.querySelectorAll('.bottom-nav-item').forEach(i => i.classList.remove('active'));
