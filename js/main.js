@@ -174,6 +174,10 @@ function ejecutarBusqueda() {
     document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
   }
   renderizarGrupos();
+  // Scroll suave hasta los resultados
+  setTimeout(() => {
+    document.getElementById('gruposContainer')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
 }
 
 // ============================================

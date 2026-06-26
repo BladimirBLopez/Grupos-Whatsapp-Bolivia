@@ -13,12 +13,11 @@
   </script>
   
   <title>Qigrupos Bolivia | Grupos WhatsApp, Telegram y más</title>
-  <meta name="description" content="Encuentra los mejores grupos de WhatsApp, Telegram, Facebook y Discord en Bolivia. Únete a grupos por ciudad y categoría.">
-  <meta name="keywords" content="grupos whatsapp bolivia, grupos telegram bolivia, compra venta bolivia, empleos bolivia">
+  <meta name="description" content="Encuentra los mejores grupos de WhatsApp, Telegram, Facebook y Discord en Bolivia.">
+  <meta name="keywords" content="grupos whatsapp bolivia, grupos telegram bolivia, compra venta bolivia">
   <meta name="author" content="Qigrupos Bolivia">
   <meta name="robots" content="index, follow">
   <meta property="og:title" content="Qigrupos Bolivia | Directorio de Grupos">
-  <meta property="og:description" content="Encuentra y únete a grupos de Bolivia por ciudad y categoría.">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="es_ES">
   
@@ -28,7 +27,6 @@
   <link rel="stylesheet" href="css/styles.css">
 
   <style>
-    /* ===== MODAL LOGIN ===== */
     .login-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; align-items:center; justify-content:center; backdrop-filter:blur(5px); }
     .login-modal.show { display:flex; }
     .login-modal-content { background:white; border-radius:24px; padding:2.5rem 2rem; max-width:380px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.4); animation:slideUp 0.4s ease; position:relative; }
@@ -53,24 +51,8 @@
 
 <div class="container">
 
-  <!-- ===== NAVBAR ===== -->
-  <div class="navbar">
-    <div class="logo-area" id="logoResetBtn" style="cursor:pointer;">
-      <h1>
-        <span class="logo-q">Q</span>
-        Qigrupos <span style="color:#25D366;">Bolivia</span>
-      </h1>
-      <p>Directorio de grupos &middot; Bolivia</p>
-    </div>
-    <div class="nav-links">
-      <button class="nav-btn publish-btn" id="btnAdminLogin">
-        <i class="fas fa-crown"></i> Admin
-      </button>
-    </div>
-  </div>
-
   <!-- ===== HERO ===== -->
-  <div class="hero">
+  <div class="hero" id="logoResetBtn" style="cursor:pointer;">
     <div class="hero-counter">
       <span class="dot"></span>
       <span id="heroCount">0</span> grupos activos ahora
@@ -168,11 +150,13 @@
 
 <!-- ===== NAVBAR INFERIOR ===== -->
 <nav class="bottom-nav">
-  <a class="bottom-nav-item active" id="navInicio" href="#">
+  <a class="bottom-nav-item active" id="navInicio" href="#"
+     onclick="document.getElementById('logoResetBtn').click(); return false;">
     <i class="fas fa-home"></i>
     <span>Inicio</span>
   </a>
-  <a class="bottom-nav-item" id="navBuscar" href="#" onclick="document.getElementById('searchInput').focus(); return false;">
+  <a class="bottom-nav-item" id="navBuscar" href="#"
+     onclick="document.getElementById('searchInput').focus(); return false;">
     <i class="fas fa-search"></i>
     <span>Buscar</span>
   </a>
@@ -182,11 +166,13 @@
     <div class="add-btn"><i class="fas fa-plus"></i></div>
     <span>Añadir</span>
   </a>
-  <a class="bottom-nav-item" id="navCiudad" href="#" onclick="document.getElementById('openCityModalBtn').click(); return false;">
+  <a class="bottom-nav-item" id="navCiudad" href="#"
+     onclick="document.getElementById('openCityModalBtn').click(); return false;">
     <i class="fas fa-map-marker-alt"></i>
     <span>Ciudad</span>
   </a>
-  <a class="bottom-nav-item" id="navAdmin" href="#" onclick="document.getElementById('btnAdminLogin').click(); return false;">
+  <a class="bottom-nav-item" id="navAdmin" href="#"
+     onclick="document.getElementById('btnAdminLogin').click(); return false;">
     <i class="fas fa-crown"></i>
     <span>Admin</span>
   </a>
@@ -203,7 +189,7 @@
       <i class="fas fa-search"></i>
       <input type="text" id="citySearchInput" placeholder="Buscar ciudad...">
     </div>
-    <div class="city-list" id="cityList">
+    <div class="city-list">
       <div class="city-item active" data-city="todos"><div class="city-info"><i class="fas fa-globe-americas"></i><span>Todos los departamentos</span></div><span class="city-count" id="modalTotalCount">0</span></div>
       <div class="city-item" data-city="Santa Cruz"><div class="city-info"><i class="fas fa-tree"></i><span>Santa Cruz</span></div><span class="city-count" id="modalSantaCruzCount">0</span></div>
       <div class="city-item" data-city="La Paz"><div class="city-info"><i class="fas fa-mountain"></i><span>La Paz</span></div><span class="city-count" id="modalLaPazCount">0</span></div>
@@ -243,9 +229,12 @@
         <i class="fas fa-exclamation-circle"></i> Usuario o contraseña incorrectos
       </div>
     </form>
-    <div class="footer-text"><i class="fas fa-shield-alt"></i> Acceso restringido a administradores</div>
+    <div class="footer-text"><i class="fas fa-shield-alt"></i> Acceso restringido</div>
   </div>
 </div>
+
+<!-- Botón Admin oculto para el navbar inferior -->
+<button id="btnAdminLogin" style="display:none;"></button>
 
 <script src="js/main.js"></script>
 <script src="https://pl29813678.effectivecpmnetwork.com/85/ed/63/85ed635c7bee052567a3c49453aa5df3.js"></script>
