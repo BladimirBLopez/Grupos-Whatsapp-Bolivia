@@ -164,20 +164,28 @@ function mostrarGrupoDestacado() {
 // ============================================
 // BUSCAR (función central)
 // ============================================
-function ejecutarBusqueda() {
+function ejecutarBusqueda(hacerScroll = false) {
   const input = document.getElementById('searchInput');
-  busquedaActual  = input ? input.value : '';
+  busquedaActual = input ? input.value : '';
   gruposMostrados = GRUPOS_POR_PAGINA;
+
   // Si hay búsqueda activa, mostrar todas las plataformas
   if (busquedaActual.trim()) {
     plataformaSeleccionada = 'todos';
     document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
   }
+
   renderizarGrupos();
-  // Scroll suave hasta los resultados
-  setTimeout(() => {
-    document.getElementById('gruposContainer')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 100);
+
+  // Solo hacer scroll cuando se solicite
+  if (hacerScroll) {
+    setTimeout(() => {
+      document.getElementById('gruposContainer')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }, 100);
+  }
 }
 
 // ============================================
@@ -375,15 +383,22 @@ function configurarEventListeners() {
   });
 
   // Buscador — input en tiempo real
-  document.getElementById('searchInput')?.addEventListener('input', ejecutarBusqueda);
+  document.getElementById('searchInput')?.addEventListener('input', () => {
+  ejecutarBusqueda(false);
+});
 
   // Botón Buscar — clic directo
-  document.getElementById('btnBuscar')?.addEventListener('click', ejecutarBusqueda);
+document.getElementById('btnBuscar')?.addEventListener('click', () => {
+  ejecutarBusqueda(true);
+});
 
   // Enter en el buscador
-  document.getElementById('searchInput')?.addEventListener('keydown', e => {
-    if (e.key === 'Enter') ejecutarBusqueda();
-  });
+ document.getElementById('searchInput')?.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    ejecutarBusqueda(true);
+  }
+});
 
   // Navbar inferior buscar
   document.getElementById('navBuscar')?.addEventListener('click', e => {
