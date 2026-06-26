@@ -29,7 +29,7 @@ function emojiCategoria(c) {
   return { 'compra-venta':'🛒', 
   'empleos':'💼',
   'inmuebles':'🏠',
-  'ropa':'🚗',
+  'ropa':'👕',
   'educacion':'📚', 
   'deportes':'⚽', 
   'otro':'📌'
