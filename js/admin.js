@@ -12,7 +12,7 @@ const CATEGORIAS = {
   'compra-venta': { label: 'Compra/Venta', emoji: '🛒', color: '#25D366' },
   'empleos':      { label: 'Empleos',      emoji: '💼', color: '#F59E0B' },
   'inmuebles':    { label: 'Inmuebles',     emoji: '🏠', color: '#3B82F6' },
-  'transporte':   { label: 'Transporte',    emoji: '🚗', color: '#8B5CF6' },
+  'ropa':   { label: 'Ropas',    emoji: '👕', color: '#8B5CF6' },
   'educacion':    { label: 'Educación',     emoji: '📚', color: '#EC4899' },
   'deportes':     { label: 'Deportes',      emoji: '⚽', color: '#EF4444' },
   'otro':         { label: 'Otro',          emoji: '📌', color: '#8ba0ae' }

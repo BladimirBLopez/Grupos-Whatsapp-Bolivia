@@ -26,7 +26,8 @@ function labelPlataforma(p) {
 // HELPERS: CATEGORÍA
 // ============================================
 function emojiCategoria(c) {
-  return { 'compra-venta':'🛒', 
+  return { 
+  'compra-venta':'🛒', 
   'empleos':'💼',
   'inmuebles':'🏠',
   'ropa':'👕',
