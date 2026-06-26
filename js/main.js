@@ -30,7 +30,7 @@ function emojiCategoria(c) {
   'empleos':'💼',
   'inmuebles':'🏠',
   'ropa':'👕',
-  'educacion':'📚', 
+  'citas':'❤️', 
   'deportes':'⚽', 
   'otro':'📌'
   }
@@ -42,7 +42,7 @@ function labelCategoria(c) {
   'empleos':'Empleos',
   'inmuebles':'Inmuebles', 
   'ropa':'Ropas', 
-  'educacion':'Educación',
+  'citas':'Citas/Amigos',
   'deportes':'Deportes', 
   'otro':'Otro'
   }
