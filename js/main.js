@@ -168,6 +168,11 @@ function ejecutarBusqueda() {
   const input = document.getElementById('searchInput');
   busquedaActual  = input ? input.value : '';
   gruposMostrados = GRUPOS_POR_PAGINA;
+  // Si hay búsqueda activa, mostrar todas las plataformas
+  if (busquedaActual.trim()) {
+    plataformaSeleccionada = 'todos';
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  }
   renderizarGrupos();
 }
 
