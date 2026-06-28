@@ -1,7 +1,7 @@
 import { MongoClient, ObjectId } from 'mongodb';
 
 const PLATAFORMAS_VALIDAS = ['whatsapp', 'telegram', 'facebook', 'discord', 'otro'];
-const CATEGORIAS_VALIDAS  = ['compra-venta', 'empleos', 'inmuebles', 'transporte', 'educacion', 'deportes', 'otro'];
+const CATEGORIAS_VALIDAS  = ['compra-venta', 'empleos', 'inmuebles', 'ropa', 'citas', 'futbol', 'otro'];
 
 let cachedClient = null;
 

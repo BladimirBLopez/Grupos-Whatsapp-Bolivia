@@ -3,7 +3,7 @@
 // ============================================
 let gruposData = [];
 let ciudadSeleccionada     = 'todos';
-let plataformaSeleccionada = 'whatsapp';
+let plataformaSeleccionada = 'todos';
 let categoriaSeleccionada  = 'todas';
 let busquedaActual         = '';
 let gruposMostrados = 5;
@@ -26,27 +26,13 @@ function labelPlataforma(p) {
 // HELPERS: CATEGORÍA
 // ============================================
 function emojiCategoria(c) {
-  return { 
-  'compra-venta':'🛒', 
-  'empleos':'💼',
-  'inmuebles':'🏠',
-  'ropa':'👕',
-  'educacion':'📚', 
-  'deportes':'⚽', 
-  'otro':'📌'
-  }
+  return { 'compra-venta':'🛒', 'empleos':'💼', 'inmuebles':'🏠', 'ropa':'👕', 'citas':'💬', 'futbol':'⚽', 'otro':'🗂️' }[c] || '🗂️';
+}
   [c] || '📌';
 }
 function labelCategoria(c) {
-  return { 
-  'compra-venta':'Compra/Venta',
-  'empleos':'Empleos',
-  'inmuebles':'Inmuebles', 
-  'ropa':'Ropas', 
-  'educacion':'Educación',
-  'deportes':'Deportes', 
-  'otro':'Otro'
-  }
+  return { 'compra-venta':'Compra/Venta', 'empleos':'Empleos', 'inmuebles':'Inmuebles', 'ropa':'Ropas', 'citas':'Citas/Amigos', 'futbol':'Fútbol', 'otro':'Otros' }[c] || 'Otros';
+}
   [c] || 'Otro';
 }
 
@@ -338,13 +324,13 @@ function actualizarContadoresCiudades() {
 // ============================================
 function resetFiltros() {
   ciudadSeleccionada     = 'todos';
-  plataformaSeleccionada = 'whatsapp';
+  plataformaSeleccionada = 'todos';
   categoriaSeleccionada  = 'todas';
   busquedaActual         = '';
   gruposMostrados        = GRUPOS_POR_PAGINA;
 
   document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-  document.querySelector('.filter-chip[data-platform="whatsapp"]')?.classList.add('active');
+  document.querySelector('.filter-chip[data-platform="todos"]')?.classList.add('active');
   document.querySelectorAll('.cat-item').forEach(c => c.classList.remove('active'));
   document.querySelector('.cat-item[data-cat="todas"]')?.classList.add('active');
   document.getElementById('selectedCityName').textContent = 'Todos los departamentos';
