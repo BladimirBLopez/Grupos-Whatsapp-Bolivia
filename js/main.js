@@ -28,12 +28,8 @@ function labelPlataforma(p) {
 function emojiCategoria(c) {
   return { 'compra-venta':'🛒', 'empleos':'💼', 'inmuebles':'🏠', 'ropa':'👕', 'citas':'💬', 'futbol':'⚽', 'otro':'🗂️' }[c] || '🗂️';
 }
-  [c] || '📌';
-}
 function labelCategoria(c) {
   return { 'compra-venta':'Compra/Venta', 'empleos':'Empleos', 'inmuebles':'Inmuebles', 'ropa':'Ropas', 'citas':'Citas/Amigos', 'futbol':'Fútbol', 'otro':'Otros' }[c] || 'Otros';
-}
-  [c] || 'Otro';
 }
 
 // ============================================
