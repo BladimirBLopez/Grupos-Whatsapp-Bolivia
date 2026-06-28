@@ -3,7 +3,7 @@
 // ============================================
 let gruposData = [];
 let ciudadSeleccionada     = 'todos';
-let plataformaSeleccionada = 'todos';
+let plataformaSeleccionada = 'whatsapp';
 let categoriaSeleccionada  = 'todas';
 let busquedaActual         = '';
 let gruposMostrados = 5;
@@ -171,7 +171,7 @@ function ejecutarBusqueda(hacerScroll = false) {
 
   // Si hay búsqueda activa, mostrar todas las plataformas
   if (busquedaActual.trim()) {
-    plataformaSeleccionada = 'todos';
+    plataformaSeleccionada = 'whatsapp';
     document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
   }
 
@@ -320,13 +320,13 @@ function actualizarContadoresCiudades() {
 // ============================================
 function resetFiltros() {
   ciudadSeleccionada     = 'todos';
-  plataformaSeleccionada = 'todos';
+  plataformaSeleccionada = 'whatsapp';
   categoriaSeleccionada  = 'todas';
   busquedaActual         = '';
   gruposMostrados        = GRUPOS_POR_PAGINA;
 
   document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-  document.querySelector('.filter-chip[data-platform="todos"]')?.classList.add('active');
+  document.querySelector('.filter-chip[data-platform="whatsapp"]')?.classList.add('active');
   document.querySelectorAll('.cat-item').forEach(c => c.classList.remove('active'));
   document.querySelector('.cat-item[data-cat="todas"]')?.classList.add('active');
   document.getElementById('selectedCityName').textContent = 'Todos los departamentos';
