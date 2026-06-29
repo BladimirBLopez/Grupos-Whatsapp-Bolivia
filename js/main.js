@@ -13,13 +13,13 @@ const GRUPOS_POR_PAGINA = 5;
 // HELPERS: PLATAFORMA
 // ============================================
 function iconoPlataforma(p) {
-  return { whatsapp:'fab fa-whatsapp', telegram:'fab fa-telegram', facebook:'fab fa-facebook', discord:'fab fa-discord', otro:'fas fa-link' }[(p||'whatsapp').toLowerCase()] || 'fab fa-whatsapp';
+  return { whatsapp:'fab fa-whatsapp', telegram:'fab fa-telegram', facebook:'fab fa-facebook', instagram:'fab fa-instagram', otro:'fas fa-link' }[(p||'whatsapp').toLowerCase()] || 'fab fa-whatsapp';
 }
 function colorPlataforma(p) {
-  return { whatsapp:'#25D366', telegram:'#229ED9', facebook:'#1877F2', discord:'#5865F2', otro:'#8ba0ae' }[(p||'whatsapp').toLowerCase()] || '#25D366';
+  return { whatsapp:'#25D366', telegram:'#229ED9', facebook:'#1877F2', instagram:'#E1306C', otro:'#8ba0ae' }[(p||'whatsapp').toLowerCase()] || '#25D366';
 }
 function labelPlataforma(p) {
-  return { whatsapp:'WhatsApp', telegram:'Telegram', facebook:'Facebook', discord:'Discord', otro:'Otro' }[(p||'whatsapp').toLowerCase()] || 'WhatsApp';
+  return { whatsapp:'WhatsApp', telegram:'Telegram', facebook:'Facebook', instagram:'Instagram', otro:'Otro' }[(p||'whatsapp').toLowerCase()] || 'WhatsApp';
 }
 
 // ============================================
@@ -342,6 +342,35 @@ function resetFiltros() {
 // ============================================
 const ADMIN_CREDENTIALS = { usuario:'admin', password:'admin123' };
 
+
+// ============================================
+// BUSCADOR FLOTANTE
+// ============================================
+function abrirBuscador() {
+  const overlay = document.getElementById('searchOverlay');
+  const input   = document.getElementById('searchInputNav');
+  if (!overlay) return;
+  overlay.style.display = 'block';
+  setTimeout(() => input?.focus(), 100);
+  // Marcar navbar
+  document.querySelectorAll('.bottom-nav-item').forEach(i => i.classList.remove('active'));
+  document.getElementById('navBuscar')?.classList.add('active');
+}
+
+function cerrarBuscador() {
+  const overlay = document.getElementById('searchOverlay');
+  if (overlay) overlay.style.display = 'none';
+  // Limpiar búsqueda
+  const input = document.getElementById('searchInputNav');
+  if (input) input.value = '';
+  busquedaActual = '';
+  gruposMostrados = GRUPOS_POR_PAGINA;
+  renderizarGrupos();
+  // Volver a Inicio activo
+  document.querySelectorAll('.bottom-nav-item').forEach(i => i.classList.remove('active'));
+  document.getElementById('navInicio')?.classList.add('active');
+}
+
 // ============================================
 // EVENT LISTENERS
 // ============================================
@@ -382,30 +411,24 @@ function configurarEventListeners() {
     }, 800);
   });
 
-  // Buscador — input en tiempo real
-  document.getElementById('searchInput')?.addEventListener('input', () => {
-  ejecutarBusqueda(false);
-});
 
-  // Botón Buscar — clic directo
-document.getElementById('btnBuscar')?.addEventListener('click', () => {
-  ejecutarBusqueda(true);
-});
+  // Buscador flotante — tiempo real
+  document.getElementById('searchInputNav')?.addEventListener('input', () => {
+    busquedaActual = document.getElementById('searchInputNav')?.value || '';
+    gruposMostrados = GRUPOS_POR_PAGINA;
+    if (busquedaActual.trim()) {
+      plataformaSeleccionada = 'todos';
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    } else {
+      plataformaSeleccionada = 'whatsapp';
+      document.querySelector('.filter-chip[data-platform="whatsapp"]')?.classList.add('active');
+    }
+    renderizarGrupos();
+  });
 
-  // Enter en el buscador
- document.getElementById('searchInput')?.addEventListener('keydown', e => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    ejecutarBusqueda(true);
-  }
-});
-
-  // Navbar inferior buscar
-  document.getElementById('navBuscar')?.addEventListener('click', e => {
-    e.preventDefault();
-    document.getElementById('searchInput')?.focus();
-    document.querySelectorAll('.bottom-nav-item').forEach(i => i.classList.remove('active'));
-    document.getElementById('navBuscar').classList.add('active');
+  // Cerrar buscador con Escape
+  document.getElementById('searchInputNav')?.addEventListener('keydown', e => {
+    if (e.key === 'Escape') cerrarBuscador();
   });
 
   // Filtros plataforma
