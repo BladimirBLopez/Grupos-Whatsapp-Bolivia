@@ -338,8 +338,9 @@ function resetFiltros() {
 }
 
 // ============================================
-// LOGIN ADMIN — credenciales en servidor
+// LOGIN ADMIN
 // ============================================
+// Credenciales movidas al servidor
 
 
 // ============================================
@@ -397,29 +398,26 @@ function configurarEventListeners() {
     const btn  = document.getElementById('loginSubmitBtn');
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
-    setTimeout(() => {
-      try {
-        const resp = await fetch('/api/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ usuario: user, password: pass })
-        });
-        const data = await resp.json();
-        if (data.success && data.token) {
-          sessionStorage.setItem('qigrupos_token', data.token);
-          window.location.href = 'admin.html';
-        } else {
-          document.getElementById('loginError').classList.add('show');
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Ingresar';
-          document.getElementById('loginPass').value = '';
-          setTimeout(() => document.getElementById('loginError').classList.remove('show'), 3000);
-        }
-      } catch(e) {
+    fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ usuario: user, password: pass })
+    }).then(r => r.json()).then(data => {
+      if (data.success && data.token) {
+        sessionStorage.setItem('qigrupos_token', data.token);
+        window.location.href = 'admin.html';
+      } else {
         document.getElementById('loginError').classList.add('show');
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Ingresar';
+        document.getElementById('loginPass').value = '';
+        setTimeout(() => document.getElementById('loginError').classList.remove('show'), 3000);
       }
+    }).catch(() => {
+      document.getElementById('loginError').classList.add('show');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Ingresar';
+    });
   });
 
 
