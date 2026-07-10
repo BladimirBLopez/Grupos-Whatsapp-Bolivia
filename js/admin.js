@@ -38,7 +38,7 @@ const PLATAFORMAS = {
   whatsapp: { label: 'WhatsApp', icon: 'fab fa-whatsapp', color: '#25D366', validar: link => link.startsWith('http') },
   telegram:  { label: 'Telegram',  icon: 'fab fa-telegram',  color: '#229ED9', validar: link => link.startsWith('http') },
   facebook:  { label: 'Facebook',  icon: 'fab fa-facebook',  color: '#1877F2', validar: link => link.startsWith('http') },
-  discord:   { label: 'Discord',   icon: 'fab fa-discord',   color: '#5865F2', validar: link => link.startsWith('http') },
+  instagram: { label: 'Instagram', icon: 'fab fa-instagram', color: '#E1306C', validar: link => link.startsWith('http') },
   otro:      { label: 'Otro',      icon: 'fas fa-link',      color: '#8ba0ae', validar: link => link.startsWith('http') }
 };
 
@@ -307,20 +307,19 @@ function abrirModal(grupo = null) {
   }
 
   formModificado = false;
-  // Detectar cambios en el formulario
   setTimeout(() => {
     document.querySelectorAll('#formGrupo input, #formGrupo textarea, #formGrupo select').forEach(el => {
-      el.addEventListener('change', () => { formModificado = true; }, { once: false });
-      el.addEventListener('input', () => { formModificado = true; }, { once: false });
+      el.addEventListener('change', () => { formModificado = true; });
+      el.addEventListener('input',  () => { formModificado = true; });
     });
-  }, 100);
+  }, 150);
   modal.style.display = 'flex';
 }
 
 function cerrarModal(forzar = false) {
   if (!forzar && formModificado) {
-    const opcion = confirm('¿Tienes cambios sin guardar.\n\nOK = Descartar cambios\nCancelar = Seguir editando');
-    if (!opcion) return; // Seguir editando
+    const descartar = confirm('Tienes cambios sin guardar.\n\nAceptar = Descartar cambios\nCancelar = Seguir editando');
+    if (!descartar) return;
   }
   formModificado = false;
   const modal = document.getElementById('modalGrupo');
@@ -399,7 +398,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('formGrupo')?.addEventListener('submit', guardarGrupo);
   document.getElementById('searchGrupos')?.addEventListener('input', e => filtrarGruposAdmin(e.target.value));
 
-  // Filtro ciudad admin
+  // Filtro ciudad
   document.getElementById('filtroCiudadAdmin')?.addEventListener('change', function() {
     filtroCiudadActual = this.value;
     renderizarTabla();
