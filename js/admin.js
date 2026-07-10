@@ -4,6 +4,8 @@ const API_URL = '/api/grupos';
 let gruposData = [];
 let grupoAEliminar = null;
 let filtroPlataformaActual = 'todas';
+let filtroCiudadActual = 'todas';
+let formModificado = false;
 
 // ============================================
 // CATEGORÍAS CONFIG
@@ -81,7 +83,10 @@ function renderizarTabla() {
 
   let datos = gruposData;
   if (filtroPlataformaActual !== 'todas') {
-    datos = gruposData.filter(g => (g.plataforma || 'whatsapp') === filtroPlataformaActual);
+    datos = datos.filter(g => (g.plataforma || 'whatsapp') === filtroPlataformaActual);
+  }
+  if (filtroCiudadActual !== 'todas') {
+    datos = datos.filter(g => g.ubicacion === filtroCiudadActual);
   }
 
   if (datos.length === 0) {
@@ -203,7 +208,7 @@ async function guardarGrupo(e) {
 
     if (response.ok && result.success) {
       await cargarGrupos();
-      cerrarModal();
+      cerrarModal(true);
       mostrarNotificacion('✅ Grupo guardado exitosamente');
     } else {
       mostrarNotificacion('❌ Error: ' + (result.error || 'Error al guardar'), 'error');
@@ -301,10 +306,23 @@ function abrirModal(grupo = null) {
     titulo.innerHTML = '<i class="fas fa-plus-circle"></i> Nuevo Grupo';
   }
 
+  formModificado = false;
+  // Detectar cambios en el formulario
+  setTimeout(() => {
+    document.querySelectorAll('#formGrupo input, #formGrupo textarea, #formGrupo select').forEach(el => {
+      el.addEventListener('change', () => { formModificado = true; }, { once: false });
+      el.addEventListener('input', () => { formModificado = true; }, { once: false });
+    });
+  }, 100);
   modal.style.display = 'flex';
 }
 
-function cerrarModal() {
+function cerrarModal(forzar = false) {
+  if (!forzar && formModificado) {
+    const opcion = confirm('¿Tienes cambios sin guardar.\n\nOK = Descartar cambios\nCancelar = Seguir editando');
+    if (!opcion) return; // Seguir editando
+  }
+  formModificado = false;
   const modal = document.getElementById('modalGrupo');
   if (modal) modal.style.display = 'none';
 }
@@ -380,6 +398,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('cancelConfirmBtn')?.addEventListener('click', cerrarConfirmacion);
   document.getElementById('formGrupo')?.addEventListener('submit', guardarGrupo);
   document.getElementById('searchGrupos')?.addEventListener('input', e => filtrarGruposAdmin(e.target.value));
+
+  // Filtro ciudad admin
+  document.getElementById('filtroCiudadAdmin')?.addEventListener('change', function() {
+    filtroCiudadActual = this.value;
+    renderizarTabla();
+  });
 
   document.querySelectorAll('input[name="plataforma"]').forEach(radio => {
     radio.addEventListener('change', () => actualizarHintEnlace(radio.value));

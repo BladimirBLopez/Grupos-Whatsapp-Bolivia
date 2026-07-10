@@ -2,6 +2,12 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <script>
+    if (!sessionStorage.getItem('qigrupos_token')) {
+      window.location.href = 'index.html';
+    }
+  </script>
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel Admin - Qigrupos Bolivia</title>
   
@@ -61,6 +67,23 @@
       <button class="btn-plataforma telegram" data-plataforma="telegram"><i class="fab fa-telegram"></i> Telegram</button>
       <button class="btn-plataforma facebook" data-plataforma="facebook"><i class="fab fa-facebook"></i> Facebook</button>
       <button class="btn-plataforma discord" data-plataforma="discord"><i class="fab fa-discord"></i> Discord</button>
+    </div>
+
+    <!-- Filtro ciudad -->
+    <div style="margin-top:0.5rem;">
+      <select id="filtroCiudadAdmin" style="padding:6px 12px;border-radius:20px;border:1.5px solid #dde3e9;background:#fff;color:#6b7f8e;font-size:0.8rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">
+        <option value="todas">📍 Todas las ciudades</option>
+        <option value="Santa Cruz">Santa Cruz</option>
+        <option value="La Paz">La Paz</option>
+        <option value="Cochabamba">Cochabamba</option>
+        <option value="Sucre">Sucre</option>
+        <option value="Tarija">Tarija</option>
+        <option value="Potosí">Potosí</option>
+        <option value="Oruro">Oruro</option>
+        <option value="Beni">Beni</option>
+        <option value="Pando">Pando</option>
+        <option value="Nacional">Todo Bolivia</option>
+      </select>
     </div>
   </div>
 

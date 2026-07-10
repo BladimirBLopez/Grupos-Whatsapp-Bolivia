@@ -338,9 +338,8 @@ function resetFiltros() {
 }
 
 // ============================================
-// LOGIN ADMIN
+// LOGIN ADMIN — credenciales en servidor
 // ============================================
-const ADMIN_CREDENTIALS = { usuario:'admin', password:'admin123' };
 
 
 // ============================================
@@ -399,16 +398,28 @@ function configurarEventListeners() {
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
     setTimeout(() => {
-      if (user === ADMIN_CREDENTIALS.usuario && pass === ADMIN_CREDENTIALS.password) {
-        window.location.href = 'admin.html';
-      } else {
+      try {
+        const resp = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ usuario: user, password: pass })
+        });
+        const data = await resp.json();
+        if (data.success && data.token) {
+          sessionStorage.setItem('qigrupos_token', data.token);
+          window.location.href = 'admin.html';
+        } else {
+          document.getElementById('loginError').classList.add('show');
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Ingresar';
+          document.getElementById('loginPass').value = '';
+          setTimeout(() => document.getElementById('loginError').classList.remove('show'), 3000);
+        }
+      } catch(e) {
         document.getElementById('loginError').classList.add('show');
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Ingresar';
-        document.getElementById('loginPass').value = '';
-        setTimeout(() => document.getElementById('loginError').classList.remove('show'), 3000);
       }
-    }, 800);
   });
 
 
