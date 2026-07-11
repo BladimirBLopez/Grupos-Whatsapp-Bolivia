@@ -6,6 +6,8 @@ let grupoAEliminar = null;
 let filtroPlataformaActual = 'todas';
 let filtroCiudadActual = 'todas';
 let formModificado = false;
+let categoriasData = [];
+let dragSrcIndex = null;
 
 // ============================================
 // CATEGORÍAS CONFIG
@@ -387,6 +389,189 @@ function mostrarNotificacion(mensaje, tipo = 'success') {
 // ============================================
 // INICIALIZAR
 // ============================================
+
+// ============================================
+// GESTIÓN DE CATEGORÍAS
+// ============================================
+async function cargarCategorias() {
+  try {
+    const res  = await fetch('/api/categorias');
+    const data = await res.json();
+    categoriasData = data.categorias || [];
+    renderizarCategorias();
+    actualizarSelectorCategorias();
+  } catch(e) {
+    mostrarNotificacion('❌ Error al cargar categorías', 'error');
+  }
+}
+
+function renderizarCategorias() {
+  const lista = document.getElementById('listaCategorias');
+  if (!lista) return;
+
+  if (categoriasData.length === 0) {
+    lista.innerHTML = '<div style="text-align:center;color:#8ba0ae;font-size:0.8rem;">No hay categorías</div>';
+    return;
+  }
+
+  lista.innerHTML = categoriasData.map((cat, i) => `
+    <div class="cat-drag-item" data-id="${cat.id}" data-index="${i}"
+      draggable="true"
+      style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8fafc;border-radius:12px;border:1.5px solid #e5f0f5;cursor:grab;transition:all 0.2s;user-select:none;">
+      <i class="fas fa-grip-lines" style="color:#bcc8d4;font-size:0.9rem;flex-shrink:0;"></i>
+      <span style="font-size:1.1rem;">${cat.emoji}</span>
+      <span style="flex:1;font-size:0.85rem;font-weight:600;color:#1a2c3e;">${cat.label}</span>
+      <span style="font-size:0.65rem;color:#8ba0ae;background:#eef2f5;padding:2px 8px;border-radius:20px;">${cat.slug}</span>
+      <button onclick="editarCategoria('${cat.id}')"
+        style="background:#e9f9ef;color:#075E54;border:none;padding:5px 8px;border-radius:8px;cursor:pointer;font-size:0.75rem;">
+        <i class="fas fa-edit"></i>
+      </button>
+      <button onclick="eliminarCategoria('${cat.id}', '${cat.label}')"
+        style="background:#fde8e8;color:#dc3545;border:none;padding:5px 8px;border-radius:8px;cursor:pointer;font-size:0.75rem;">
+        <i class="fas fa-trash"></i>
+      </button>
+    </div>
+  `).join('');
+
+  // Drag & Drop
+  lista.querySelectorAll('.cat-drag-item').forEach(item => {
+    item.addEventListener('dragstart', e => {
+      dragSrcIndex = parseInt(item.dataset.index);
+      item.style.opacity = '0.5';
+    });
+    item.addEventListener('dragend', e => {
+      item.style.opacity = '1';
+    });
+    item.addEventListener('dragover', e => {
+      e.preventDefault();
+      item.style.borderColor = '#25D366';
+    });
+    item.addEventListener('dragleave', e => {
+      item.style.borderColor = '#e5f0f5';
+    });
+    item.addEventListener('drop', async e => {
+      e.preventDefault();
+      item.style.borderColor = '#e5f0f5';
+      const destIndex = parseInt(item.dataset.index);
+      if (dragSrcIndex === null || dragSrcIndex === destIndex) return;
+
+      // Reordenar array
+      const moved = categoriasData.splice(dragSrcIndex, 1)[0];
+      categoriasData.splice(destIndex, 0, moved);
+      renderizarCategorias();
+
+      // Guardar nuevo orden en servidor
+      try {
+        await fetch('/api/categorias', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reordenar: categoriasData.map(c => ({ id: c.id })) })
+        });
+        mostrarNotificacion('✅ Orden guardado');
+      } catch(e) {
+        mostrarNotificacion('❌ Error al guardar orden', 'error');
+      }
+      dragSrcIndex = null;
+    });
+  });
+}
+
+// Actualizar selector de categorías en el form de grupos
+function actualizarSelectorCategorias() {
+  const selector = document.querySelector('.selector-categoria');
+  if (!selector) return;
+  selector.innerHTML = categoriasData.map(cat => `
+    <label class="opcion-categoria">
+      <input type="radio" name="categoria" value="${cat.slug}">
+      <span>${cat.emoji} ${cat.label}</span>
+    </label>
+  `).join('');
+}
+
+function abrirModalCategoria() {
+  document.getElementById('catEditId').value = '';
+  document.getElementById('catEmoji').value  = '';
+  document.getElementById('catLabel').value  = '';
+  document.getElementById('catSlug').value   = '';
+  document.getElementById('modalCatTitulo').textContent = 'Nueva Categoría';
+  document.getElementById('modalCategoria').style.display = 'flex';
+  document.getElementById('catEmoji').focus();
+}
+
+function cerrarModalCategoria() {
+  document.getElementById('modalCategoria').style.display = 'none';
+}
+
+function editarCategoria(id) {
+  const cat = categoriasData.find(c => c.id === id);
+  if (!cat) return;
+  document.getElementById('catEditId').value = cat.id;
+  document.getElementById('catEmoji').value  = cat.emoji;
+  document.getElementById('catLabel').value  = cat.label;
+  document.getElementById('catSlug').value   = cat.slug;
+  document.getElementById('modalCatTitulo').textContent = 'Editar Categoría';
+  document.getElementById('modalCategoria').style.display = 'flex';
+}
+
+async function guardarCategoria() {
+  const id    = document.getElementById('catEditId').value;
+  const emoji = document.getElementById('catEmoji').value.trim() || '📌';
+  const label = document.getElementById('catLabel').value.trim();
+  const slug  = document.getElementById('catSlug').value.trim().toLowerCase().replace(/\s+/g, '-');
+
+  if (!label || !slug) {
+    mostrarNotificacion('❌ Nombre y slug son requeridos', 'error');
+    return;
+  }
+
+  try {
+    let res;
+    if (id) {
+      res = await fetch('/api/categorias', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, datos: { emoji, label, slug } })
+      });
+    } else {
+      res = await fetch('/api/categorias', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ emoji, label, slug })
+      });
+    }
+    const data = await res.json();
+    if (res.ok && data.success !== false) {
+      cerrarModalCategoria();
+      await cargarCategorias();
+      mostrarNotificacion('✅ Categoría guardada');
+    } else {
+      mostrarNotificacion('❌ ' + (data.error || 'Error al guardar'), 'error');
+    }
+  } catch(e) {
+    mostrarNotificacion('❌ Error de conexión', 'error');
+  }
+}
+
+async function eliminarCategoria(id, nombre) {
+  if (!confirm(`¿Eliminar la categoría "${nombre}"?\n\nLos grupos con esta categoría quedarán sin categoría.`)) return;
+  try {
+    const res = await fetch('/api/categorias', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
+    });
+    const data = await res.json();
+    if (res.ok && data.success) {
+      await cargarCategorias();
+      mostrarNotificacion('🗑️ Categoría eliminada');
+    } else {
+      mostrarNotificacion('❌ Error al eliminar', 'error');
+    }
+  } catch(e) {
+    mostrarNotificacion('❌ Error de conexión', 'error');
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   cargarGrupos();
 
@@ -398,11 +583,17 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('formGrupo')?.addEventListener('submit', guardarGrupo);
   document.getElementById('searchGrupos')?.addEventListener('input', e => filtrarGruposAdmin(e.target.value));
 
+  // Nueva categoría
+  document.getElementById('btnNuevaCategoria')?.addEventListener('click', abrirModalCategoria);
+
   // Filtro ciudad
   document.getElementById('filtroCiudadAdmin')?.addEventListener('change', function() {
     filtroCiudadActual = this.value;
     renderizarTabla();
   });
+
+  // Cargar categorías al iniciar
+  cargarCategorias();
 
   document.querySelectorAll('input[name="plataforma"]').forEach(radio => {
     radio.addEventListener('change', () => actualizarHintEnlace(radio.value));

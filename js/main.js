@@ -7,6 +7,7 @@ let plataformaSeleccionada = 'whatsapp';
 let categoriaSeleccionada  = 'todas';
 let busquedaActual         = '';
 let gruposMostrados = 5;
+let categoriasGlobal = [];
 const GRUPOS_POR_PAGINA = 5;
 
 // ============================================
@@ -25,11 +26,19 @@ function labelPlataforma(p) {
 // ============================================
 // HELPERS: CATEGORÍA
 // ============================================
-function emojiCategoria(c) {
-  return { 'compra-venta':'🛒', 'empleos':'💼', 'inmuebles':'🏠', 'ropa':'👕', 'citas':'💬', 'futbol':'⚽', 'otro':'🗂️' }[c] || '🗂️';
+function emojiCategoria(slug) {
+  const cat = categoriasGlobal.find(c => c.slug === slug);
+  if (cat) return cat.emoji;
+  const fallback = { 'compra-venta':'🛒', 'empleos':'💼', 'inmuebles':'🏠', 'ropa':'👕', 'citas':'💬', 'futbol':'⚽', 'otro':'🗂️' };
+  return fallback[slug] || '🗂️';
+}[c] || '🗂️';
 }
-function labelCategoria(c) {
-  return { 'compra-venta':'Compra/Venta', 'empleos':'Empleos', 'inmuebles':'Inmuebles', 'ropa':'Ropas', 'citas':'Citas/Amigos', 'futbol':'Fútbol', 'otro':'Otros' }[c] || 'Otros';
+function labelCategoria(slug) {
+  const cat = categoriasGlobal.find(c => c.slug === slug);
+  if (cat) return cat.label;
+  const fallback = { 'compra-venta':'Compra/Venta', 'empleos':'Empleos', 'inmuebles':'Inmuebles', 'ropa':'Ropas', 'citas':'Citas/Amigos', 'futbol':'Fútbol', 'otro':'Otros' };
+  return fallback[slug] || 'Otros';
+}[c] || 'Otros';
 }
 
 // ============================================
@@ -106,8 +115,50 @@ function iniciarPagina() {
   actualizarHeroCount();
   mostrarGrupoDestacado();
   actualizarContadoresCiudades();
-  renderizarGrupos();
+  cargarCategoriasUI().then(() => {
+    renderizarGrupos();
+  });
   configurarEventListeners();
+}
+
+async function cargarCategoriasUI() {
+  try {
+    const res  = await fetch('/api/categorias');
+    const data = await res.json();
+    categoriasGlobal = data.categorias || [];
+    renderizarCategoriasCirculares();
+  } catch(e) {
+    // fallback: categorías por defecto ya en el HTML
+  }
+}
+
+function renderizarCategoriasCirculares() {
+  const scroll = document.getElementById('categoriasScroll');
+  if (!scroll || categoriasGlobal.length === 0) return;
+
+  scroll.innerHTML = `
+    <div class="cat-item active" data-cat="todas">
+      <div class="cat-icon">🔍</div>
+      <span class="cat-label">Todas</span>
+    </div>
+    ${categoriasGlobal.map(cat => `
+    <div class="cat-item" data-cat="${cat.slug}">
+      <div class="cat-icon">${cat.emoji}</div>
+      <span class="cat-label">${cat.label}</span>
+    </div>`).join('')}
+  `;
+
+  // Re-bind listeners
+  document.querySelectorAll('.cat-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.cat-item').forEach(c => c.classList.remove('active'));
+      item.classList.add('active');
+      categoriaSeleccionada = item.dataset.cat;
+      gruposMostrados = GRUPOS_POR_PAGINA;
+      renderizarGrupos();
+      actualizarContadoresCiudades();
+    });
+  });
 }
 
 // ============================================
@@ -340,7 +391,7 @@ function resetFiltros() {
 // ============================================
 // LOGIN ADMIN
 // ============================================
-// Credenciales movidas al servidor
+// Credenciales en servidor
 
 
 // ============================================

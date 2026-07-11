@@ -7,10 +7,24 @@
     "api/login.js": {
       "memory": 128,
       "maxDuration": 10
+    },
+    "api/categorias.js": {
+      "memory": 128,
+      "maxDuration": 10
     }
   },
   "rewrites": [
-    { "source": "/api/grupos", "destination": "/api/grupos.js" },
-    { "source": "/api/login",  "destination": "/api/login.js" }
+    {
+      "source": "/api/grupos",
+      "destination": "/api/grupos.js"
+    },
+    {
+      "source": "/api/login",
+      "destination": "/api/login.js"
+    },
+    {
+      "source": "/api/categorias",
+      "destination": "/api/categorias.js"
+    }
   ]
 }
