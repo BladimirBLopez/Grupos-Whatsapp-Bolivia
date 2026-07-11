@@ -22,23 +22,41 @@ function colorPlataforma(p) {
 function labelPlataforma(p) {
   return { whatsapp:'WhatsApp', telegram:'Telegram', facebook:'Facebook', instagram:'Instagram', otro:'Otro' }[(p||'whatsapp').toLowerCase()] || 'WhatsApp';
 }
-
 // ============================================
 // HELPERS: CATEGORÍA
 // ============================================
 function emojiCategoria(slug) {
   const cat = categoriasGlobal.find(c => c.slug === slug);
   if (cat) return cat.emoji;
-  const fb = { 'compra-venta':'🛒','empleos':'💼','inmuebles':'🏠','ropa':'👕','citas':'💬','futbol':'⚽','otro':'🗂️' };
+
+  const fb = {
+    'compra-venta': '🛒',
+    'empleos': '💼',
+    'inmuebles': '🏠',
+    'ropa': '👕',
+    'citas': '💬',
+    'futbol': '⚽',
+    'otro': '🗂️'
+  };
+
   return fb[slug] || '🗂️';
-}[c] || '🗂️';
 }
+
 function labelCategoria(slug) {
   const cat = categoriasGlobal.find(c => c.slug === slug);
   if (cat) return cat.label;
-  const fb = { 'compra-venta':'Compra/Venta','empleos':'Empleos','inmuebles':'Inmuebles','ropa':'Ropas','citas':'Citas/Amigos','futbol':'Fútbol','otro':'Otros' };
+
+  const fb = {
+    'compra-venta': 'Compra/Venta',
+    'empleos': 'Empleos',
+    'inmuebles': 'Inmuebles',
+    'ropa': 'Ropas',
+    'citas': 'Citas/Amigos',
+    'futbol': 'Fútbol',
+    'otro': 'Otros'
+  };
+
   return fb[slug] || 'Otros';
-}[c] || 'Otros';
 }
 
 // ============================================
