@@ -29,15 +29,15 @@ function labelPlataforma(p) {
 function emojiCategoria(slug) {
   const cat = categoriasGlobal.find(c => c.slug === slug);
   if (cat) return cat.emoji;
-  const fallback = { 'compra-venta':'🛒', 'empleos':'💼', 'inmuebles':'🏠', 'ropa':'👕', 'citas':'💬', 'futbol':'⚽', 'otro':'🗂️' };
-  return fallback[slug] || '🗂️';
+  const fb = { 'compra-venta':'🛒','empleos':'💼','inmuebles':'🏠','ropa':'👕','citas':'💬','futbol':'⚽','otro':'🗂️' };
+  return fb[slug] || '🗂️';
 }[c] || '🗂️';
 }
 function labelCategoria(slug) {
   const cat = categoriasGlobal.find(c => c.slug === slug);
   if (cat) return cat.label;
-  const fallback = { 'compra-venta':'Compra/Venta', 'empleos':'Empleos', 'inmuebles':'Inmuebles', 'ropa':'Ropas', 'citas':'Citas/Amigos', 'futbol':'Fútbol', 'otro':'Otros' };
-  return fallback[slug] || 'Otros';
+  const fb = { 'compra-venta':'Compra/Venta','empleos':'Empleos','inmuebles':'Inmuebles','ropa':'Ropas','citas':'Citas/Amigos','futbol':'Fútbol','otro':'Otros' };
+  return fb[slug] || 'Otros';
 }[c] || 'Otros';
 }
 
@@ -115,21 +115,18 @@ function iniciarPagina() {
   actualizarHeroCount();
   mostrarGrupoDestacado();
   actualizarContadoresCiudades();
-  cargarCategoriasUI().then(() => {
-    renderizarGrupos();
-  });
+  // Cargar categorías y luego grupos — si falla igual muestra grupos
+  fetch('/api/categorias')
+    .then(r => r.json())
+    .then(data => {
+      categoriasGlobal = data.categorias || [];
+      renderizarCategoriasCirculares();
+    })
+    .catch(() => { categoriasGlobal = []; })
+    .finally(() => {
+      renderizarGrupos();
+    });
   configurarEventListeners();
-}
-
-async function cargarCategoriasUI() {
-  try {
-    const res  = await fetch('/api/categorias');
-    const data = await res.json();
-    categoriasGlobal = data.categorias || [];
-    renderizarCategoriasCirculares();
-  } catch(e) {
-    // fallback: categorías por defecto ya en el HTML
-  }
 }
 
 function renderizarCategoriasCirculares() {
@@ -148,7 +145,7 @@ function renderizarCategoriasCirculares() {
     </div>`).join('')}
   `;
 
-  // Re-bind listeners
+  // Re-bind listeners categorías
   document.querySelectorAll('.cat-item').forEach(item => {
     item.addEventListener('click', () => {
       document.querySelectorAll('.cat-item').forEach(c => c.classList.remove('active'));
