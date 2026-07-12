@@ -22,13 +22,15 @@ const CATEGORIAS = {
   'otro':         { label: 'Otro',          emoji: '📌', color: '#8ba0ae' }
 };
 
-function getCategoria(key) {
-  return CATEGORIAS[key] || CATEGORIAS['otro'];
+function getCategoria(slug) {
+  const cat = categoriasData.find(c => c.slug === slug);
+  if (cat) return { label: cat.label, emoji: cat.emoji, color: '#25D366' };
+  return { label: slug || 'Otro', emoji: '🗂️', color: '#8ba0ae' };
 }
 
-function badgeCategoria(key) {
-  const c = getCategoria(key);
-  return `<span style="background:${c.color}20;color:${c.color};border:1px solid ${c.color}40;border-radius:20px;padding:2px 8px;font-size:0.65rem;font-weight:600;">
+function badgeCategoria(slug) {
+  const c = getCategoria(slug);
+  return `<span style="background:#25D36620;color:#25D366;border:1px solid #25D36640;border-radius:20px;padding:2px 8px;font-size:0.65rem;font-weight:600;">
     ${c.emoji} ${c.label}
   </span>`;
 }
@@ -279,7 +281,9 @@ function abrirModal(grupo = null) {
   form.reset();
   document.getElementById('editId').value = '';
   document.querySelector('input[name="plataforma"][value="whatsapp"]').checked = true;
-  document.querySelector('input[name="categoria"][value="compra-venta"]').checked = true;
+  // Seleccionar primera categoría por defecto
+  const primerRadio = document.querySelector('input[name="categoria"]');
+  if (primerRadio) primerRadio.checked = true;
   actualizarHintEnlace('whatsapp');
 
   if (grupo) {
@@ -478,11 +482,11 @@ function renderizarCategorias() {
 
 // Actualizar selector de categorías en el form de grupos
 function actualizarSelectorCategorias() {
-  const selector = document.querySelector('.selector-categoria');
+  const selector = document.getElementById('selectorCategorias');
   if (!selector) return;
-  selector.innerHTML = categoriasData.map(cat => `
+  selector.innerHTML = categoriasData.map((cat, i) => `
     <label class="opcion-categoria">
-      <input type="radio" name="categoria" value="${cat.slug}">
+      <input type="radio" name="categoria" value="${cat.slug}" ${i === 0 ? 'checked' : ''}>
       <span>${cat.emoji} ${cat.label}</span>
     </label>
   `).join('');

@@ -208,35 +208,9 @@
       <!-- CATEGORÍA -->
       <div class="form-group">
         <label><i class="fas fa-th-large"></i> Categoría *</label>
-        <div class="selector-categoria">
-          <label class="opcion-categoria">
-            <input type="radio" name="categoria" value="compra-venta" checked>
-            <span>🛒 Compra/Venta</span>
-          </label>
-          <label class="opcion-categoria">
-            <input type="radio" name="categoria" value="empleos">
-            <span>💼 Empleos</span>
-          </label>
-          <label class="opcion-categoria">
-            <input type="radio" name="categoria" value="inmuebles">
-            <span>🏠 Inmuebles</span>
-          </label>
-          <label class="opcion-categoria">
-            <input type="radio" name="categoria" value="ropa">
-            <span>👕Ropas</span>
-          </label>
-          <label class="opcion-categoria">
-            <input type="radio" name="categoria" value="citas">
-            <span>💬 Citas/Amigos</span>
-          </label>
-          <label class="opcion-categoria">
-            <input type="radio" name="categoria" value="futbol">
-            <span>⚽ Fútbol</span>
-          </label>
-          <label class="opcion-categoria">
-            <input type="radio" name="categoria" value="otro">
-            <span>📌 Otro</span>
-          </label>
+        <div class="selector-categoria" id="selectorCategorias">
+          <!-- Se llena dinámicamente desde MongoDB -->
+          <div style="color:#8ba0ae;font-size:0.8rem;padding:0.5rem;">Cargando categorías...</div>
         </div>
       </div>
 

@@ -133,7 +133,8 @@ function iniciarPagina() {
   actualizarHeroCount();
   mostrarGrupoDestacado();
   actualizarContadoresCiudades();
-  // Cargar categorías y luego grupos — si falla igual muestra grupos
+  configurarEventListeners();
+  // Cargar categorías y luego grupos
   fetch('/api/categorias')
     .then(r => r.json())
     .then(data => {
@@ -144,7 +145,6 @@ function iniciarPagina() {
     .finally(() => {
       renderizarGrupos();
     });
-  configurarEventListeners();
 }
 
 function renderizarCategoriasCirculares() {
