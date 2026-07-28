@@ -242,13 +242,7 @@
 
       <div class="form-group">
         <label><i class="fas fa-link"></i> Enlace del grupo *</label>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <input type="url" id="fEnlace" required placeholder="https://chat.whatsapp.com/..." style="flex:1;">
-          <button type="button" id="btnPreview" onclick="fetchPreview(document.getElementById('fEnlace').value.trim())"
-            style="background:linear-gradient(135deg,#25D366,#128C7E);color:white;border:none;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:0.75rem;font-weight:600;white-space:nowrap;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:4px;">
-            <i class="fas fa-magic"></i> Obtener info
-          </button>
-        </div>
+        <input type="url" id="fEnlace" required placeholder="https://chat.whatsapp.com/...">
         <small id="enlaceHint" style="color:#8ba0ae; font-size:0.78rem; margin-top:4px; display:block;">
           Pega el link e intenta obtener nombre e imagen automáticamente
         </small>

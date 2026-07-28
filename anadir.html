@@ -116,22 +116,7 @@
     .opcion-plat.ig  input:checked + span { background:#E1306C; }
     .opcion-plat.otro input:checked + span { background:#8ba0ae; }
 
-    /* Enlace + botón preview */
-    .enlace-wrap { display:flex; gap:8px; align-items:center; }
-    .enlace-wrap input { flex:1; }
-    .btn-preview {
-      background:linear-gradient(135deg,#25D366,#128C7E);
-      color:#fff;
-      border:none;
-      padding:10px 12px;
-      border-radius:10px;
-      font-size:0.75rem;
-      font-weight:600;
-      cursor:pointer;
-      white-space:nowrap;
-      font-family:'Inter',sans-serif;
-      flex-shrink:0;
-    }
+
 
     /* Preview imagen */
     .img-preview {
@@ -267,12 +252,8 @@
       <!-- Enlace -->
       <div class="form-group">
         <label><i class="fas fa-link"></i> Enlace del grupo *</label>
-        <div class="enlace-wrap">
-          <input type="url" id="fLink" name="link" required placeholder="https://chat.whatsapp.com/...">
-          <button type="button" class="btn-preview" id="btnPreview" onclick="obtenerInfo()">
-            <i class="fas fa-magic"></i> Info
-          </button>
-        </div>
+        <input type="url" id="fLink" name="link" required placeholder="https://chat.whatsapp.com/...">
+        <p class="hint" id="previewStatus"></p>
         <div class="img-preview" id="imgPreview">
           <img id="previewImg" src="" alt="Foto">
           <span><i class="fas fa-check-circle"></i> Foto obtenida</span>
@@ -359,14 +340,11 @@ let imagenUrl = '';
 
 async function obtenerInfo() {
   const url = document.getElementById('fLink').value.trim();
-  if (!url || !url.startsWith('http')) {
-    alert('Ingresa un enlace válido primero'); return;
-  }
+  if (!url || !url.startsWith('http')) return;
   if (!url.includes('whatsapp.com')) return;
 
-  const btn = document.getElementById('btnPreview');
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-  btn.disabled = true;
+  const status = document.getElementById('previewStatus');
+  if (status) status.textContent = '⏳ Obteniendo información del grupo...';
 
   try {
     const res  = await fetch('/api/preview', {
@@ -387,16 +365,25 @@ async function obtenerInfo() {
         document.getElementById('imgPreview').style.display = 'flex';
       }
     }
-  } catch(e) {}
-  finally {
-    btn.innerHTML = '<i class="fas fa-magic"></i> Info';
-    btn.disabled = false;
+    if (status) status.textContent = '✅ Información obtenida';
+  } catch(e) {
+    if (status) status.textContent = '';
   }
 }
 
-// Auto-fetch al pegar enlace
+// Auto-fetch al pegar o escribir enlace
+let linkTimeout = null;
 document.getElementById('fLink').addEventListener('paste', function() {
-  setTimeout(() => obtenerInfo(), 600);
+  setTimeout(() => obtenerInfo(), 700);
+});
+document.getElementById('fLink').addEventListener('input', function() {
+  clearTimeout(linkTimeout);
+  const val = this.value.trim();
+  const status = document.getElementById('previewStatus');
+  if (val.includes('whatsapp.com')) {
+    if (status) status.textContent = 'Obteniendo información...';
+    linkTimeout = setTimeout(() => obtenerInfo(), 1000);
+  }
 });
 
 // Cargar categorías desde API

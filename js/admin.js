@@ -550,9 +550,144 @@ async function eliminarCategoria(id, nombre) {
 // ============================================
 // INICIALIZAR
 // ============================================
+
+// ============================================
+// SECCIONES (tabs)
+// ============================================
+function mostrarSeccion(seccion) {
+  const esGrupos = seccion === 'grupos';
+
+  document.getElementById('seccionSolicitudes').style.display = esGrupos ? 'none' : 'block';
+
+  // Ocultar/mostrar elementos de grupos
+  const elementosGrupos = [
+    'panelCategorias', 'admin-actions-wrapper', 'admin-search-wrapper', 'admin-table-wrapper'
+  ];
+
+  // Tab styling
+  document.getElementById('tabGrupos').style.background      = esGrupos ? '#25D366' : 'transparent';
+  document.getElementById('tabGrupos').style.color           = esGrupos ? '#fff' : '#6b7f8e';
+  document.getElementById('tabSolicitudes').style.background = !esGrupos ? '#F59E0B' : 'transparent';
+  document.getElementById('tabSolicitudes').style.color      = !esGrupos ? '#fff' : '#6b7f8e';
+
+  // Mostrar u ocultar secciones de grupos
+  const panelCats   = document.getElementById('panelCategorias');
+  const adminActs   = document.querySelector('.admin-actions');
+  const adminSearch = document.querySelector('.admin-search');
+  const adminTable  = document.querySelector('.admin-table-container');
+
+  [panelCats, adminActs, adminSearch, adminTable].forEach(el => {
+    if (el) el.style.display = esGrupos ? '' : 'none';
+  });
+
+  if (!esGrupos) cargarSolicitudes();
+}
+
+// ============================================
+// SOLICITUDES
+// ============================================
+async function cargarSolicitudes() {
+  const estado = document.getElementById('filtroEstadoSol')?.value || 'pendiente';
+  const lista  = document.getElementById('listaSolicitudes');
+  if (!lista) return;
+
+  lista.innerHTML = '<div style="text-align:center;padding:2rem;color:#8ba0ae;"><i class="fas fa-spinner fa-spin" style="font-size:1.5rem;display:block;margin-bottom:0.5rem;"></i>Cargando...</div>';
+
+  try {
+    const res  = await fetch(`/api/solicitudes?estado=${estado}`);
+    const data = await res.json();
+    const sols = data.solicitudes || [];
+
+    // Actualizar badge
+    const badge = document.getElementById('badgeSolicitudes');
+    if (badge) {
+      if (estado === 'pendiente' && sols.length > 0) {
+        badge.style.display = 'inline';
+        badge.textContent   = sols.length;
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+    const statEl = document.getElementById('totalSolicitudes');
+    if (statEl && estado === 'pendiente') statEl.textContent = sols.length;
+
+    if (sols.length === 0) {
+      lista.innerHTML = `<div style="text-align:center;padding:2rem;color:#8ba0ae;">
+        <i class="fas fa-inbox" style="font-size:2rem;display:block;margin-bottom:0.5rem;"></i>
+        No hay solicitudes ${estado === 'pendiente' ? 'pendientes' : estado === 'aprobado' ? 'aprobadas' : 'rechazadas'}
+      </div>`;
+      return;
+    }
+
+    lista.innerHTML = sols.map(s => `
+      <div style="background:#fff;border-radius:16px;padding:1rem;margin-bottom:0.8rem;border:1.5px solid ${s.estado==='pendiente'?'#fde68a':s.estado==='aprobado'?'#bbf7d0':'#fecaca'};box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+        <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:0.6rem;">
+          ${s.imagen ? `<img src="${s.imagen}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0;" onerror="this.style.display='none'">` : ''}
+          <div style="flex:1;min-width:0;">
+            <div style="font-weight:700;font-size:0.9rem;color:#1a2c3e;">${s.nombre}</div>
+            ${s.descripcion ? `<div style="font-size:0.75rem;color:#6b7f8e;margin-top:2px;">${s.descripcion}</div>` : ''}
+          </div>
+          <span style="font-size:0.65rem;font-weight:700;padding:3px 8px;border-radius:20px;flex-shrink:0;${s.estado==='pendiente'?'background:#fef3c7;color:#92400e':s.estado==='aprobado'?'background:#dcfce7;color:#166534':'background:#fee2e2;color:#991b1b'}">
+            ${s.estado==='pendiente'?'⏳ Pendiente':s.estado==='aprobado'?'✅ Aprobado':'❌ Rechazado'}
+          </span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;font-size:0.72rem;color:#6b7f8e;margin-bottom:0.7rem;">
+          <span><i class="fas fa-map-marker-alt" style="color:#25D366;"></i> ${s.ubicacion}</span>
+          <span><i class="fas fa-users"></i> ${s.miembros||0} miembros</span>
+          ${s.contacto ? `<span><i class="fas fa-phone"></i> ${s.contacto}</span>` : ''}
+          <span><i class="fas fa-clock"></i> ${new Date(s.fecha).toLocaleDateString('es-BO')}</span>
+        </div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <a href="${s.link}" target="_blank" style="flex:1;text-align:center;padding:7px;background:#f0f4f8;color:#1a2c3e;border-radius:10px;text-decoration:none;font-size:0.78rem;font-weight:600;">
+            <i class="fas fa-external-link-alt"></i> Ver enlace
+          </a>
+          ${s.estado === 'pendiente' ? `
+          <button onclick="accionSolicitud('${s.id}','aprobar')"
+            style="flex:1;padding:7px;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;border:none;border-radius:10px;font-size:0.78rem;font-weight:600;cursor:pointer;">
+            <i class="fas fa-check"></i> Aprobar
+          </button>
+          <button onclick="accionSolicitud('${s.id}','rechazar')"
+            style="flex:1;padding:7px;background:#fee2e2;color:#991b1b;border:none;border-radius:10px;font-size:0.78rem;font-weight:600;cursor:pointer;">
+            <i class="fas fa-times"></i> Rechazar
+          </button>` : ''}
+        </div>
+      </div>
+    `).join('');
+
+  } catch(e) {
+    lista.innerHTML = '<div style="text-align:center;padding:2rem;color:#e74c3c;">Error al cargar solicitudes</div>';
+  }
+}
+
+async function accionSolicitud(id, accion) {
+  const confirmMsg = accion === 'aprobar'
+    ? '¿Aprobar este grupo? Se publicará inmediatamente.'
+    : '¿Rechazar esta solicitud?';
+  if (!confirm(confirmMsg)) return;
+
+  try {
+    const res  = await fetch('/api/solicitudes', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, accion })
+    });
+    const data = await res.json();
+    if (res.ok && data.success) {
+      mostrarNotificacion(accion === 'aprobar' ? '✅ Grupo aprobado y publicado' : '❌ Solicitud rechazada');
+      cargarSolicitudes();
+      if (accion === 'aprobar') cargarGrupos();
+    } else {
+      mostrarNotificacion('❌ Error: ' + (data.error || ''), 'error');
+    }
+  } catch(e) {
+    mostrarNotificacion('❌ Error de conexión', 'error');
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   cargarGrupos();
   cargarCategorias();
+  cargarSolicitudes(); // para badge inicial
 
   document.getElementById('btnNuevoGrupo')?.addEventListener('click', () => abrirModal());
   document.getElementById('closeModalBtn')?.addEventListener('click', () => cerrarModal());
@@ -581,13 +716,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Auto-fetch al pegar o escribir enlace
   document.getElementById('fEnlace')?.addEventListener('paste', function() {
     clearTimeout(previewTimeout);
-    setTimeout(() => fetchPreview(this.value.trim()), 600);
+    setTimeout(() => fetchPreview(this.value.trim()), 700);
   });
-
-  document.getElementById('fEnlace')?.addEventListener('change', function() {
+  document.getElementById('fEnlace')?.addEventListener('input', function() {
     clearTimeout(previewTimeout);
-    previewTimeout = setTimeout(() => fetchPreview(this.value.trim()), 500);
+    const val = this.value.trim();
+    if (val.includes('whatsapp.com') || val.includes('t.me')) {
+      previewTimeout = setTimeout(() => fetchPreview(val), 1000);
+    }
   });
 });
