@@ -11,6 +11,10 @@
     "api/categorias.js": {
       "memory": 128,
       "maxDuration": 10
+    },
+    "api/preview.js": {
+      "memory": 256,
+      "maxDuration": 15
     }
   },
   "redirects": [
@@ -32,6 +36,10 @@
     {
       "source": "/api/categorias",
       "destination": "/api/categorias.js"
+    },
+    {
+      "source": "/api/preview",
+      "destination": "/api/preview.js"
     }
   ]
 }
