@@ -12,7 +12,6 @@
     * { margin:0; padding:0; box-sizing:border-box; }
     body { background:#f4f7fc; font-family:'Inter',sans-serif; color:#1a2c3e; min-height:100vh; padding-bottom:2rem; }
 
-    /* Header */
     .header {
       background:#fff;
       padding:1rem 1.2rem;
@@ -29,12 +28,7 @@
 
     .container { max-width:560px; margin:0 auto; padding:1.2rem; }
 
-    /* Hero */
-    .hero {
-      text-align:center;
-      padding:1.5rem 0 1rem;
-      margin-bottom:1rem;
-    }
+    .hero { text-align:center; padding:1.5rem 0 1rem; margin-bottom:1rem; }
     .hero-icon {
       width:64px; height:64px;
       background:linear-gradient(135deg,#25D366,#128C7E);
@@ -47,7 +41,6 @@
     .hero h2 { font-family:'Poppins',sans-serif; font-size:1.3rem; font-weight:800; margin-bottom:0.3rem; }
     .hero p  { font-size:0.8rem; color:#6b7f8e; line-height:1.5; }
 
-    /* Card formulario */
     .form-card {
       background:#fff;
       border-radius:20px;
@@ -76,37 +69,34 @@
       font-size:0.88rem;
       font-family:'Inter',sans-serif;
       color:#1a2c3e;
-      transition:border-color 0.2s;
+      transition:border-color 0.2s, opacity 0.2s;
       outline:none;
       background:#fff;
     }
     .form-group input:focus,
     .form-group textarea:focus,
-    .form-group select:focus {
-      border-color:#25D366;
-      box-shadow:0 0 0 3px rgba(37,211,102,0.1);
-    }
+    .form-group select:focus { border-color:#25D366; box-shadow:0 0 0 3px rgba(37,211,102,0.1); }
     .form-group textarea { resize:vertical; min-height:70px; }
 
-    /* Selector plataforma */
-    .selector-plat {
-      display:flex;
-      gap:0.4rem;
-      flex-wrap:wrap;
+    /* Campos bloqueados */
+    .campo-bloqueado input,
+    .campo-bloqueado textarea,
+    .campo-bloqueado select {
+      opacity:0.45;
+      pointer-events:none;
+      background:#f4f7fc;
     }
+    .campo-bloqueado label { opacity:0.5; }
+
+    /* Selector plataforma */
+    .selector-plat { display:flex; gap:0.4rem; flex-wrap:wrap; }
     .opcion-plat { cursor:pointer; position:relative; }
     .opcion-plat input[type="radio"] { position:absolute; opacity:0; width:0; height:0; }
     .opcion-plat span {
-      display:inline-flex;
-      align-items:center;
-      gap:5px;
-      padding:7px 13px;
-      border-radius:20px;
-      border:1.5px solid #e5f0f5;
-      background:#fff;
-      color:#6b7f8e;
-      font-size:0.78rem;
-      font-weight:600;
+      display:inline-flex; align-items:center; gap:5px;
+      padding:7px 13px; border-radius:20px;
+      border:1.5px solid #e5f0f5; background:#fff;
+      color:#6b7f8e; font-size:0.78rem; font-weight:600;
       transition:all 0.2s;
     }
     .opcion-plat input:checked + span { color:#fff; border-color:transparent; }
@@ -115,8 +105,6 @@
     .opcion-plat.fb  input:checked + span { background:#1877F2; }
     .opcion-plat.ig  input:checked + span { background:#E1306C; }
     .opcion-plat.otro input:checked + span { background:#8ba0ae; }
-
-
 
     /* Preview imagen */
     .img-preview {
@@ -127,76 +115,55 @@
     }
     .img-preview img {
       width:44px; height:44px;
-      border-radius:50%;
-      object-fit:cover;
+      border-radius:50%; object-fit:cover;
       border:2px solid #25D366;
     }
-    .img-preview span { font-size:0.75rem; color:#25D366; font-weight:600; }
 
-    /* Botón enviar */
+    /* Estado del enlace */
+    .link-status {
+      font-size:0.72rem;
+      margin-top:5px;
+      min-height:16px;
+      font-weight:500;
+    }
+    .link-status.loading { color:#F59E0B; }
+    .link-status.ok      { color:#25D366; }
+    .link-status.err     { color:#e74c3c; }
+
     .btn-submit {
-      width:100%;
-      padding:14px;
+      width:100%; padding:14px;
       background:linear-gradient(135deg,#25D366,#128C7E);
-      color:#fff;
-      border:none;
-      border-radius:14px;
-      font-size:1rem;
-      font-weight:700;
-      cursor:pointer;
-      font-family:'Inter',sans-serif;
-      margin-top:0.5rem;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
+      color:#fff; border:none; border-radius:14px;
+      font-size:1rem; font-weight:700; cursor:pointer;
+      font-family:'Inter',sans-serif; margin-top:0.5rem;
+      display:flex; align-items:center; justify-content:center; gap:8px;
       box-shadow:0 4px 16px rgba(37,211,102,0.35);
       transition:all 0.2s;
     }
     .btn-submit:hover { transform:scale(1.01); }
     .btn-submit:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
 
-    /* Éxito */
-    .success-box {
-      display:none;
-      text-align:center;
-      padding:2rem 1rem;
-    }
+    .success-box { display:none; text-align:center; padding:2rem 1rem; }
     .success-box .icon { font-size:3rem; margin-bottom:0.8rem; }
     .success-box h3 { font-family:'Poppins',sans-serif; font-size:1.2rem; font-weight:700; margin-bottom:0.4rem; color:#25D366; }
     .success-box p { font-size:0.82rem; color:#6b7f8e; margin-bottom:1.2rem; }
     .btn-volver {
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      background:#25D366;
-      color:#fff;
-      padding:10px 20px;
-      border-radius:50px;
-      text-decoration:none;
-      font-weight:700;
-      font-size:0.85rem;
+      display:inline-flex; align-items:center; gap:6px;
+      background:#25D366; color:#fff; padding:10px 20px;
+      border-radius:50px; text-decoration:none; font-weight:700; font-size:0.85rem;
     }
 
-    /* Info box */
     .info-box {
-      background:#f0fdf4;
-      border:1px solid #bbf7d0;
-      border-radius:12px;
-      padding:0.8rem 1rem;
-      margin-bottom:1rem;
-      font-size:0.78rem;
-      color:#166534;
-      line-height:1.5;
+      background:#f0fdf4; border:1px solid #bbf7d0;
+      border-radius:12px; padding:0.8rem 1rem; margin-bottom:1rem;
+      font-size:0.78rem; color:#166534; line-height:1.5;
     }
     .info-box i { margin-right:5px; }
-
     .hint { font-size:0.72rem; color:#8ba0ae; margin-top:4px; }
   </style>
 </head>
 <body>
 
-<!-- Header -->
 <div class="header">
   <a href="index.html"><i class="fas fa-arrow-left"></i> Volver</a>
   <h1>Añadir Grupo</h1>
@@ -204,21 +171,17 @@
 </div>
 
 <div class="container">
-
-  <!-- Hero -->
   <div class="hero">
     <div class="hero-icon">➕</div>
     <h2>Publica tu grupo</h2>
     <p>Comparte tu grupo con miles de bolivianos.<br>Lo revisaremos y lo publicaremos pronto.</p>
   </div>
 
-  <!-- Info -->
   <div class="info-box">
     <i class="fas fa-shield-alt"></i>
     <strong>Revisión manual:</strong> Tu grupo será revisado antes de publicarse. Solo aceptamos grupos activos y con contenido apropiado.
   </div>
 
-  <!-- Formulario -->
   <div class="form-card">
     <form id="formSolicitud">
 
@@ -226,26 +189,11 @@
       <div class="form-group">
         <label><i class="fas fa-mobile-alt"></i> Plataforma *</label>
         <div class="selector-plat">
-          <label class="opcion-plat wa">
-            <input type="radio" name="plataforma" value="whatsapp" checked>
-            <span><i class="fab fa-whatsapp"></i> WhatsApp</span>
-          </label>
-          <label class="opcion-plat tg">
-            <input type="radio" name="plataforma" value="telegram">
-            <span><i class="fab fa-telegram"></i> Telegram</span>
-          </label>
-          <label class="opcion-plat fb">
-            <input type="radio" name="plataforma" value="facebook">
-            <span><i class="fab fa-facebook"></i> Facebook</span>
-          </label>
-          <label class="opcion-plat ig">
-            <input type="radio" name="plataforma" value="instagram">
-            <span><i class="fab fa-instagram"></i> Instagram</span>
-          </label>
-          <label class="opcion-plat otro">
-            <input type="radio" name="plataforma" value="otro">
-            <span><i class="fas fa-link"></i> Otro</span>
-          </label>
+          <label class="opcion-plat wa"><input type="radio" name="plataforma" value="whatsapp" checked><span><i class="fab fa-whatsapp"></i> WhatsApp</span></label>
+          <label class="opcion-plat tg"><input type="radio" name="plataforma" value="telegram"><span><i class="fab fa-telegram"></i> Telegram</span></label>
+          <label class="opcion-plat fb"><input type="radio" name="plataforma" value="facebook"><span><i class="fab fa-facebook"></i> Facebook</span></label>
+          <label class="opcion-plat ig"><input type="radio" name="plataforma" value="instagram"><span><i class="fab fa-instagram"></i> Instagram</span></label>
+          <label class="opcion-plat otro"><input type="radio" name="plataforma" value="otro"><span><i class="fas fa-link"></i> Otro</span></label>
         </div>
       </div>
 
@@ -253,43 +201,34 @@
       <div class="form-group">
         <label><i class="fas fa-link"></i> Enlace del grupo *</label>
         <input type="url" id="fLink" name="link" required placeholder="https://chat.whatsapp.com/...">
-        <p class="hint" id="previewStatus"></p>
+        <div class="link-status" id="linkStatus"></div>
         <div class="img-preview" id="imgPreview">
-          <img id="previewImg" src="" alt="Foto">
-          <span><i class="fas fa-check-circle"></i> Foto obtenida</span>
+          <img id="previewImg" src="" alt="Foto del grupo" onerror="this.parentElement.style.display='none'">
         </div>
-        <p class="hint">Pega el enlace de invitación de tu grupo</p>
       </div>
 
       <!-- Nombre -->
-      <div class="form-group">
+      <div class="form-group campo-bloqueado" id="grupoNombre">
         <label><i class="fas fa-tag"></i> Nombre del grupo *</label>
         <input type="text" id="fNombre" name="nombre" required placeholder="Ej: Compra y Venta Santa Cruz" minlength="5">
       </div>
 
       <!-- Descripción -->
-      <div class="form-group">
+      <div class="form-group campo-bloqueado" id="grupoDesc">
         <label><i class="fas fa-align-left"></i> Descripción</label>
-        <textarea id="fDescripcion" name="descripcion" placeholder="¿De qué trata el grupo? Máximo 200 caracteres..." maxlength="200"></textarea>
+        <textarea id="fDescripcion" name="descripcion" placeholder="¿De qué trata el grupo?" maxlength="200"></textarea>
       </div>
 
       <!-- Categoría -->
-      <div class="form-group">
+      <div class="form-group campo-bloqueado" id="grupoCat">
         <label><i class="fas fa-th-large"></i> Categoría *</label>
         <select id="fCategoria" name="categoria" required>
           <option value="">Selecciona una categoría</option>
-          <option value="compra-venta">🛒 Compra/Venta</option>
-          <option value="empleos">💼 Empleos</option>
-          <option value="inmuebles">🏠 Inmuebles</option>
-          <option value="ropa">👕 Ropas</option>
-          <option value="citas">💬 Citas/Amigos</option>
-          <option value="futbol">🎬 Streaming</option>
-          <option value="otro">🗂️ Otros</option>
         </select>
       </div>
 
       <!-- Ciudad -->
-      <div class="form-group">
+      <div class="form-group campo-bloqueado" id="grupoCiudad">
         <label><i class="fas fa-map-marker-alt"></i> Ciudad *</label>
         <select id="fCiudad" name="ubicacion" required>
           <option value="">Selecciona tu ciudad</option>
@@ -307,24 +246,23 @@
       </div>
 
       <!-- Miembros -->
-      <div class="form-group">
+      <div class="form-group campo-bloqueado" id="grupoMiembros">
         <label><i class="fas fa-users"></i> Miembros aproximados</label>
         <input type="number" id="fMiembros" name="miembros" min="0" placeholder="Ej: 250">
       </div>
 
       <!-- Contacto -->
-      <div class="form-group">
+      <div class="form-group campo-bloqueado" id="grupoContacto">
         <label><i class="fas fa-phone"></i> Tu WhatsApp (opcional)</label>
         <input type="text" id="fContacto" name="contacto" placeholder="Ej: +591 7XXXXXXX">
         <p class="hint">Para contactarte si hay algún problema con tu solicitud</p>
       </div>
 
-      <button type="submit" class="btn-submit" id="btnEnviar">
+      <button type="submit" class="btn-submit" id="btnEnviar" disabled>
         <i class="fas fa-paper-plane"></i> Enviar solicitud
       </button>
     </form>
 
-    <!-- Éxito -->
     <div class="success-box" id="successBox">
       <div class="icon">🎉</div>
       <h3>¡Solicitud enviada!</h3>
@@ -332,61 +270,95 @@
       <a href="index.html" class="btn-volver"><i class="fas fa-home"></i> Volver al inicio</a>
     </div>
   </div>
-
 </div>
 
 <script>
 let imagenUrl = '';
+let linkTimeout = null;
+const camposBloqueados = ['grupoNombre','grupoDesc','grupoCat','grupoCiudad','grupoMiembros','grupoContacto'];
+
+function desbloquearCampos() {
+  camposBloqueados.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('campo-bloqueado');
+  });
+  document.getElementById('btnEnviar').disabled = false;
+}
 
 async function obtenerInfo() {
   const url = document.getElementById('fLink').value.trim();
   if (!url || !url.startsWith('http')) return;
-  if (!url.includes('whatsapp.com')) return;
 
-  const status = document.getElementById('previewStatus');
-  if (status) status.textContent = '⏳ Obteniendo información del grupo...';
+  const plat = document.querySelector('input[name="plataforma"]:checked')?.value;
+  const status = document.getElementById('linkStatus');
 
-  try {
-    const res  = await fetch('/api/preview', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url })
-    });
-    const data = await res.json();
+  // Para WhatsApp intentar preview
+  if (url.includes('whatsapp.com')) {
+    status.className = 'link-status loading';
+    status.textContent = '⏳ Obteniendo información...';
 
-    if (data.success) {
-      const fNombre = document.getElementById('fNombre');
-      if (!fNombre.value.trim() && data.nombre) fNombre.value = data.nombre;
-      const fDesc = document.getElementById('fDescripcion');
-      if (!fDesc.value.trim() && data.descripcion) fDesc.value = data.descripcion;
-      if (data.imagen) {
-        imagenUrl = data.imagen;
-        document.getElementById('previewImg').src = data.imagen;
-        document.getElementById('imgPreview').style.display = 'flex';
+    try {
+      const res  = await fetch('/api/preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        const fNombre = document.getElementById('fNombre');
+        if (!fNombre.value.trim() && data.nombre) fNombre.value = data.nombre;
+
+        const fDesc = document.getElementById('fDescripcion');
+        if (!fDesc.value.trim() && data.descripcion) fDesc.value = data.descripcion;
+
+        if (data.imagen) {
+          imagenUrl = data.imagen;
+          document.getElementById('previewImg').src = data.imagen;
+          document.getElementById('imgPreview').style.display = 'flex';
+        }
+
+        status.className = 'link-status ok';
+        status.textContent = '✅ Enlace válido';
+      } else {
+        status.className = 'link-status ok';
+        status.textContent = '✅ Enlace agregado';
       }
+    } catch(e) {
+      status.className = 'link-status ok';
+      status.textContent = '✅ Enlace agregado';
     }
-    if (status) status.textContent = '✅ Información obtenida';
-  } catch(e) {
-    if (status) status.textContent = '';
+  } else {
+    // Para otras plataformas solo validar que sea URL válida
+    status.className = 'link-status ok';
+    status.textContent = '✅ Enlace válido';
   }
+
+  desbloquearCampos();
 }
 
-// Auto-fetch al pegar o escribir enlace
-let linkTimeout = null;
+// Auto-fetch al pegar
 document.getElementById('fLink').addEventListener('paste', function() {
   setTimeout(() => obtenerInfo(), 700);
 });
+
+// Auto-fetch mientras escribe (con debounce)
 document.getElementById('fLink').addEventListener('input', function() {
   clearTimeout(linkTimeout);
   const val = this.value.trim();
-  const status = document.getElementById('previewStatus');
-  if (val.includes('whatsapp.com')) {
-    if (status) status.textContent = 'Obteniendo información...';
-    linkTimeout = setTimeout(() => obtenerInfo(), 1000);
+  const status = document.getElementById('linkStatus');
+
+  if (!val) {
+    status.textContent = '';
+    return;
   }
+
+  linkTimeout = setTimeout(() => {
+    if (val.startsWith('http')) obtenerInfo();
+  }, 1200);
 });
 
-// Cargar categorías desde API
+// Cargar categorías desde MongoDB
 async function cargarCategorias() {
   try {
     const res  = await fetch('/api/categorias');
@@ -426,7 +398,6 @@ document.getElementById('formSolicitud').addEventListener('submit', async functi
       body: JSON.stringify(datos)
     });
     const data = await res.json();
-
     if (res.ok && data.success) {
       document.getElementById('formSolicitud').style.display = 'none';
       document.getElementById('successBox').style.display = 'block';
