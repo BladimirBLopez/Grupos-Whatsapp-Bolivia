@@ -378,8 +378,27 @@ body {
   padding: 0.6rem 0.8rem 0.2rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
+  gap: 0.6rem;
+}
+
+.grupo-foto {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e5f0f5;
+  flex-shrink: 0;
+}
+
+.grupo-foto-placeholder {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid #e5f0f5;
 }
 
 .card-header h3 {

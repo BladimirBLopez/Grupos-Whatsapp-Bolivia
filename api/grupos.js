@@ -71,6 +71,7 @@ export default async function handler(req, res) {
         destacado:   Boolean(grupo.destacado),
         plataforma:  PLATAFORMAS_VALIDAS.includes(grupo.plataforma) ? grupo.plataforma : 'whatsapp',
         categoria:   CATEGORIAS_VALIDAS.includes(grupo.categoria)   ? grupo.categoria  : 'compra-venta',
+        imagen:      grupo.imagen?.trim() || '',
         visitas:     0,
         reportes:    0,
         fecha:       new Date().toISOString()

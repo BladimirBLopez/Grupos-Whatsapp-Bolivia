@@ -8,6 +8,7 @@ let filtroCiudadActual = 'todas';
 let formModificado = false;
 let categoriasData = [];
 let dragSrcIndex = null;
+let imagenPreviewUrl = '';
 
 // ============================================
 // CATEGORÍAS CONFIG
@@ -180,7 +181,8 @@ async function guardarGrupo(e) {
     activos:     parseInt(document.getElementById('fActivos').value)  || 0,
     destacado:   document.getElementById('fDestacado').checked,
     plataforma:  plataformaSeleccionada,
-    categoria:   categoriaSeleccionada
+    categoria:   categoriaSeleccionada,
+    imagen:      imagenPreviewUrl || ''
   };
 
   if (!datos.nombre || datos.nombre.length < 3) {
@@ -296,6 +298,11 @@ function abrirModal(grupo = null) {
     document.getElementById('fMiembros').value    = grupo.miembros  || 0;
     document.getElementById('fActivos').value     = grupo.activos   || 0;
     document.getElementById('fDestacado').checked = Boolean(grupo.destacado);
+    // Cargar imagen existente
+    if (grupo.imagen) {
+      imagenPreviewUrl = grupo.imagen;
+      mostrarImagenPreview(grupo.imagen);
+    }
 
     // Plataforma
     const plat  = grupo.plataforma || 'whatsapp';
@@ -313,6 +320,7 @@ function abrirModal(grupo = null) {
   }
 
   formModificado = false;
+  imagenPreviewUrl = '';
   setTimeout(() => {
     document.querySelectorAll('#formGrupo input, #formGrupo textarea, #formGrupo select').forEach(el => {
       el.addEventListener('change', () => { formModificado = true; });
@@ -328,6 +336,7 @@ function cerrarModal(forzar = false) {
     if (!descartar) return;
   }
   formModificado = false;
+  imagenPreviewUrl = '';
   const modal = document.getElementById('modalGrupo');
   if (modal) modal.style.display = 'none';
 }
@@ -393,84 +402,6 @@ function mostrarNotificacion(mensaje, tipo = 'success') {
 // ============================================
 // INICIALIZAR
 // ============================================
-
-
-// ============================================
-// PREVIEW AUTOMÁTICO DEL ENLACE
-// ============================================
-let previewTimeout = null;
-
-async function fetchPreview(url) {
-  if (!url || !url.startsWith('http')) return;
-  // Solo para WhatsApp por ahora
-  if (!url.includes('whatsapp.com')) return;
-
-  const btn = document.getElementById('btnPreview');
-  if (btn) {
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-    btn.disabled = true;
-  }
-
-  try {
-    const res  = await fetch('/api/preview', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url })
-    });
-    const data = await res.json();
-
-    if (data.success) {
-      // Autocompletar nombre si está vacío
-      const fNombre = document.getElementById('fNombre');
-      if (fNombre && !fNombre.value.trim() && data.nombre) {
-        fNombre.value = data.nombre;
-        formModificado = true;
-      }
-
-      // Autocompletar descripción si está vacía
-      const fDesc = document.getElementById('fDescripcion');
-      if (fDesc && !fDesc.value.trim() && data.descripcion) {
-        fDesc.value = data.descripcion;
-        formModificado = true;
-      }
-
-      // Mostrar imagen preview
-      if (data.imagen) {
-        mostrarImagenPreview(data.imagen);
-      }
-
-      mostrarNotificacion('✅ Información del grupo obtenida');
-    } else {
-      mostrarNotificacion('⚠️ No se pudo obtener info: ' + (data.error || ''), 'error');
-    }
-  } catch(e) {
-    mostrarNotificacion('❌ Error al obtener preview', 'error');
-  } finally {
-    if (btn) {
-      btn.innerHTML = '<i class="fas fa-magic"></i> Obtener info';
-      btn.disabled = false;
-    }
-  }
-}
-
-function mostrarImagenPreview(url) {
-  let preview = document.getElementById('grupoImagenPreview');
-  if (!preview) {
-    preview = document.createElement('div');
-    preview.id = 'grupoImagenPreview';
-    preview.style.cssText = 'margin-top:8px;display:flex;align-items:center;gap:8px;';
-    const enlaceGroup = document.getElementById('fEnlace')?.parentElement;
-    if (enlaceGroup) enlaceGroup.appendChild(preview);
-  }
-  preview.innerHTML = `
-    <img src="${url}" alt="Foto del grupo"
-      style="width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid #25D366;"
-      onerror="this.parentElement.style.display='none'">
-    <span style="font-size:0.75rem;color:#25D366;font-weight:600;">
-      <i class="fas fa-check-circle"></i> Foto del grupo obtenida
-    </span>
-  `;
-}
 
 // ============================================
 // GESTIÓN DE CATEGORÍAS
@@ -664,18 +595,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('cancelConfirmBtn')?.addEventListener('click', cerrarConfirmacion);
   document.getElementById('formGrupo')?.addEventListener('submit', guardarGrupo);
   document.getElementById('searchGrupos')?.addEventListener('input', e => filtrarGruposAdmin(e.target.value));
-
-  // Preview automático al cambiar enlace
-  document.getElementById('fEnlace')?.addEventListener('change', function() {
-    clearTimeout(previewTimeout);
-    previewTimeout = setTimeout(() => fetchPreview(this.value.trim()), 500);
-  });
-  document.getElementById('fEnlace')?.addEventListener('paste', function() {
-    clearTimeout(previewTimeout);
-    setTimeout(() => {
-      fetchPreview(this.value.trim());
-    }, 600);
-  });
 
   // Nueva categoría
   document.getElementById('btnNuevaCategoria')?.addEventListener('click', abrirModalCategoria);
