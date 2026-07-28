@@ -3,7 +3,7 @@
 // ============================================
 let gruposData = [];
 let ciudadSeleccionada     = 'todos';
-let plataformaSeleccionada = 'whatsapp';
+let plataformaSeleccionada = 'todos';
 let categoriaSeleccionada  = 'todas';
 let busquedaActual         = '';
 let gruposMostrados = 5;
@@ -237,7 +237,7 @@ function ejecutarBusqueda(hacerScroll = false) {
 
   // Si hay búsqueda activa, mostrar todas las plataformas
   if (busquedaActual.trim()) {
-    plataformaSeleccionada = 'whatsapp';
+    plataformaSeleccionada = 'todos';
     document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
   }
 
@@ -309,9 +309,8 @@ function renderizarGrupos() {
     <div class="grupo-card" ${reportes>=3?'style="border-color:#ffcccc;"':''}>
       <div class="card-header">
         ${tieneImagen ? `
-        <img src="${grupo.imagen}" alt="${(grupo.nombre||'').replace(/"/g,'\\"')}"
-          class="grupo-foto"
-          onerror="this.style.display='none'">
+        <img src="${grupo.imagen}" alt="${(grupo.nombre||'').replace(/"/g,'')}"
+          class="grupo-foto" onerror="this.style.display='none'">
         ` : `
         <div class="grupo-foto-placeholder" style="background:${color}22;">
           <i class="${icono}" style="color:${color};font-size:1.1rem;"></i>
@@ -401,13 +400,14 @@ function actualizarContadoresCiudades() {
 // ============================================
 function resetFiltros() {
   ciudadSeleccionada     = 'todos';
-  plataformaSeleccionada = 'whatsapp';
+  plataformaSeleccionada = 'todos';
   categoriaSeleccionada  = 'todas';
   busquedaActual         = '';
   gruposMostrados        = GRUPOS_POR_PAGINA;
 
   document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-  document.querySelector('.filter-chip[data-platform="whatsapp"]')?.classList.add('active');
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  document.querySelector('.filter-chip[data-platform="todos"]')?.classList.add('active');
   document.querySelectorAll('.cat-item').forEach(c => c.classList.remove('active'));
   document.querySelector('.cat-item[data-cat="todas"]')?.classList.add('active');
   document.getElementById('selectedCityName').textContent = 'Todos los departamentos';
@@ -510,8 +510,9 @@ function configurarEventListeners() {
       plataformaSeleccionada = 'todos';
       document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
     } else {
-      plataformaSeleccionada = 'whatsapp';
-      document.querySelector('.filter-chip[data-platform="whatsapp"]')?.classList.add('active');
+      plataformaSeleccionada = 'todos';
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  document.querySelector('.filter-chip[data-platform="todos"]')?.classList.add('active');
     }
     renderizarGrupos();
   });

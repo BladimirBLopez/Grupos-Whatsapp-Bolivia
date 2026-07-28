@@ -15,6 +15,10 @@
     "api/sync-imagenes.js": {
       "memory": 256,
       "maxDuration": 60
+    },
+    "api/preview.js": {
+      "memory": 256,
+      "maxDuration": 15
     }
   },
   "redirects": [
@@ -40,6 +44,10 @@
     {
       "source": "/api/sync-imagenes",
       "destination": "/api/sync-imagenes.js"
+    },
+    {
+      "source": "/api/preview",
+      "destination": "/api/preview.js"
     }
   ]
 }
