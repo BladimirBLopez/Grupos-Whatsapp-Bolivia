@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Añadir Grupo | Qigrupos Bolivia</title>
+  <meta name="description" content="Añade tu grupo de WhatsApp, Telegram o Facebook al directorio de Qigrupos Bolivia.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇧🇴</text></svg>">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:#f4f7fc; font-family:'Inter',sans-serif; color:#1a2c3e; min-height:100vh; padding-bottom:2rem; }
+
+    /* Header */
+    .header {
+      background:#fff;
+      padding:1rem 1.2rem;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.06);
+      position:sticky;
+      top:0;
+      z-index:100;
+    }
+    .header a { color:#1a2c3e; text-decoration:none; font-size:0.85rem; font-weight:600; display:flex; align-items:center; gap:5px; }
+    .header h1 { font-family:'Poppins',sans-serif; font-size:1rem; font-weight:700; flex:1; text-align:center; }
+
+    .container { max-width:560px; margin:0 auto; padding:1.2rem; }
+
+    /* Hero */
+    .hero {
+      text-align:center;
+      padding:1.5rem 0 1rem;
+      margin-bottom:1rem;
+    }
+    .hero-icon {
+      width:64px; height:64px;
+      background:linear-gradient(135deg,#25D366,#128C7E);
+      border-radius:20px;
+      display:flex; align-items:center; justify-content:center;
+      margin:0 auto 0.8rem;
+      font-size:1.8rem;
+      box-shadow:0 6px 20px rgba(37,211,102,0.3);
+    }
+    .hero h2 { font-family:'Poppins',sans-serif; font-size:1.3rem; font-weight:800; margin-bottom:0.3rem; }
+    .hero p  { font-size:0.8rem; color:#6b7f8e; line-height:1.5; }
+
+    /* Card formulario */
+    .form-card {
+      background:#fff;
+      border-radius:20px;
+      padding:1.5rem;
+      box-shadow:0 2px 12px rgba(0,0,0,0.06);
+      border:1px solid #e5f0f5;
+    }
+
+    .form-group { margin-bottom:1rem; }
+    .form-group label {
+      display:block;
+      font-size:0.8rem;
+      font-weight:600;
+      color:#1a2c3e;
+      margin-bottom:5px;
+    }
+    .form-group label i { margin-right:5px; color:#25D366; }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width:100%;
+      padding:10px 14px;
+      border:2px solid #e5f0f5;
+      border-radius:12px;
+      font-size:0.88rem;
+      font-family:'Inter',sans-serif;
+      color:#1a2c3e;
+      transition:border-color 0.2s;
+      outline:none;
+      background:#fff;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color:#25D366;
+      box-shadow:0 0 0 3px rgba(37,211,102,0.1);
+    }
+    .form-group textarea { resize:vertical; min-height:70px; }
+
+    /* Selector plataforma */
+    .selector-plat {
+      display:flex;
+      gap:0.4rem;
+      flex-wrap:wrap;
+    }
+    .opcion-plat { cursor:pointer; position:relative; }
+    .opcion-plat input[type="radio"] { position:absolute; opacity:0; width:0; height:0; }
+    .opcion-plat span {
+      display:inline-flex;
+      align-items:center;
+      gap:5px;
+      padding:7px 13px;
+      border-radius:20px;
+      border:1.5px solid #e5f0f5;
+      background:#fff;
+      color:#6b7f8e;
+      font-size:0.78rem;
+      font-weight:600;
+      transition:all 0.2s;
+    }
+    .opcion-plat input:checked + span { color:#fff; border-color:transparent; }
+    .opcion-plat.wa  input:checked + span { background:#25D366; }
+    .opcion-plat.tg  input:checked + span { background:#229ED9; }
+    .opcion-plat.fb  input:checked + span { background:#1877F2; }
+    .opcion-plat.ig  input:checked + span { background:#E1306C; }
+    .opcion-plat.otro input:checked + span { background:#8ba0ae; }
+
+    /* Enlace + botón preview */
+    .enlace-wrap { display:flex; gap:8px; align-items:center; }
+    .enlace-wrap input { flex:1; }
+    .btn-preview {
+      background:linear-gradient(135deg,#25D366,#128C7E);
+      color:#fff;
+      border:none;
+      padding:10px 12px;
+      border-radius:10px;
+      font-size:0.75rem;
+      font-weight:600;
+      cursor:pointer;
+      white-space:nowrap;
+      font-family:'Inter',sans-serif;
+      flex-shrink:0;
+    }
+
+    /* Preview imagen */
+    .img-preview {
+      margin-top:8px;
+      display:none;
+      align-items:center;
+      gap:8px;
+    }
+    .img-preview img {
+      width:44px; height:44px;
+      border-radius:50%;
+      object-fit:cover;
+      border:2px solid #25D366;
+    }
+    .img-preview span { font-size:0.75rem; color:#25D366; font-weight:600; }
+
+    /* Botón enviar */
+    .btn-submit {
+      width:100%;
+      padding:14px;
+      background:linear-gradient(135deg,#25D366,#128C7E);
+      color:#fff;
+      border:none;
+      border-radius:14px;
+      font-size:1rem;
+      font-weight:700;
+      cursor:pointer;
+      font-family:'Inter',sans-serif;
+      margin-top:0.5rem;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      box-shadow:0 4px 16px rgba(37,211,102,0.35);
+      transition:all 0.2s;
+    }
+    .btn-submit:hover { transform:scale(1.01); }
+    .btn-submit:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+
+    /* Éxito */
+    .success-box {
+      display:none;
+      text-align:center;
+      padding:2rem 1rem;
+    }
+    .success-box .icon { font-size:3rem; margin-bottom:0.8rem; }
+    .success-box h3 { font-family:'Poppins',sans-serif; font-size:1.2rem; font-weight:700; margin-bottom:0.4rem; color:#25D366; }
+    .success-box p { font-size:0.82rem; color:#6b7f8e; margin-bottom:1.2rem; }
+    .btn-volver {
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      background:#25D366;
+      color:#fff;
+      padding:10px 20px;
+      border-radius:50px;
+      text-decoration:none;
+      font-weight:700;
+      font-size:0.85rem;
+    }
+
+    /* Info box */
+    .info-box {
+      background:#f0fdf4;
+      border:1px solid #bbf7d0;
+      border-radius:12px;
+      padding:0.8rem 1rem;
+      margin-bottom:1rem;
+      font-size:0.78rem;
+      color:#166534;
+      line-height:1.5;
+    }
+    .info-box i { margin-right:5px; }
+
+    .hint { font-size:0.72rem; color:#8ba0ae; margin-top:4px; }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <a href="index.html"><i class="fas fa-arrow-left"></i> Volver</a>
+  <h1>Añadir Grupo</h1>
+  <div style="width:60px;"></div>
+</div>
+
+<div class="container">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-icon">➕</div>
+    <h2>Publica tu grupo</h2>
+    <p>Comparte tu grupo con miles de bolivianos.<br>Lo revisaremos y lo publicaremos pronto.</p>
+  </div>
+
+  <!-- Info -->
+  <div class="info-box">
+    <i class="fas fa-shield-alt"></i>
+    <strong>Revisión manual:</strong> Tu grupo será revisado antes de publicarse. Solo aceptamos grupos activos y con contenido apropiado.
+  </div>
+
+  <!-- Formulario -->
+  <div class="form-card">
+    <form id="formSolicitud">
+
+      <!-- Plataforma -->
+      <div class="form-group">
+        <label><i class="fas fa-mobile-alt"></i> Plataforma *</label>
+        <div class="selector-plat">
+          <label class="opcion-plat wa">
+            <input type="radio" name="plataforma" value="whatsapp" checked>
+            <span><i class="fab fa-whatsapp"></i> WhatsApp</span>
+          </label>
+          <label class="opcion-plat tg">
+            <input type="radio" name="plataforma" value="telegram">
+            <span><i class="fab fa-telegram"></i> Telegram</span>
+          </label>
+          <label class="opcion-plat fb">
+            <input type="radio" name="plataforma" value="facebook">
+            <span><i class="fab fa-facebook"></i> Facebook</span>
+          </label>
+          <label class="opcion-plat ig">
+            <input type="radio" name="plataforma" value="instagram">
+            <span><i class="fab fa-instagram"></i> Instagram</span>
+          </label>
+          <label class="opcion-plat otro">
+            <input type="radio" name="plataforma" value="otro">
+            <span><i class="fas fa-link"></i> Otro</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Enlace -->
+      <div class="form-group">
+        <label><i class="fas fa-link"></i> Enlace del grupo *</label>
+        <div class="enlace-wrap">
+          <input type="url" id="fLink" name="link" required placeholder="https://chat.whatsapp.com/...">
+          <button type="button" class="btn-preview" id="btnPreview" onclick="obtenerInfo()">
+            <i class="fas fa-magic"></i> Info
+          </button>
+        </div>
+        <div class="img-preview" id="imgPreview">
+          <img id="previewImg" src="" alt="Foto">
+          <span><i class="fas fa-check-circle"></i> Foto obtenida</span>
+        </div>
+        <p class="hint">Pega el enlace de invitación de tu grupo</p>
+      </div>
+
+      <!-- Nombre -->
+      <div class="form-group">
+        <label><i class="fas fa-tag"></i> Nombre del grupo *</label>
+        <input type="text" id="fNombre" name="nombre" required placeholder="Ej: Compra y Venta Santa Cruz" minlength="5">
+      </div>
+
+      <!-- Descripción -->
+      <div class="form-group">
+        <label><i class="fas fa-align-left"></i> Descripción</label>
+        <textarea id="fDescripcion" name="descripcion" placeholder="¿De qué trata el grupo? Máximo 200 caracteres..." maxlength="200"></textarea>
+      </div>
+
+      <!-- Categoría -->
+      <div class="form-group">
+        <label><i class="fas fa-th-large"></i> Categoría *</label>
+        <select id="fCategoria" name="categoria" required>
+          <option value="">Selecciona una categoría</option>
+          <option value="compra-venta">🛒 Compra/Venta</option>
+          <option value="empleos">💼 Empleos</option>
+          <option value="inmuebles">🏠 Inmuebles</option>
+          <option value="ropa">👕 Ropas</option>
+          <option value="citas">💬 Citas/Amigos</option>
+          <option value="futbol">🎬 Streaming</option>
+          <option value="otro">🗂️ Otros</option>
+        </select>
+      </div>
+
+      <!-- Ciudad -->
+      <div class="form-group">
+        <label><i class="fas fa-map-marker-alt"></i> Ciudad *</label>
+        <select id="fCiudad" name="ubicacion" required>
+          <option value="">Selecciona tu ciudad</option>
+          <option value="Santa Cruz">Santa Cruz</option>
+          <option value="La Paz">La Paz</option>
+          <option value="Cochabamba">Cochabamba</option>
+          <option value="Sucre">Sucre</option>
+          <option value="Tarija">Tarija</option>
+          <option value="Potosí">Potosí</option>
+          <option value="Oruro">Oruro</option>
+          <option value="Beni">Beni</option>
+          <option value="Pando">Pando</option>
+          <option value="Nacional">Todo Bolivia</option>
+        </select>
+      </div>
+
+      <!-- Miembros -->
+      <div class="form-group">
+        <label><i class="fas fa-users"></i> Miembros aproximados</label>
+        <input type="number" id="fMiembros" name="miembros" min="0" placeholder="Ej: 250">
+      </div>
+
+      <!-- Contacto -->
+      <div class="form-group">
+        <label><i class="fas fa-phone"></i> Tu WhatsApp (opcional)</label>
+        <input type="text" id="fContacto" name="contacto" placeholder="Ej: +591 7XXXXXXX">
+        <p class="hint">Para contactarte si hay algún problema con tu solicitud</p>
+      </div>
+
+      <button type="submit" class="btn-submit" id="btnEnviar">
+        <i class="fas fa-paper-plane"></i> Enviar solicitud
+      </button>
+    </form>
+
+    <!-- Éxito -->
+    <div class="success-box" id="successBox">
+      <div class="icon">🎉</div>
+      <h3>¡Solicitud enviada!</h3>
+      <p>Tu grupo será revisado pronto.<br>Si cumple los requisitos, lo publicaremos.</p>
+      <a href="index.html" class="btn-volver"><i class="fas fa-home"></i> Volver al inicio</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let imagenUrl = '';
+
+async function obtenerInfo() {
+  const url = document.getElementById('fLink').value.trim();
+  if (!url || !url.startsWith('http')) {
+    alert('Ingresa un enlace válido primero'); return;
+  }
+  if (!url.includes('whatsapp.com')) return;
+
+  const btn = document.getElementById('btnPreview');
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  btn.disabled = true;
+
+  try {
+    const res  = await fetch('/api/preview', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      const fNombre = document.getElementById('fNombre');
+      if (!fNombre.value.trim() && data.nombre) fNombre.value = data.nombre;
+      const fDesc = document.getElementById('fDescripcion');
+      if (!fDesc.value.trim() && data.descripcion) fDesc.value = data.descripcion;
+      if (data.imagen) {
+        imagenUrl = data.imagen;
+        document.getElementById('previewImg').src = data.imagen;
+        document.getElementById('imgPreview').style.display = 'flex';
+      }
+    }
+  } catch(e) {}
+  finally {
+    btn.innerHTML = '<i class="fas fa-magic"></i> Info';
+    btn.disabled = false;
+  }
+}
+
+// Auto-fetch al pegar enlace
+document.getElementById('fLink').addEventListener('paste', function() {
+  setTimeout(() => obtenerInfo(), 600);
+});
+
+// Cargar categorías desde API
+async function cargarCategorias() {
+  try {
+    const res  = await fetch('/api/categorias');
+    const data = await res.json();
+    const sel  = document.getElementById('fCategoria');
+    if (data.categorias && data.categorias.length > 0) {
+      sel.innerHTML = '<option value="">Selecciona una categoría</option>' +
+        data.categorias.map(c => `<option value="${c.slug}">${c.emoji} ${c.label}</option>`).join('');
+    }
+  } catch(e) {}
+}
+
+// Enviar formulario
+document.getElementById('formSolicitud').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const btn = document.getElementById('btnEnviar');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+
+  const datos = {
+    nombre:      document.getElementById('fNombre').value.trim(),
+    descripcion: document.getElementById('fDescripcion').value.trim(),
+    ubicacion:   document.getElementById('fCiudad').value,
+    link:        document.getElementById('fLink').value.trim(),
+    plataforma:  document.querySelector('input[name="plataforma"]:checked')?.value || 'whatsapp',
+    categoria:   document.getElementById('fCategoria').value,
+    miembros:    parseInt(document.getElementById('fMiembros').value) || 0,
+    contacto:    document.getElementById('fContacto').value.trim(),
+    imagen:      imagenUrl
+  };
+
+  try {
+    const res  = await fetch('/api/solicitudes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datos)
+    });
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      document.getElementById('formSolicitud').style.display = 'none';
+      document.getElementById('successBox').style.display = 'block';
+    } else {
+      alert('Error: ' + (data.error || 'No se pudo enviar'));
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar solicitud';
+    }
+  } catch(e) {
+    alert('Error de conexión');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar solicitud';
+  }
+});
+
+document.addEventListener('DOMContentLoaded', cargarCategorias);
+</script>
+</body>
+</html>
