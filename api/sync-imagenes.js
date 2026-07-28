@@ -38,7 +38,7 @@ async function fetchGrupoInfo(url) {
 
     const descMatch = html.match(/<meta property="og:description" content="([^"]+)"/i);
     let descripcion = descMatch ? decodeHtml(descMatch[1]) : null;
-    const genericas = ['invitación a grupo', 'invitation to group', 'join my whatsapp'];
+    const genericas = ['invitación a grupo', 'invitation to group', 'join my whatsapp', 'whatsapp group invite', 'group invite'];
     if (descripcion && genericas.some(g => descripcion.toLowerCase().includes(g))) {
       descripcion = null;
     }
