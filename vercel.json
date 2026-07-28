@@ -16,6 +16,10 @@
       "memory": 256,
       "maxDuration": 60
     },
+    "api/solicitudes.js": {
+      "memory": 128,
+      "maxDuration": 10
+    },
     "api/preview.js": {
       "memory": 256,
       "maxDuration": 15
@@ -44,6 +48,10 @@
     {
       "source": "/api/sync-imagenes",
       "destination": "/api/sync-imagenes.js"
+    },
+    {
+      "source": "/api/solicitudes",
+      "destination": "/api/solicitudes.js"
     },
     {
       "source": "/api/preview",
