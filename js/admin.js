@@ -9,6 +9,7 @@ let formModificado = false;
 let categoriasData = [];
 let dragSrcIndex = null;
 let imagenPreviewUrl = '';
+let previewTimeout = null;
 
 // ============================================
 // CATEGORÍAS CONFIG
@@ -16,11 +17,11 @@ let imagenPreviewUrl = '';
 const CATEGORIAS = {
   'compra-venta': { label: 'Compra/Venta', emoji: '🛒', color: '#25D366' },
   'empleos':      { label: 'Empleos',      emoji: '💼', color: '#F59E0B' },
-  'inmuebles':    { label: 'Inmuebles',     emoji: '🏠', color: '#3B82F6' },
-  'ropa':   { label: 'Ropas',    emoji: '👕', color: '#8B5CF6' },
-  'educacion':    { label: 'Educación',     emoji: '📚', color: '#EC4899' },
-  'deportes':     { label: 'Deportes',      emoji: '⚽', color: '#EF4444' },
-  'otro':         { label: 'Otro',          emoji: '📌', color: '#8ba0ae' }
+  'inmuebles':    { label: 'Inmuebles',    emoji: '🏠', color: '#3B82F6' },
+  'ropa':         { label: 'Ropas',        emoji: '👕', color: '#8B5CF6' },
+  'citas':        { label: 'Citas/Amigos', emoji: '💬', color: '#EC4899' },
+  'futbol':       { label: 'Streaming',    emoji: '🎬', color: '#EF4444' },
+  'otro':         { label: 'Otros',        emoji: '🗂️', color: '#8ba0ae' }
 };
 
 function getCategoria(slug) {
@@ -40,7 +41,7 @@ function badgeCategoria(slug) {
 // PLATAFORMAS CONFIG
 // ============================================
 const PLATAFORMAS = {
-  whatsapp: { label: 'WhatsApp', icon: 'fab fa-whatsapp', color: '#25D366', validar: link => link.startsWith('http') },
+  whatsapp:  { label: 'WhatsApp',  icon: 'fab fa-whatsapp',  color: '#25D366', validar: link => link.startsWith('http') },
   telegram:  { label: 'Telegram',  icon: 'fab fa-telegram',  color: '#229ED9', validar: link => link.startsWith('http') },
   facebook:  { label: 'Facebook',  icon: 'fab fa-facebook',  color: '#1877F2', validar: link => link.startsWith('http') },
   instagram: { label: 'Instagram', icon: 'fab fa-instagram', color: '#E1306C', validar: link => link.startsWith('http') },
@@ -95,24 +96,21 @@ function renderizarTabla() {
   }
 
   if (datos.length === 0) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="8" style="text-align:center; padding:2rem; color:#8ba0ae;">
-          <i class="fas fa-inbox" style="font-size:1.5rem; display:block; margin-bottom:0.5rem;"></i>
-          No hay grupos registrados
-        </td>
-      </tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:2rem;color:#8ba0ae;">
+      <i class="fas fa-inbox" style="font-size:1.5rem;display:block;margin-bottom:0.5rem;"></i>No hay grupos
+    </td></tr>`;
     return;
   }
 
   tbody.innerHTML = datos.map(grupo => {
-    const idStr    = grupo.id || '';
+    const idStr = grupo.id || '';
     const grupoJSON = JSON.stringify(grupo).replace(/"/g, '&quot;');
     return `
     <tr data-id="${idStr}">
       <td>${idStr.slice(-6)}</td>
       <td>
         <div class="grupo-nombre">
+          ${grupo.imagen ? `<img src="${grupo.imagen}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;margin-right:4px;vertical-align:middle;" onerror="this.style.display='none'">` : ''}
           ${grupo.nombre || 'Sin nombre'}
           ${grupo.destacado ? '<span class="badge-destacado-admin"><i class="fas fa-star"></i></span>' : ''}
         </div>
@@ -123,19 +121,14 @@ function renderizarTabla() {
       <td>${grupo.miembros || 0}</td>
       <td>
         <label class="switch">
-          <input type="checkbox" ${grupo.destacado ? 'checked' : ''}
-                 onchange="toggleDestacado('${idStr}', this.checked)">
+          <input type="checkbox" ${grupo.destacado ? 'checked' : ''} onchange="toggleDestacado('${idStr}', this.checked)">
           <span class="slider"></span>
         </label>
       </td>
       <td>
         <div class="acciones-btns">
-          <button class="btn-edit" onclick="abrirModal(${grupoJSON})">
-            <i class="fas fa-edit"></i>
-          </button>
-          <button class="btn-delete" onclick="abrirConfirmacion('${idStr}')">
-            <i class="fas fa-trash-alt"></i>
-          </button>
+          <button class="btn-edit" onclick="abrirModal(${grupoJSON})"><i class="fas fa-edit"></i></button>
+          <button class="btn-delete" onclick="abrirConfirmacion('${idStr}')"><i class="fas fa-trash-alt"></i></button>
         </div>
       </td>
     </tr>`;
@@ -152,11 +145,9 @@ function actualizarEstadisticas() {
   const total     = gruposData.length;
   const destacados = gruposData.filter(g => g.destacado).length;
   const ciudades  = new Set(gruposData.map(g => g.ubicacion).filter(Boolean)).size;
-
   const elTotal    = document.getElementById('totalGrupos');
   const elDest     = document.getElementById('totalDestacados');
   const elCiudades = document.getElementById('totalCiudades');
-
   if (elTotal)    elTotal.textContent    = total;
   if (elDest)     elDest.textContent     = destacados;
   if (elCiudades) elCiudades.textContent = ciudades;
@@ -167,7 +158,6 @@ function actualizarEstadisticas() {
 // ============================================
 async function guardarGrupo(e) {
   e.preventDefault();
-
   const id = document.getElementById('editId').value;
   const plataformaSeleccionada = document.querySelector('input[name="plataforma"]:checked')?.value || 'whatsapp';
   const categoriaSeleccionada  = document.querySelector('input[name="categoria"]:checked')?.value  || 'compra-venta';
@@ -186,32 +176,20 @@ async function guardarGrupo(e) {
   };
 
   if (!datos.nombre || datos.nombre.length < 3) {
-    mostrarNotificacion('❌ El nombre debe tener al menos 3 caracteres', 'error');
-    return;
+    mostrarNotificacion('❌ El nombre debe tener al menos 3 caracteres', 'error'); return;
   }
   if (!datos.link || !datos.link.startsWith('http')) {
-    mostrarNotificacion('❌ Ingresa un enlace válido', 'error');
-    return;
+    mostrarNotificacion('❌ Ingresa un enlace válido', 'error'); return;
   }
 
   try {
     let response;
     if (id) {
-      response = await fetch(API_URL, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, datos })
-      });
+      response = await fetch(API_URL, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, datos }) });
     } else {
-      response = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ grupo: datos })
-      });
+      response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ grupo: datos }) });
     }
-
     const result = await response.json();
-
     if (response.ok && result.success) {
       await cargarGrupos();
       cerrarModal(true);
@@ -229,16 +207,9 @@ async function guardarGrupo(e) {
 // ============================================
 async function eliminarGrupo() {
   if (!grupoAEliminar) return;
-
   try {
-    const response = await fetch(API_URL, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: grupoAEliminar })
-    });
-
+    const response = await fetch(API_URL, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: grupoAEliminar }) });
     const result = await response.json();
-
     if (response.ok && result.success) {
       await cargarGrupos();
       cerrarConfirmacion();
@@ -257,12 +228,7 @@ async function eliminarGrupo() {
 // ============================================
 async function toggleDestacado(id, checked) {
   try {
-    const response = await fetch(API_URL, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, datos: { destacado: checked } })
-    });
-
+    const response = await fetch(API_URL, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, datos: { destacado: checked } }) });
     if (response.ok) {
       await cargarGrupos();
       mostrarNotificacion(checked ? '⭐ Destacado activado' : '⭐ Destacado desactivado');
@@ -282,10 +248,17 @@ function abrirModal(grupo = null) {
 
   form.reset();
   document.getElementById('editId').value = '';
-  document.querySelector('input[name="plataforma"][value="whatsapp"]').checked = true;
+  formModificado = false;
+  imagenPreviewUrl = '';
+
+  // Limpiar preview imagen
+  const prevEl = document.getElementById('grupoImagenPreview');
+  if (prevEl) prevEl.innerHTML = '';
+
   // Seleccionar primera categoría por defecto
   const primerRadio = document.querySelector('input[name="categoria"]');
   if (primerRadio) primerRadio.checked = true;
+  document.querySelector('input[name="plataforma"][value="whatsapp"]').checked = true;
   actualizarHintEnlace('whatsapp');
 
   if (grupo) {
@@ -298,35 +271,31 @@ function abrirModal(grupo = null) {
     document.getElementById('fMiembros').value    = grupo.miembros  || 0;
     document.getElementById('fActivos').value     = grupo.activos   || 0;
     document.getElementById('fDestacado').checked = Boolean(grupo.destacado);
-    // Cargar imagen existente
-    if (grupo.imagen) {
-      imagenPreviewUrl = grupo.imagen;
-      mostrarImagenPreview(grupo.imagen);
-    }
 
-    // Plataforma
     const plat  = grupo.plataforma || 'whatsapp';
     const radio = document.querySelector(`input[name="plataforma"][value="${plat}"]`);
     if (radio) radio.checked = true;
     actualizarHintEnlace(plat);
 
-    // Categoría
-    const cat      = grupo.categoria || 'compra-venta';
+    const cat = grupo.categoria || 'compra-venta';
     const radioCat = document.querySelector(`input[name="categoria"][value="${cat}"]`);
     if (radioCat) radioCat.checked = true;
 
+    if (grupo.imagen) {
+      imagenPreviewUrl = grupo.imagen;
+      mostrarImagenPreview(grupo.imagen);
+    }
   } else {
     titulo.innerHTML = '<i class="fas fa-plus-circle"></i> Nuevo Grupo';
   }
 
-  formModificado = false;
-  imagenPreviewUrl = '';
   setTimeout(() => {
     document.querySelectorAll('#formGrupo input, #formGrupo textarea, #formGrupo select').forEach(el => {
       el.addEventListener('change', () => { formModificado = true; });
       el.addEventListener('input',  () => { formModificado = true; });
     });
   }, 150);
+
   modal.style.display = 'flex';
 }
 
@@ -336,7 +305,6 @@ function cerrarModal(forzar = false) {
     if (!descartar) return;
   }
   formModificado = false;
-  imagenPreviewUrl = '';
   const modal = document.getElementById('modalGrupo');
   if (modal) modal.style.display = 'none';
 }
@@ -354,13 +322,66 @@ function cerrarConfirmacion() {
 }
 
 // ============================================
-// HINT DINÁMICO DEL ENLACE
+// PREVIEW AUTOMÁTICO
+// ============================================
+async function fetchPreview(url) {
+  if (!url || !url.startsWith('http')) return;
+  if (!url.includes('whatsapp.com')) return;
+
+  const btn = document.getElementById('btnPreview');
+  if (btn) { btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; btn.disabled = true; }
+
+  try {
+    const res = await fetch('/api/preview', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url })
+    });
+    const data = await res.json();
+    if (data.success) {
+      const fNombre = document.getElementById('fNombre');
+      if (fNombre && !fNombre.value.trim() && data.nombre) { fNombre.value = data.nombre; formModificado = true; }
+      const fDesc = document.getElementById('fDescripcion');
+      if (fDesc && !fDesc.value.trim() && data.descripcion) { fDesc.value = data.descripcion; formModificado = true; }
+      if (data.imagen) mostrarImagenPreview(data.imagen);
+      mostrarNotificacion('✅ Información obtenida');
+    } else {
+      mostrarNotificacion('⚠️ ' + (data.error || 'Sin info'), 'error');
+    }
+  } catch(e) {
+    mostrarNotificacion('❌ Error al obtener preview', 'error');
+  } finally {
+    if (btn) { btn.innerHTML = '<i class="fas fa-magic"></i> Obtener info'; btn.disabled = false; }
+  }
+}
+
+function mostrarImagenPreview(url) {
+  imagenPreviewUrl = url;
+  let preview = document.getElementById('grupoImagenPreview');
+  if (!preview) {
+    preview = document.createElement('div');
+    preview.id = 'grupoImagenPreview';
+    preview.style.cssText = 'margin-top:8px;display:flex;align-items:center;gap:8px;';
+    const enlaceGroup = document.getElementById('fEnlace')?.parentElement;
+    if (enlaceGroup) enlaceGroup.appendChild(preview);
+  }
+  preview.innerHTML = `
+    <img src="${url}" alt="Foto del grupo"
+      style="width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid #25D366;"
+      onerror="this.parentElement.style.display='none'">
+    <span style="font-size:0.75rem;color:#25D366;font-weight:600;">
+      <i class="fas fa-check-circle"></i> Foto del grupo obtenida
+    </span>`;
+}
+
+// ============================================
+// HINT DINÁMICO
 // ============================================
 const HINTS = {
-  whatsapp: 'Ej: https://chat.whatsapp.com/ABC123...',
+  whatsapp:  'Ej: https://chat.whatsapp.com/ABC123...',
   telegram:  'Ej: https://t.me/nombre_del_grupo',
   facebook:  'Ej: https://www.facebook.com/groups/...',
-  discord:   'Ej: https://discord.gg/codigo...',
+  instagram: 'Ej: https://www.instagram.com/...',
   otro:      'Pega el enlace de invitación del grupo'
 };
 
@@ -400,10 +421,6 @@ function mostrarNotificacion(mensaje, tipo = 'success') {
 }
 
 // ============================================
-// INICIALIZAR
-// ============================================
-
-// ============================================
 // GESTIÓN DE CATEGORÍAS
 // ============================================
 async function cargarCategorias() {
@@ -421,12 +438,10 @@ async function cargarCategorias() {
 function renderizarCategorias() {
   const lista = document.getElementById('listaCategorias');
   if (!lista) return;
-
   if (categoriasData.length === 0) {
     lista.innerHTML = '<div style="text-align:center;color:#8ba0ae;font-size:0.8rem;">No hay categorías</div>';
     return;
   }
-
   lista.innerHTML = categoriasData.map((cat, i) => `
     <div class="cat-drag-item" data-id="${cat.id}" data-index="${i}"
       draggable="true"
@@ -435,61 +450,33 @@ function renderizarCategorias() {
       <span style="font-size:1.1rem;">${cat.emoji}</span>
       <span style="flex:1;font-size:0.85rem;font-weight:600;color:#1a2c3e;">${cat.label}</span>
       <span style="font-size:0.65rem;color:#8ba0ae;background:#eef2f5;padding:2px 8px;border-radius:20px;">${cat.slug}</span>
-      <button onclick="editarCategoria('${cat.id}')"
-        style="background:#e9f9ef;color:#075E54;border:none;padding:5px 8px;border-radius:8px;cursor:pointer;font-size:0.75rem;">
-        <i class="fas fa-edit"></i>
-      </button>
-      <button onclick="eliminarCategoria('${cat.id}', '${cat.label}')"
-        style="background:#fde8e8;color:#dc3545;border:none;padding:5px 8px;border-radius:8px;cursor:pointer;font-size:0.75rem;">
-        <i class="fas fa-trash"></i>
-      </button>
+      <button onclick="editarCategoria('${cat.id}')" style="background:#e9f9ef;color:#075E54;border:none;padding:5px 8px;border-radius:8px;cursor:pointer;font-size:0.75rem;"><i class="fas fa-edit"></i></button>
+      <button onclick="eliminarCategoria('${cat.id}', '${cat.label}')" style="background:#fde8e8;color:#dc3545;border:none;padding:5px 8px;border-radius:8px;cursor:pointer;font-size:0.75rem;"><i class="fas fa-trash"></i></button>
     </div>
   `).join('');
 
-  // Drag & Drop
   lista.querySelectorAll('.cat-drag-item').forEach(item => {
-    item.addEventListener('dragstart', e => {
-      dragSrcIndex = parseInt(item.dataset.index);
-      item.style.opacity = '0.5';
-    });
-    item.addEventListener('dragend', e => {
-      item.style.opacity = '1';
-    });
-    item.addEventListener('dragover', e => {
-      e.preventDefault();
-      item.style.borderColor = '#25D366';
-    });
-    item.addEventListener('dragleave', e => {
-      item.style.borderColor = '#e5f0f5';
-    });
+    item.addEventListener('dragstart', e => { dragSrcIndex = parseInt(item.dataset.index); item.style.opacity = '0.5'; });
+    item.addEventListener('dragend',   e => { item.style.opacity = '1'; });
+    item.addEventListener('dragover',  e => { e.preventDefault(); item.style.borderColor = '#25D366'; });
+    item.addEventListener('dragleave', e => { item.style.borderColor = '#e5f0f5'; });
     item.addEventListener('drop', async e => {
       e.preventDefault();
       item.style.borderColor = '#e5f0f5';
       const destIndex = parseInt(item.dataset.index);
       if (dragSrcIndex === null || dragSrcIndex === destIndex) return;
-
-      // Reordenar array
       const moved = categoriasData.splice(dragSrcIndex, 1)[0];
       categoriasData.splice(destIndex, 0, moved);
       renderizarCategorias();
-
-      // Guardar nuevo orden en servidor
       try {
-        await fetch('/api/categorias', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ reordenar: categoriasData.map(c => ({ id: c.id })) })
-        });
+        await fetch('/api/categorias', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ reordenar: categoriasData.map(c => ({ id: c.id })) }) });
         mostrarNotificacion('✅ Orden guardado');
-      } catch(e) {
-        mostrarNotificacion('❌ Error al guardar orden', 'error');
-      }
+      } catch(e) { mostrarNotificacion('❌ Error al guardar orden', 'error'); }
       dragSrcIndex = null;
     });
   });
 }
 
-// Actualizar selector de categorías en el form de grupos
 function actualizarSelectorCategorias() {
   const selector = document.getElementById('selectorCategorias');
   if (!selector) return;
@@ -531,26 +518,13 @@ async function guardarCategoria() {
   const emoji = document.getElementById('catEmoji').value.trim() || '📌';
   const label = document.getElementById('catLabel').value.trim();
   const slug  = document.getElementById('catSlug').value.trim().toLowerCase().replace(/\s+/g, '-');
-
-  if (!label || !slug) {
-    mostrarNotificacion('❌ Nombre y slug son requeridos', 'error');
-    return;
-  }
-
+  if (!label || !slug) { mostrarNotificacion('❌ Nombre y slug son requeridos', 'error'); return; }
   try {
     let res;
     if (id) {
-      res = await fetch('/api/categorias', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, datos: { emoji, label, slug } })
-      });
+      res = await fetch('/api/categorias', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, datos: { emoji, label, slug } }) });
     } else {
-      res = await fetch('/api/categorias', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ emoji, label, slug })
-      });
+      res = await fetch('/api/categorias', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ emoji, label, slug }) });
     }
     const data = await res.json();
     if (res.ok && data.success !== false) {
@@ -560,53 +534,39 @@ async function guardarCategoria() {
     } else {
       mostrarNotificacion('❌ ' + (data.error || 'Error al guardar'), 'error');
     }
-  } catch(e) {
-    mostrarNotificacion('❌ Error de conexión', 'error');
-  }
+  } catch(e) { mostrarNotificacion('❌ Error de conexión', 'error'); }
 }
 
 async function eliminarCategoria(id, nombre) {
   if (!confirm(`¿Eliminar la categoría "${nombre}"?\n\nLos grupos con esta categoría quedarán sin categoría.`)) return;
   try {
-    const res = await fetch('/api/categorias', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id })
-    });
+    const res = await fetch('/api/categorias', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) });
     const data = await res.json();
-    if (res.ok && data.success) {
-      await cargarCategorias();
-      mostrarNotificacion('🗑️ Categoría eliminada');
-    } else {
-      mostrarNotificacion('❌ Error al eliminar', 'error');
-    }
-  } catch(e) {
-    mostrarNotificacion('❌ Error de conexión', 'error');
-  }
+    if (res.ok && data.success) { await cargarCategorias(); mostrarNotificacion('🗑️ Categoría eliminada'); }
+    else { mostrarNotificacion('❌ Error al eliminar', 'error'); }
+  } catch(e) { mostrarNotificacion('❌ Error de conexión', 'error'); }
 }
 
+// ============================================
+// INICIALIZAR
+// ============================================
 document.addEventListener('DOMContentLoaded', () => {
   cargarGrupos();
+  cargarCategorias();
 
   document.getElementById('btnNuevoGrupo')?.addEventListener('click', () => abrirModal());
-  document.getElementById('closeModalBtn')?.addEventListener('click', cerrarModal);
-  document.getElementById('cancelModalBtn')?.addEventListener('click', cerrarModal);
+  document.getElementById('closeModalBtn')?.addEventListener('click', () => cerrarModal());
+  document.getElementById('cancelModalBtn')?.addEventListener('click', () => cerrarModal());
   document.getElementById('confirmDeleteBtn')?.addEventListener('click', eliminarGrupo);
   document.getElementById('cancelConfirmBtn')?.addEventListener('click', cerrarConfirmacion);
   document.getElementById('formGrupo')?.addEventListener('submit', guardarGrupo);
   document.getElementById('searchGrupos')?.addEventListener('input', e => filtrarGruposAdmin(e.target.value));
-
-  // Nueva categoría
   document.getElementById('btnNuevaCategoria')?.addEventListener('click', abrirModalCategoria);
 
-  // Filtro ciudad
   document.getElementById('filtroCiudadAdmin')?.addEventListener('change', function() {
     filtroCiudadActual = this.value;
     renderizarTabla();
   });
-
-  // Cargar categorías al iniciar
-  cargarCategorias();
 
   document.querySelectorAll('input[name="plataforma"]').forEach(radio => {
     radio.addEventListener('change', () => actualizarHintEnlace(radio.value));
@@ -619,5 +579,15 @@ document.addEventListener('DOMContentLoaded', () => {
       filtroPlataformaActual = btn.dataset.plataforma;
       renderizarTabla();
     });
+  });
+
+  document.getElementById('fEnlace')?.addEventListener('paste', function() {
+    clearTimeout(previewTimeout);
+    setTimeout(() => fetchPreview(this.value.trim()), 600);
+  });
+
+  document.getElementById('fEnlace')?.addEventListener('change', function() {
+    clearTimeout(previewTimeout);
+    previewTimeout = setTimeout(() => fetchPreview(this.value.trim()), 500);
   });
 });
