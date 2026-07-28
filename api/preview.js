@@ -34,8 +34,29 @@ export default async function handler(req, res) {
         .replace(/&gt;/g, '>')
         .replace(/&quot;/g, '"')
         .replace(/&#39;/g, "'")
-        .replace(/&#x([0-9a-f]+);/gi, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
-        .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(dec))
+        .replace(/&#x([0-9a-f]+);/gi, (_, hex) => {
+          const code = parseInt(hex, 16);
+          // Handle surrogate pairs for emojis (code points > 0xFFFF)
+          if (code > 0xFFFF) {
+            const offset = code - 0x10000;
+            return String.fromCharCode(
+              0xD800 + (offset >> 10),
+              0xDC00 + (offset & 0x3FF)
+            );
+          }
+          return String.fromCharCode(code);
+        })
+        .replace(/&#(\d+);/g, (_, dec) => {
+          const code = parseInt(dec);
+          if (code > 0xFFFF) {
+            const offset = code - 0x10000;
+            return String.fromCharCode(
+              0xD800 + (offset >> 10),
+              0xDC00 + (offset & 0x3FF)
+            );
+          }
+          return String.fromCharCode(code);
+        })
         .trim();
     }
 
