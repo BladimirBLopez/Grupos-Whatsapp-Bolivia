@@ -303,13 +303,28 @@ function renderizarGrupos() {
     const cat      = grupo.categoria || 'compra-venta';
     const nombreSeguro = (grupo.nombre||'').replace(/'/g,"\\'");
 
+    const tieneImagen = grupo.imagen && grupo.imagen.trim();
+
     return `
     <div class="grupo-card" ${reportes>=3?'style="border-color:#ffcccc;"':''}>
       <div class="card-header">
-        <h3>${grupo.nombre||'Sin nombre'}</h3>
-        <span class="badge-whatsapp" style="background:${color}20;color:${color};border:1px solid ${color}40;">
-          <i class="${icono}"></i> ${label}
-        </span>
+        ${tieneImagen ? `
+        <img src="${grupo.imagen}" alt="${(grupo.nombre||'').replace(/"/g,'\\"')}"
+          class="grupo-foto"
+          onerror="this.style.display='none'">
+        ` : `
+        <div class="grupo-foto-placeholder" style="background:${color}22;">
+          <i class="${icono}" style="color:${color};font-size:1.1rem;"></i>
+        </div>
+        `}
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            <h3 style="margin:0;flex:1;min-width:0;">${grupo.nombre||'Sin nombre'}</h3>
+            <span class="badge-whatsapp" style="background:${color}20;color:${color};border:1px solid ${color}40;flex-shrink:0;">
+              <i class="${icono}"></i> ${label}
+            </span>
+          </div>
+        </div>
       </div>
       ${reportes>=3?`<div style="margin:0 0.8rem 0.3rem;background:#fff3f3;border-radius:8px;padding:4px 8px;font-size:0.65rem;color:#e74c3c;font-weight:600;">⚠️ Link posiblemente caído (${reportes} reportes)</div>`:''}
       ${grupo.descripcion?`<div class="descripcion">${grupo.descripcion}</div>`:''}
