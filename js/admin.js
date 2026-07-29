@@ -583,6 +583,7 @@ function mostrarSeccion(seccion) {
   document.getElementById('tabSolicitudes').style.color      = !esGrupos ? '#fff' : '#6b7f8e';
 
   // Mostrar u ocultar secciones de grupos
+  const esDestacados = seccion === 'destacados';
   const panelCats   = document.getElementById('panelCategorias');
   const adminActs   = document.querySelector('.admin-actions');
   const adminSearch = document.querySelector('.admin-search');
@@ -592,7 +593,17 @@ function mostrarSeccion(seccion) {
     if (el) el.style.display = esGrupos ? '' : 'none';
   });
 
-  if (!esGrupos) cargarSolicitudes();
+  document.getElementById('seccionDestacados').style.display = esDestacados ? 'block' : 'none';
+
+  // Tab styling
+  const tabDest = document.getElementById('tabDestacados');
+  if (tabDest) {
+    tabDest.style.background = esDestacados ? '#F59E0B' : 'transparent';
+    tabDest.style.color = esDestacados ? '#fff' : '#6b7f8e';
+  }
+
+  if (seccion === 'solicitudes') cargarSolicitudes();
+  if (esDestacados) cargarDestacados();
 }
 
 // ============================================
@@ -696,10 +707,102 @@ async function accionSolicitud(id, accion) {
   }
 }
 
+// ============================================
+// GESTIÓN DE DESTACADOS PAGADOS
+// ============================================
+async function cargarDestacados() {
+  const estado = document.getElementById('filtroEstadoDest')?.value || 'pendiente';
+  const lista  = document.getElementById('listaDestacados');
+  if (!lista) return;
+
+  lista.innerHTML = '<div style="text-align:center;padding:2rem;color:#8ba0ae;"><i class="fas fa-spinner fa-spin"></i></div>';
+
+  try {
+    const res  = await fetch(`/api/destacados?estado=${estado}`);
+    const data = await res.json();
+    const dests = data.destacados || [];
+
+    // Badge
+    const badge = document.getElementById('badgeDestacados');
+    if (badge && estado === 'pendiente') {
+      badge.style.display = dests.length > 0 ? 'inline' : 'none';
+      badge.textContent = dests.length;
+    }
+
+    if (dests.length === 0) {
+      lista.innerHTML = `<div style="text-align:center;padding:2rem;color:#8ba0ae;">
+        <i class="fas fa-star" style="font-size:2rem;display:block;margin-bottom:0.5rem;"></i>
+        No hay solicitudes ${estado}s
+      </div>`;
+      return;
+    }
+
+    lista.innerHTML = dests.map(d => `
+      <div style="background:#fff;border-radius:16px;padding:1rem;margin-bottom:0.8rem;border:1.5px solid ${d.estado==='pendiente'?'#fde68a':d.estado==='aprobado'?'#bbf7d0':'#fecaca'};box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.6rem;">
+          <div>
+            <div style="font-weight:700;font-size:0.9rem;color:#1a2c3e;">${d.nombre}</div>
+            <div style="font-size:0.72rem;color:#6b7f8e;margin-top:2px;">${d.link}</div>
+          </div>
+          <span style="font-size:0.65rem;font-weight:700;padding:3px 8px;border-radius:20px;flex-shrink:0;${d.estado==='pendiente'?'background:#fef3c7;color:#92400e':d.estado==='aprobado'?'background:#dcfce7;color:#166534':'background:#fee2e2;color:#991b1b'}">
+            ${d.estado==='pendiente'?'⏳ Pendiente':d.estado==='aprobado'?'✅ Aprobado':'❌ Rechazado'}
+          </span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;font-size:0.72rem;color:#6b7f8e;margin-bottom:0.7rem;">
+          <span>📦 ${d.plan} - Bs. ${d.precio}</span>
+          <span>📞 ${d.contacto}</span>
+          <span>📅 ${new Date(d.fecha).toLocaleDateString('es-BO')}</span>
+          ${d.mensaje ? `<span>💬 ${d.mensaje}</span>` : ''}
+        </div>
+        ${d.estado === 'pendiente' ? `
+        <div style="display:flex;gap:0.5rem;">
+          <button onclick="accionDestacado('${d.id}','aprobar')"
+            style="flex:1;padding:7px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;border:none;border-radius:10px;font-size:0.78rem;font-weight:600;cursor:pointer;">
+            <i class="fas fa-star"></i> Activar destacado
+          </button>
+          <button onclick="accionDestacado('${d.id}','rechazar')"
+            style="flex:1;padding:7px;background:#fee2e2;color:#991b1b;border:none;border-radius:10px;font-size:0.78rem;font-weight:600;cursor:pointer;">
+            <i class="fas fa-times"></i> Rechazar
+          </button>
+        </div>` : ''}
+      </div>
+    `).join('');
+
+  } catch(e) {
+    lista.innerHTML = '<div style="text-align:center;padding:2rem;color:#e74c3c;">Error al cargar</div>';
+  }
+}
+
+async function accionDestacado(id, accion) {
+  const msg = accion === 'aprobar' ? '¿Activar el destacado de este grupo?' : '¿Rechazar esta solicitud?';
+  if (!confirm(msg)) return;
+
+  try {
+    const res  = await fetch('/api/destacados', {
+      method: 'PUT',
+      headers: headersAdmin(),
+      body: JSON.stringify({ id, accion })
+    });
+    const data = await res.json();
+    if (res.ok && data.success) {
+      if (accion === 'aprobar' && !data.grupoEncontrado) {
+        mostrarNotificacion('⚠️ Destacado aprobado pero el grupo no fue encontrado — actívalo manualmente', 'error');
+      } else {
+        mostrarNotificacion(accion === 'aprobar' ? '⭐ Grupo destacado activado' : '❌ Solicitud rechazada');
+      }
+      cargarDestacados();
+      if (accion === 'aprobar') cargarGrupos();
+    }
+  } catch(e) {
+    mostrarNotificacion('❌ Error de conexión', 'error');
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   cargarGrupos();
   cargarCategorias();
   cargarSolicitudes(); // para badge inicial
+  cargarDestacados(); // para badge inicial
 
   document.getElementById('btnNuevoGrupo')?.addEventListener('click', () => abrirModal());
   document.getElementById('closeModalBtn')?.addEventListener('click', () => cerrarModal());
