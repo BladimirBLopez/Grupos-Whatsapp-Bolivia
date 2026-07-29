@@ -1,6 +1,17 @@
 // js/admin.js
 const API_URL = '/api/grupos';
 
+function getToken() {
+  return sessionStorage.getItem('qigrupos_token') || '';
+}
+
+function headersAdmin() {
+  return {
+    'Content-Type': 'application/json',
+    'x-admin-token': getToken()
+  };
+}
+
 let gruposData = [];
 let grupoAEliminar = null;
 let filtroPlataformaActual = 'todas';
@@ -185,9 +196,9 @@ async function guardarGrupo(e) {
   try {
     let response;
     if (id) {
-      response = await fetch(API_URL, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, datos }) });
+      response = await fetch(API_URL, { method: 'PUT', headers: headersAdmin(), body: JSON.stringify({ id, datos }) });
     } else {
-      response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ grupo: datos }) });
+      response = await fetch(API_URL, { method: 'POST', headers: headersAdmin(), body: JSON.stringify({ grupo: datos }) });
     }
     const result = await response.json();
     if (response.ok && result.success) {
@@ -208,7 +219,7 @@ async function guardarGrupo(e) {
 async function eliminarGrupo() {
   if (!grupoAEliminar) return;
   try {
-    const response = await fetch(API_URL, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: grupoAEliminar }) });
+    const response = await fetch(API_URL, { method: 'DELETE', headers: headersAdmin(), body: JSON.stringify({ id: grupoAEliminar }) });
     const result = await response.json();
     if (response.ok && result.success) {
       await cargarGrupos();
@@ -229,7 +240,7 @@ async function eliminarGrupo() {
 // ============================================
 async function toggleDestacado(id, checked) {
   try {
-    const response = await fetch(API_URL, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, datos: { destacado: checked } }) });
+    const response = await fetch(API_URL, { method: 'PUT', headers: headersAdmin(), body: JSON.stringify({ id, datos: { destacado: checked } }) });
     if (response.ok) {
       await cargarGrupos();
       mostrarNotificacion(checked ? '⭐ Destacado activado' : '⭐ Destacado desactivado');

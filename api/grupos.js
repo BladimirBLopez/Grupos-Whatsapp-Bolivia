@@ -15,6 +15,19 @@ async function conectar() {
   return client;
 }
 
+function verificarToken(req) {
+  const token = req.headers['x-admin-token'] || req.body?.token;
+  if (!token) return false;
+  try {
+    const decoded = Buffer.from(token, 'base64').toString('utf8');
+    const partes  = decoded.split(':');
+    if (partes.length !== 3) return false;
+    const [usuario, expira, pass] = partes;
+    if (Date.now() > parseInt(expira)) return false;
+    return usuario === process.env.ADMIN_USER && pass === process.env.ADMIN_PASS;
+  } catch(e) { return false; }
+}
+
 export default async function handler(req, res) {
   const origen = process.env.ALLOWED_ORIGIN || 'https://qigruposbo.online';
   res.setHeader('Access-Control-Allow-Origin', origen);
@@ -47,6 +60,9 @@ export default async function handler(req, res) {
     // ── POST ─────────────────────────────────────────────────────────
     if (req.method === 'POST') {
       const { grupo, accion, id } = req.body;
+      if (accion !== 'visita' && accion !== 'reporte' && !verificarToken(req)) {
+        return res.status(401).json({ error: 'No autorizado' });
+      }
 
       if (accion === 'visita' && id) {
         await col.updateOne({ _id: new ObjectId(id) }, { $inc: { visitas: 1 } });
@@ -93,6 +109,7 @@ export default async function handler(req, res) {
 
     // ── PUT ──────────────────────────────────────────────────────────
     if (req.method === 'PUT') {
+      if (!verificarToken(req)) return res.status(401).json({ error: 'No autorizado' });
       const { id, datos } = req.body;
       if (!id) return res.status(400).json({ error: 'ID requerido' });
 
@@ -109,6 +126,7 @@ export default async function handler(req, res) {
 
     // ── DELETE ───────────────────────────────────────────────────────
     if (req.method === 'DELETE') {
+      if (!verificarToken(req)) return res.status(401).json({ error: 'No autorizado' });
       const { id } = req.body;
       if (!id) return res.status(400).json({ error: 'ID requerido' });
 
