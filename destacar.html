@@ -285,7 +285,16 @@ document.getElementById('formDestacado').addEventListener('submit', async functi
     mensaje:     document.getElementById('dMensaje').value.trim(),
   };
 
-  // Enviar por WhatsApp al admin
+  // Guardar en MongoDB
+  try {
+    await fetch('/api/destacados', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datos)
+    });
+  } catch(e) {}
+
+  // Abrir WhatsApp con los datos
   const texto = encodeURIComponent(
     `👑 SOLICITUD DESTACADO\n\n` +
     `📦 Plan: ${datos.plan} - Bs. ${datos.precio}\n` +
