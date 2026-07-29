@@ -61,6 +61,12 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Faltan nombre o link' });
       }
 
+      // Verificar link duplicado
+      const linkExistente = await col.findOne({ link: grupo.link.trim() });
+      if (linkExistente) {
+        return res.status(400).json({ error: 'Este enlace ya está registrado en el directorio' });
+      }
+
       const nuevo = {
         nombre:      grupo.nombre.trim(),
         descripcion: grupo.descripcion?.trim() || '',

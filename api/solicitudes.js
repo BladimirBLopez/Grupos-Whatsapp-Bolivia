@@ -39,6 +39,18 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Nombre, enlace y ciudad son requeridos' });
       }
 
+      // Verificar link duplicado en grupos y solicitudes pendientes
+      const [enGrupos, enSolicitudes] = await Promise.all([
+        grp.findOne({ link: link.trim() }),
+        sol.findOne({ link: link.trim(), estado: 'pendiente' })
+      ]);
+      if (enGrupos) {
+        return res.status(400).json({ error: 'Este grupo ya está publicado en el directorio' });
+      }
+      if (enSolicitudes) {
+        return res.status(400).json({ error: 'Este grupo ya tiene una solicitud pendiente de revisión' });
+      }
+
       const nueva = {
         nombre:      nombre.trim(),
         descripcion: descripcion?.trim() || '',
