@@ -15,7 +15,7 @@ body {
 .container {
   max-width: 600px;
   margin: 0 auto;
-  padding: 0 1rem 1rem;
+  padding: 0 0.8rem 0.8rem;
 }
 
 /* ============================================ */
@@ -92,7 +92,7 @@ body {
 /* ============================================ */
 .hero {
   text-align: center;
-  padding: 1.2rem 0 1rem;
+  padding: 0.6rem 0 0.6rem;
 }
 
 .hero-counter {
@@ -105,7 +105,7 @@ body {
   font-weight: 700;
   padding: 4px 12px;
   border-radius: 20px;
-  margin-bottom: 0.7rem;
+  margin-bottom: 0.4rem;
 }
 
 .hero-counter .dot {
@@ -354,7 +354,7 @@ body {
 .grupos-grid {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 0.6rem;
 }
 
 /* ============================================ */

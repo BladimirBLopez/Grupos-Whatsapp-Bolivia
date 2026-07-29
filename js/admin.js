@@ -212,6 +212,7 @@ async function eliminarGrupo() {
     const result = await response.json();
     if (response.ok && result.success) {
       await cargarGrupos();
+      actualizarEstadisticas();
       cerrarConfirmacion();
       mostrarNotificacion('🗑️ Grupo eliminado correctamente');
       grupoAEliminar = null;
