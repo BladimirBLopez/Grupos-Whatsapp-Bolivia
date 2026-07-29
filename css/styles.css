@@ -388,6 +388,8 @@ body {
   object-fit: cover;
   border: 2px solid #e5f0f5;
   flex-shrink: 0;
+  loading: lazy;
+  background: #f0f4f8;
 }
 
 .grupo-foto-placeholder {
@@ -692,4 +694,12 @@ body {
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
   }
+}
+
+/* ============================================ */
+/* SKELETON LOADING                             */
+/* ============================================ */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
 }

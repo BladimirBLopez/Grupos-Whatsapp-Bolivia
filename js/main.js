@@ -3,7 +3,7 @@
 // ============================================
 let gruposData = [];
 let ciudadSeleccionada     = 'todos';
-let plataformaSeleccionada = 'todos';
+let plataformaSeleccionada = 'whatsapp';
 let categoriaSeleccionada  = 'todas';
 let busquedaActual         = '';
 let gruposMostrados = 5;
@@ -107,13 +107,41 @@ function mostrarToast(msg) {
 // ============================================
 // CARGAR GRUPOS
 // ============================================
+function mostrarSkeleton() {
+  const container = document.getElementById('gruposContainer');
+  if (!container) return;
+  container.innerHTML = Array(4).fill(`
+    <div class="grupo-card" style="pointer-events:none;">
+      <div class="card-header">
+        <div style="width:46px;height:46px;border-radius:50%;background:linear-gradient(90deg,#f0f4f8 25%,#e2edf2 50%,#f0f4f8 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;flex-shrink:0;"></div>
+        <div style="flex:1;">
+          <div style="height:14px;border-radius:6px;background:linear-gradient(90deg,#f0f4f8 25%,#e2edf2 50%,#f0f4f8 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;margin-bottom:6px;width:70%;"></div>
+          <div style="height:10px;border-radius:6px;background:linear-gradient(90deg,#f0f4f8 25%,#e2edf2 50%,#f0f4f8 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;width:40%;"></div>
+        </div>
+      </div>
+      <div style="padding:0 0.8rem 0.8rem;">
+        <div style="height:10px;border-radius:6px;background:linear-gradient(90deg,#f0f4f8 25%,#e2edf2 50%,#f0f4f8 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;margin-bottom:8px;width:90%;"></div>
+        <div style="height:36px;border-radius:50px;background:linear-gradient(90deg,#f0f4f8 25%,#e2edf2 50%,#f0f4f8 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;"></div>
+      </div>
+    </div>`).join('');
+}
+
 async function cargarGrupos() {
+  // Mostrar skeleton inmediatamente
+  mostrarSkeleton();
+
   try {
-    const res = await fetch('/api/grupos');
-    if (res.ok) {
-      gruposData = (await res.json()).grupos || [];
-    } else {
-      gruposData = (await (await fetch('data/grupos.json')).json()).grupos || [];
+    // Cargar grupos y categorías EN PARALELO
+    const [resGrupos, resCats] = await Promise.all([
+      fetch('/api/grupos'),
+      fetch('/api/categorias')
+    ]);
+
+    if (resGrupos.ok) {
+      gruposData = (await resGrupos.json()).grupos || [];
+    }
+    if (resCats.ok) {
+      categoriasGlobal = (await resCats.json()).categorias || [];
     }
   } catch(e) {
     try {
@@ -133,18 +161,9 @@ function iniciarPagina() {
   actualizarHeroCount();
   mostrarGrupoDestacado();
   actualizarContadoresCiudades();
+  renderizarCategoriasCirculares();
+  renderizarGrupos();
   configurarEventListeners();
-  // Cargar categorías y luego grupos
-  fetch('/api/categorias')
-    .then(r => r.json())
-    .then(data => {
-      categoriasGlobal = data.categorias || [];
-      renderizarCategoriasCirculares();
-    })
-    .catch(() => { categoriasGlobal = []; })
-    .finally(() => {
-      renderizarGrupos();
-    });
 }
 
 function renderizarCategoriasCirculares() {
@@ -237,7 +256,7 @@ function ejecutarBusqueda(hacerScroll = false) {
 
   // Si hay búsqueda activa, mostrar todas las plataformas
   if (busquedaActual.trim()) {
-    plataformaSeleccionada = 'todos';
+    plataformaSeleccionada = 'whatsapp';
     document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
   }
 
@@ -303,27 +322,13 @@ function renderizarGrupos() {
     const cat      = grupo.categoria || 'compra-venta';
     const nombreSeguro = (grupo.nombre||'').replace(/'/g,"\\'");
 
-    const tieneImagen = grupo.imagen && grupo.imagen.trim();
-
     return `
     <div class="grupo-card" ${reportes>=3?'style="border-color:#ffcccc;"':''}>
       <div class="card-header">
-        ${tieneImagen ? `
-        <img src="${grupo.imagen}" alt="${(grupo.nombre||'').replace(/"/g,'')}"
-          class="grupo-foto" onerror="this.style.display='none'">
-        ` : `
-        <div class="grupo-foto-placeholder" style="background:${color}22;">
-          <i class="${icono}" style="color:${color};font-size:1.1rem;"></i>
-        </div>
-        `}
-        <div style="flex:1;min-width:0;">
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-            <h3 style="margin:0;flex:1;min-width:0;">${grupo.nombre||'Sin nombre'}</h3>
-            <span class="badge-whatsapp" style="background:${color}20;color:${color};border:1px solid ${color}40;flex-shrink:0;">
-              <i class="${icono}"></i> ${label}
-            </span>
-          </div>
-        </div>
+        <h3>${grupo.nombre||'Sin nombre'}</h3>
+        <span class="badge-whatsapp" style="background:${color}20;color:${color};border:1px solid ${color}40;">
+          <i class="${icono}"></i> ${label}
+        </span>
       </div>
       ${reportes>=3?`<div style="margin:0 0.8rem 0.3rem;background:#fff3f3;border-radius:8px;padding:4px 8px;font-size:0.65rem;color:#e74c3c;font-weight:600;">⚠️ Link posiblemente caído (${reportes} reportes)</div>`:''}
       ${grupo.descripcion?`<div class="descripcion">${grupo.descripcion}</div>`:''}
@@ -400,14 +405,13 @@ function actualizarContadoresCiudades() {
 // ============================================
 function resetFiltros() {
   ciudadSeleccionada     = 'todos';
-  plataformaSeleccionada = 'todos';
+  plataformaSeleccionada = 'whatsapp';
   categoriaSeleccionada  = 'todas';
   busquedaActual         = '';
   gruposMostrados        = GRUPOS_POR_PAGINA;
 
   document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-  document.querySelector('.filter-chip[data-platform="todos"]')?.classList.add('active');
+  document.querySelector('.filter-chip[data-platform="whatsapp"]')?.classList.add('active');
   document.querySelectorAll('.cat-item').forEach(c => c.classList.remove('active'));
   document.querySelector('.cat-item[data-cat="todas"]')?.classList.add('active');
   document.getElementById('selectedCityName').textContent = 'Todos los departamentos';
@@ -510,9 +514,8 @@ function configurarEventListeners() {
       plataformaSeleccionada = 'todos';
       document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
     } else {
-      plataformaSeleccionada = 'todos';
-      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-  document.querySelector('.filter-chip[data-platform="todos"]')?.classList.add('active');
+      plataformaSeleccionada = 'whatsapp';
+      document.querySelector('.filter-chip[data-platform="whatsapp"]')?.classList.add('active');
     }
     renderizarGrupos();
   });
