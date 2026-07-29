@@ -53,8 +53,29 @@
         <span class="stat-label">Ciudades</span>
       </div>
     </div>
+    <div class="stat-card" style="cursor:pointer;" onclick="mostrarSeccion('solicitudes')">
+      <i class="fas fa-clock" style="color:#F59E0B;"></i>
+      <div>
+        <span class="stat-number" id="totalSolicitudes">0</span>
+        <span class="stat-label">Pendientes</span>
+      </div>
+    </div>
   </div>
 
+
+
+  <!-- ===== TABS ===== -->
+  <div style="display:flex;gap:0.5rem;margin-bottom:1.5rem;background:#f0f4f8;border-radius:12px;padding:4px;">
+    <button id="tabGrupos" onclick="mostrarSeccion('grupos')"
+      style="flex:1;padding:8px;border:none;border-radius:9px;font-weight:600;font-size:0.82rem;cursor:pointer;background:#25D366;color:#fff;font-family:'Inter',sans-serif;">
+      <i class="fas fa-users"></i> Grupos
+    </button>
+    <button id="tabSolicitudes" onclick="mostrarSeccion('solicitudes')"
+      style="flex:1;padding:8px;border:none;border-radius:9px;font-weight:600;font-size:0.82rem;cursor:pointer;background:transparent;color:#6b7f8e;font-family:'Inter',sans-serif;">
+      <i class="fas fa-clock"></i> Solicitudes
+      <span id="badgeSolicitudes" style="display:none;background:#EF4444;color:#fff;border-radius:20px;padding:1px 6px;font-size:0.65rem;margin-left:3px;">0</span>
+    </button>
+  </div>
 
   <!-- ===== GESTIÓN DE CATEGORÍAS ===== -->
   <div class="admin-categorias-panel" id="panelCategorias" style="background:white;border-radius:16px;padding:1.2rem;margin-bottom:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.05);border:1px solid #e5f0f5;">
@@ -165,6 +186,24 @@
       <tbody id="adminGruposBody"></tbody>
     </table>
   </div>
+
+  <!-- ===== SECCIÓN SOLICITUDES ===== -->
+  <div id="seccionSolicitudes" style="display:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">
+      <h3 style="font-size:1rem;font-weight:700;color:#1a2c3e;">
+        <i class="fas fa-clock" style="color:#F59E0B;"></i> Solicitudes
+      </h3>
+      <select id="filtroEstadoSol" onchange="cargarSolicitudes()" style="padding:6px 10px;border-radius:10px;border:1.5px solid #dde3e9;font-size:0.8rem;font-family:'Inter',sans-serif;outline:none;">
+        <option value="pendiente">Pendientes</option>
+        <option value="aprobado">Aprobadas</option>
+        <option value="rechazado">Rechazadas</option>
+      </select>
+    </div>
+    <div id="listaSolicitudes">
+      <div style="text-align:center;padding:2rem;color:#8ba0ae;">Cargando...</div>
+    </div>
+  </div>
+
 </div>
 
 <!-- ====== MODAL CREAR/EDITAR ====== -->
