@@ -573,7 +573,14 @@ function configurarEventListeners() {
   document.getElementById('closeCityModalBtn')?.addEventListener('click', () =>
     document.getElementById('cityModal').style.display = 'none');
   document.getElementById('cityModal')?.addEventListener('click', e => {
-    if (e.target === e.currentTarget) e.currentTarget.style.display = 'none';
+    if (e.target === e.currentTarget) {
+      e.stopPropagation();
+      e.currentTarget.style.display = 'none';
+    }
+  });
+
+  document.getElementById('openCityModalBtn')?.addEventListener('click', e => {
+    e.stopPropagation();
   });
 
   document.querySelectorAll('.city-item').forEach(item => {
