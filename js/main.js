@@ -449,9 +449,10 @@ function abrirBuscador() {
   const overlay = document.getElementById('searchOverlay');
   const input   = document.getElementById('searchInputNav');
   if (!overlay) return;
+  // Cerrar modal ciudad si está abierto
+  document.getElementById('cityModal').style.display = 'none';
   overlay.style.display = 'block';
   setTimeout(() => input?.focus(), 100);
-  // Marcar navbar
   document.querySelectorAll('.bottom-nav-item').forEach(i => i.classList.remove('active'));
   document.getElementById('navBuscar')?.classList.add('active');
 }
@@ -564,8 +565,10 @@ function configurarEventListeners() {
   });
 
   // Modal ciudades
-  document.getElementById('openCityModalBtn')?.addEventListener('click', () =>
-    document.getElementById('cityModal').style.display = 'flex');
+  document.getElementById('openCityModalBtn')?.addEventListener('click', () => {
+    cerrarBuscador();
+    document.getElementById('cityModal').style.display = 'flex';
+  });
   document.getElementById('closeCityModalBtn')?.addEventListener('click', () =>
     document.getElementById('cityModal').style.display = 'none');
   document.getElementById('cityModal')?.addEventListener('click', e => {
