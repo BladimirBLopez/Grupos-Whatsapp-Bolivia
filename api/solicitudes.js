@@ -76,7 +76,7 @@ export default async function handler(req, res) {
           miembros:    solicitud.miembros,
           activos:     0,
           destacado:   false,
-          imagen:      '',
+          imagen:      solicitud.imagen || '',
           visitas:     0,
           reportes:    0,
           fecha:       new Date().toISOString()
