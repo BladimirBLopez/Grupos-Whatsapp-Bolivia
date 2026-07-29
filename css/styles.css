@@ -290,10 +290,11 @@ body {
 
 .filter-chip:hover { background: #e2edf2; }
 .filter-chip.active { color: #fff; }
+.filter-chip[data-platform="todos"].active    { background:#1a2c3e; box-shadow:0 3px 10px rgba(26,44,62,0.35); }
 .filter-chip[data-platform="whatsapp"].active { background:#25D366; box-shadow:0 3px 10px rgba(37,211,102,0.35); }
 .filter-chip[data-platform="telegram"].active  { background:#229ED9; box-shadow:0 3px 10px rgba(34,158,217,0.35); }
-.filter-chip[data-platform="discord"].active   { background:#5865F2; box-shadow:0 3px 10px rgba(88,101,242,0.35); }
 .filter-chip[data-platform="facebook"].active  { background:#1877F2; box-shadow:0 3px 10px rgba(24,119,242,0.35); }
+.filter-chip[data-platform="instagram"].active { background:#E1306C; box-shadow:0 3px 10px rgba(225,48,108,0.35); }
 
 /* ============================================ */
 /* SELECTOR CIUDAD                              */
