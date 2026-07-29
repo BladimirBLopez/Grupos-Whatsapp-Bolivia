@@ -569,9 +569,7 @@ function configurarEventListeners() {
     cerrarBuscador();
     document.getElementById('cityModal').style.display = 'flex';
   });
-  document.getElementById('navCiudad')?.addEventListener('click', () => {
-    document.querySelectorAll('.bottom-nav-item').forEach(i => i.classList.remove('active'));
-  });
+
   document.getElementById('closeCityModalBtn')?.addEventListener('click', () =>
     document.getElementById('cityModal').style.display = 'none');
   document.getElementById('cityModal')?.addEventListener('click', e => {
@@ -600,9 +598,10 @@ function configurarEventListeners() {
     });
   });
 
-  // Navbar inferior
+  // Navbar inferior - Ciudad no se marca como activo
   document.querySelectorAll('.bottom-nav-item').forEach(item => {
     item.addEventListener('click', () => {
+      if (item.id === 'navCiudad') return; // Ciudad abre modal, no se marca activo
       document.querySelectorAll('.bottom-nav-item').forEach(i => i.classList.remove('active'));
       item.classList.add('active');
     });
