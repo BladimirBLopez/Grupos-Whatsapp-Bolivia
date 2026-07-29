@@ -67,10 +67,28 @@ export default async function handler(req, res) {
         const grupo = todosGrupos.find(g => g.link && g.link.split('?')[0] === linkBase);
 
         if (grupo) {
+          // Grupo existe — activar destacado
           await grp.updateOne(
             { _id: new ObjectId(grupo._id) },
             { $set: { destacado: true } }
           );
+        } else {
+          // Grupo no existe — crearlo y destacarlo
+          await grp.insertOne({
+            nombre:      solicitud.nombre,
+            descripcion: '',
+            ubicacion:   'Bolivia',
+            link:        solicitud.link,
+            plataforma:  'whatsapp',
+            categoria:   'compra-venta',
+            miembros:    0,
+            activos:     0,
+            destacado:   true,
+            imagen:      '',
+            visitas:     0,
+            reportes:    0,
+            fecha:       new Date().toISOString()
+          });
         }
         await col.updateOne({ _id: new ObjectId(id) }, { $set: { estado: 'aprobado' } });
         return res.status(200).json({ success: true, grupoEncontrado: !!grupo });
