@@ -569,7 +569,7 @@ async function eliminarCategoria(id, nombre) {
 function mostrarSeccion(seccion) {
   const esGrupos = seccion === 'grupos';
 
-  document.getElementById('seccionSolicitudes').style.display = esGrupos ? 'none' : 'block';
+  document.getElementById('seccionSolicitudes').style.display = seccion === 'solicitudes' ? 'block' : 'none';
 
   // Ocultar/mostrar elementos de grupos
   const elementosGrupos = [
@@ -579,8 +579,8 @@ function mostrarSeccion(seccion) {
   // Tab styling
   document.getElementById('tabGrupos').style.background      = esGrupos ? '#25D366' : 'transparent';
   document.getElementById('tabGrupos').style.color           = esGrupos ? '#fff' : '#6b7f8e';
-  document.getElementById('tabSolicitudes').style.background = !esGrupos ? '#F59E0B' : 'transparent';
-  document.getElementById('tabSolicitudes').style.color      = !esGrupos ? '#fff' : '#6b7f8e';
+  document.getElementById('tabSolicitudes').style.background = seccion === 'solicitudes' ? '#F59E0B' : 'transparent';
+  document.getElementById('tabSolicitudes').style.color      = seccion === 'solicitudes' ? '#fff' : '#6b7f8e';
 
   // Mostrar u ocultar secciones de grupos
   const esDestacados = seccion === 'destacados';
