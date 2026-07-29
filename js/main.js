@@ -311,6 +311,16 @@ function ejecutarBusqueda(hacerScroll = false) {
 // ============================================
 // RENDERIZAR GRUPOS
 // ============================================
+function escapeHtml(str) {
+  if (!str) return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function renderizarGrupos() {
   const container = document.getElementById('gruposContainer');
   if (!container) return;
@@ -355,7 +365,7 @@ function renderizarGrupos() {
     const redir    = redirUrl(grupo);
     const reportes = grupo.reportes || 0;
     const cat      = grupo.categoria || 'compra-venta';
-    const nombreSeguro = (grupo.nombre||'').replace(/'/g,"\\'");
+    const nombreSeguro = escapeHtml(grupo.nombre||'');
 
     const tieneImagen = grupo.imagen && grupo.imagen.trim() && !grupo.imagen.includes('undefined');
 
@@ -372,7 +382,7 @@ function renderizarGrupos() {
         `}
         <div style="flex:1;min-width:0;">
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-            <h3 style="margin:0;flex:1;min-width:0;">${grupo.nombre||'Sin nombre'}</h3>
+            <h3 style="margin:0;flex:1;min-width:0;">${escapeHtml(grupo.nombre)||'Sin nombre'}</h3>
             <span class="badge-whatsapp" style="background:${color}20;color:${color};border:1px solid ${color}40;flex-shrink:0;">
               <i class="${icono}"></i> ${label}
             </span>
@@ -380,7 +390,7 @@ function renderizarGrupos() {
         </div>
       </div>
       ${reportes>=3?`<div style="margin:0 0.8rem 0.3rem;background:#fff3f3;border-radius:8px;padding:4px 8px;font-size:0.65rem;color:#e74c3c;font-weight:600;">⚠️ Link posiblemente caído (${reportes} reportes)</div>`:''}
-      ${grupo.descripcion?`<div class="descripcion">${grupo.descripcion}</div>`:''}
+      ${grupo.descripcion?`<div class="descripcion">${escapeHtml(grupo.descripcion)}</div>`:''}
       <div class="ubicacion">
         <i class="fas fa-map-marker-alt"></i> ${grupo.ubicacion||'Bolivia'}
         <span style="margin-left:auto;font-size:0.65rem;color:#8ba0ae;">${emojiCategoria(cat)} ${labelCategoria(cat)}</span>
