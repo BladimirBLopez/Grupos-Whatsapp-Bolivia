@@ -39,11 +39,16 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Nombre, enlace y ciudad son requeridos' });
       }
 
+      // Limpiar link antes de comparar
+      const linkBase = link.trim().split('?')[0];
+
       // Verificar link duplicado en grupos y solicitudes pendientes
-      const [enGrupos, enSolicitudes] = await Promise.all([
-        grp.findOne({ link: link.trim() }),
-        sol.findOne({ link: link.trim(), estado: 'pendiente' })
-      ]);
+      const todosGrupos = await grp.find({}).toArray();
+      const todasSols   = await sol.find({ estado: 'pendiente' }).toArray();
+
+      const enGrupos     = todosGrupos.find(g => g.link && g.link.split('?')[0] === linkBase);
+      const enSolicitudes = todasSols.find(s => s.link && s.link.split('?')[0] === linkBase);
+
       if (enGrupos) {
         return res.status(400).json({ error: 'Este grupo ya está publicado en el directorio' });
       }
