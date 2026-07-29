@@ -170,11 +170,10 @@ function renderizarCategoriasCirculares() {
   const scroll = document.getElementById('categoriasScroll');
   if (!scroll || categoriasGlobal.length === 0) return;
 
-  // Mantener el "Todas" existente y agregar el resto
-  const todas = scroll.querySelector('[data-cat="todas"]');
-  scroll.innerHTML = '';
-  if (todas) scroll.appendChild(todas);
+  // Eliminar categorías previas excepto "Todas"
+  scroll.querySelectorAll('.cat-item:not([data-cat="todas"])').forEach(el => el.remove());
 
+  // Agregar categorías desde MongoDB
   categoriasGlobal.forEach(cat => {
     const div = document.createElement('div');
     div.className = 'cat-item';
