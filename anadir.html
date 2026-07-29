@@ -419,6 +419,21 @@ document.getElementById('formSolicitud').addEventListener('submit', async functi
   }
 });
 
+// Cambiar placeholder según plataforma
+document.querySelectorAll('input[name="plataforma"]').forEach(radio => {
+  radio.addEventListener('change', function() {
+    const hints = {
+      whatsapp:  'https://chat.whatsapp.com/...',
+      telegram:  'https://t.me/nombre_grupo',
+      facebook:  'https://www.facebook.com/groups/...',
+      instagram: 'https://www.instagram.com/...',
+      otro:      'https://...'
+    };
+    const input = document.getElementById('fLink');
+    if (input) input.placeholder = hints[this.value] || 'https://...';
+  });
+});
+
 document.addEventListener('DOMContentLoaded', cargarCategorias);
 </script>
 </body>
