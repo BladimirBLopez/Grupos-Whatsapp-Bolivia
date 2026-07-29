@@ -170,17 +170,18 @@ function renderizarCategoriasCirculares() {
   const scroll = document.getElementById('categoriasScroll');
   if (!scroll || categoriasGlobal.length === 0) return;
 
-  scroll.innerHTML = `
-    <div class="cat-item active" data-cat="todas">
-      <div class="cat-icon">🔍</div>
-      <span class="cat-label">Todas</span>
-    </div>
-    ${categoriasGlobal.map(cat => `
-    <div class="cat-item" data-cat="${cat.slug}">
-      <div class="cat-icon">${cat.emoji}</div>
-      <span class="cat-label">${cat.label}</span>
-    </div>`).join('')}
-  `;
+  // Mantener el "Todas" existente y agregar el resto
+  const todas = scroll.querySelector('[data-cat="todas"]');
+  scroll.innerHTML = '';
+  if (todas) scroll.appendChild(todas);
+
+  categoriasGlobal.forEach(cat => {
+    const div = document.createElement('div');
+    div.className = 'cat-item';
+    div.dataset.cat = cat.slug;
+    div.innerHTML = `<div class="cat-icon">${cat.emoji}</div><span class="cat-label">${cat.label}</span>`;
+    scroll.appendChild(div);
+  });
 
   // Re-bind listeners categorías
   document.querySelectorAll('.cat-item').forEach(item => {
