@@ -663,4 +663,12 @@ function configurarEventListeners() {
 // ============================================
 // INICIALIZAR
 // ============================================
-document.addEventListener('DOMContentLoaded', cargarGrupos);
+document.addEventListener('DOMContentLoaded', () => {
+  cargarGrupos();
+  if (window.location.search.includes('showLogin=1')) {
+    setTimeout(() => {
+      document.getElementById('loginModal').classList.add('show');
+      document.getElementById('loginUser').focus();
+    }, 800);
+  }
+});
