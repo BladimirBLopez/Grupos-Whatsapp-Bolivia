@@ -569,6 +569,9 @@ function configurarEventListeners() {
     cerrarBuscador();
     document.getElementById('cityModal').style.display = 'flex';
   });
+  document.getElementById('navCiudad')?.addEventListener('click', () => {
+    document.querySelectorAll('.bottom-nav-item').forEach(i => i.classList.remove('active'));
+  });
   document.getElementById('closeCityModalBtn')?.addEventListener('click', () =>
     document.getElementById('cityModal').style.display = 'none');
   document.getElementById('cityModal')?.addEventListener('click', e => {
