@@ -286,8 +286,14 @@ function desbloquearCampos() {
 }
 
 async function obtenerInfo() {
-  const url = document.getElementById('fLink').value.trim();
+  let url = document.getElementById('fLink').value.trim();
   if (!url || !url.startsWith('http')) return;
+
+  // Limpiar parámetros extra del link de WhatsApp
+  if (url.includes('whatsapp.com')) {
+    url = url.split('?')[0];
+    document.getElementById('fLink').value = url;
+  }
 
   const plat = document.querySelector('input[name="plataforma"]:checked')?.value;
   const status = document.getElementById('linkStatus');
