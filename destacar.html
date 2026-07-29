@@ -209,8 +209,8 @@
     <strong>📋 ¿Cómo funciona?</strong>
     1️⃣ Elige tu plan y paga el monto con el QR<br>
     2️⃣ Llena el formulario con los datos de tu grupo<br>
-    3️⃣ Sube una foto del comprobante de pago<br>
-    4️⃣ Te confirmamos en menos de 24 horas por WhatsApp
+    3️⃣ Al enviar se abrirá WhatsApp — adjunta la foto del comprobante<br>
+    4️⃣ Te confirmamos en menos de 24 horas
   </div>
 
   <!-- Formulario -->
@@ -234,11 +234,7 @@
         <small style="color:#8ba0ae;font-size:0.72rem;margin-top:3px;display:block;">Para confirmar tu pago y activar el destacado</small>
       </div>
 
-      <div class="form-group">
-        <label><i class="fas fa-image"></i> Número de comprobante o referencia *</label>
-        <input type="text" id="dComprobante" required placeholder="Ej: REF-123456">
-        <small style="color:#8ba0ae;font-size:0.72rem;margin-top:3px;display:block;">Número de transacción o referencia del pago</small>
-      </div>
+
 
       <div class="form-group">
         <label><i class="fas fa-comment"></i> Mensaje adicional (opcional)</label>
@@ -286,7 +282,6 @@ document.getElementById('formDestacado').addEventListener('submit', async functi
     link:        document.getElementById('dLink').value.trim(),
     nombre:      document.getElementById('dNombre').value.trim(),
     contacto:    document.getElementById('dContacto').value.trim(),
-    comprobante: document.getElementById('dComprobante').value.trim(),
     mensaje:     document.getElementById('dMensaje').value.trim(),
   };
 
