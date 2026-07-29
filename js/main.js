@@ -217,38 +217,73 @@ function mostrarGrupoDestacado() {
   const color = colorPlataforma(plat);
   const label = labelPlataforma(plat);
   const redir = redirUrl(d);
+  const tieneImg = d.imagen && d.imagen.trim() && !d.imagen.includes('undefined');
 
   banner.innerHTML = `
-    <div style="position:relative;border-radius:18px;overflow:hidden;margin-bottom:1rem;background:#fff;border:2px solid #E8B923;box-shadow:0 0 0 4px rgba(232,185,35,0.1),0 8px 28px rgba(232,185,35,0.18);">
-      <div style="background:linear-gradient(90deg,#B8860B,#FFD700,#F5A623,#FFD700,#B8860B);padding:7px 14px;display:flex;align-items:center;justify-content:center;gap:7px;">
-        <i class="fas fa-crown" style="color:#fff;font-size:0.75rem;"></i>
-        <span style="font-size:0.6rem;font-weight:900;letter-spacing:3px;color:#fff;text-transform:uppercase;">Grupo destacado de la semana</span>
-        <i class="fas fa-crown" style="color:#fff;font-size:0.75rem;"></i>
+    <div style="border-radius:20px;overflow:hidden;margin-bottom:1rem;background:#fff;border:2px solid #E8B923;box-shadow:0 4px 20px rgba(232,185,35,0.25);">
+
+      <!-- Ribbon -->
+      <div style="background:linear-gradient(90deg,#B8860B,#FFD700,#F5A623,#FFD700,#B8860B);padding:6px;display:flex;align-items:center;justify-content:center;gap:6px;">
+        <i class="fas fa-crown" style="color:#fff;font-size:0.7rem;"></i>
+        <span style="font-size:0.6rem;font-weight:900;letter-spacing:2px;color:#fff;text-transform:uppercase;">Grupo destacado de la semana</span>
+        <i class="fas fa-crown" style="color:#fff;font-size:0.7rem;"></i>
       </div>
-      <div style="padding:0.85rem 1rem;">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:0.4rem;flex-wrap:wrap;">
-          <h3 style="margin:0;font-size:1rem;font-weight:800;color:#0f1f2e;flex:1;">${d.nombre}</h3>
-          <div style="display:flex;gap:5px;align-items:center;flex-shrink:0;">
-            <span style="background:linear-gradient(135deg,#B8860B,#FFD700);color:#fff;font-size:0.6rem;font-weight:800;padding:3px 8px;border-radius:20px;display:inline-flex;align-items:center;gap:3px;"><i class="fas fa-star"></i> DESTACADO</span>
-            <span style="background:${color}18;color:${color};border:1.5px solid ${color}55;font-size:0.6rem;font-weight:700;padding:3px 8px;border-radius:20px;display:inline-flex;align-items:center;gap:3px;"><i class="${icono}"></i> ${label}</span>
+
+      <!-- Contenido -->
+      <div style="padding:0.9rem 1rem;">
+
+        <!-- Header con foto -->
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:0.7rem;">
+          ${tieneImg ? `
+          <img src="${d.imagen}" alt="${d.nombre||''}"
+            style="width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid #FFD700;flex-shrink:0;"
+            onerror="this.style.display='none'">
+          ` : `
+          <div style="width:52px;height:52px;border-radius:50%;background:${color}22;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:2px solid #FFD700;">
+            <i class="${icono}" style="color:${color};font-size:1.3rem;"></i>
+          </div>
+          `}
+          <div style="flex:1;min-width:0;">
+            <h3 style="margin:0 0 4px;font-size:0.95rem;font-weight:800;color:#0f1f2e;line-height:1.2;">${d.nombre||''}</h3>
+            <div style="display:flex;gap:5px;flex-wrap:wrap;">
+              <span style="background:linear-gradient(135deg,#B8860B,#FFD700);color:#fff;font-size:0.6rem;font-weight:800;padding:2px 8px;border-radius:20px;display:inline-flex;align-items:center;gap:3px;">
+                <i class="fas fa-star"></i> DESTACADO
+              </span>
+              <span style="background:${color}18;color:${color};border:1px solid ${color}44;font-size:0.6rem;font-weight:700;padding:2px 8px;border-radius:20px;display:inline-flex;align-items:center;gap:3px;">
+                <i class="${icono}"></i> ${label}
+              </span>
+            </div>
           </div>
         </div>
-        ${d.descripcion?`<p style="margin:0 0 0.5rem;font-size:0.78rem;color:#5a7080;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${d.descripcion}</p>`:''}
-        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px;margin-bottom:0.5rem;">
-          <span style="font-size:0.78rem;font-weight:700;color:#e65100;"><i class="fas fa-map-marker-alt"></i> ${d.ubicacion||'Bolivia'}</span>
-          <span style="background:linear-gradient(135deg,#ff6b35,#f7931e);color:#fff;font-size:0.68rem;font-weight:700;padding:2px 9px;border-radius:20px;">🔥 +50 miembros/semana</span>
+
+        ${d.descripcion ? `<p style="margin:0 0 0.6rem;font-size:0.78rem;color:#5a7080;line-height:1.4;">${d.descripcion}</p>` : ''}
+
+        <!-- Info -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.7rem;flex-wrap:wrap;gap:4px;">
+          <span style="font-size:0.78rem;font-weight:600;color:#e65100;display:flex;align-items:center;gap:4px;">
+            <i class="fas fa-map-marker-alt"></i> ${d.ubicacion||'Bolivia'}
+          </span>
+          <span style="background:linear-gradient(135deg,#ff6b35,#f7931e);color:#fff;font-size:0.68rem;font-weight:700;padding:3px 10px;border-radius:20px;">
+            🔥 +50 miembros/semana
+          </span>
         </div>
-        <div style="font-size:0.78rem;color:#555;margin-bottom:0.75rem;">👥 ${d.miembros||0} &nbsp;·&nbsp; 📈 ${d.activos||0}</div>
-        <a href="${redir}" onclick="registrarVisita('${d.id}')" style="display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,${color},${color}cc);color:#fff;padding:9px 20px;border-radius:50px;font-weight:800;font-size:0.88rem;text-decoration:none;box-shadow:0 4px 16px ${color}44;">
+
+        <!-- Stats -->
+        <div style="display:flex;gap:1rem;margin-bottom:0.8rem;font-size:0.72rem;color:#6b7f8e;">
+          <span><i class="fas fa-users" style="color:#25D366;"></i> ${d.miembros||0} miembros</span>
+          <span><i class="fas fa-eye" style="color:#3B82F6;"></i> ${d.visitas||0} visitas</span>
+        </div>
+
+        <!-- Botón -->
+        <a href="${redir}" onclick="registrarVisita('${d.id}')"
+          style="display:flex;align-items:center;justify-content:center;gap:7px;background:linear-gradient(135deg,${color},${color}cc);color:#fff;padding:11px;border-radius:50px;font-weight:800;font-size:0.9rem;text-decoration:none;box-shadow:0 4px 14px ${color}44;">
           <i class="${icono}"></i> Unirme ahora
         </a>
       </div>
     </div>`;
 }
 
-// ============================================
-// BUSCAR (función central)
-// ============================================
+
 function ejecutarBusqueda(hacerScroll = false) {
   const input = document.getElementById('searchInput');
   busquedaActual = input ? input.value : '';
