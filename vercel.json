@@ -23,6 +23,10 @@
     "api/solicitudes.js": {
       "memory": 128,
       "maxDuration": 10
+    },
+    "api/destacados.js": {
+      "memory": 128,
+      "maxDuration": 10
     }
   },
   "redirects": [
@@ -56,6 +60,10 @@
     {
       "source": "/api/solicitudes",
       "destination": "/api/solicitudes.js"
+    },
+    {
+      "source": "/api/destacados",
+      "destination": "/api/destacados.js"
     }
   ],
   "headers": [
