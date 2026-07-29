@@ -66,7 +66,10 @@ export default async function handler(req, res) {
         const todosGrupos = await grp.find({}).toArray();
         const grupo = todosGrupos.find(g => g.link && g.link.split('?')[0] === linkBase);
 
-        if (grupo) {
+        // Quitar destacado anterior
+      await grp.updateMany({}, { $set: { destacado: false } });
+
+      if (grupo) {
           // Grupo existe — activar destacado
           await grp.updateOne(
             { _id: new ObjectId(grupo._id) },
