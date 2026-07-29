@@ -24,7 +24,8 @@ const CATEGORIAS_DEFAULT = [
 ];
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const origen = process.env.ALLOWED_ORIGIN || 'https://qigruposbo.online';
+  res.setHeader('Access-Control-Allow-Origin', origen);
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 

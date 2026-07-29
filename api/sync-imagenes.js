@@ -50,8 +50,14 @@ async function fetchGrupoInfo(url) {
 }
 
 export default async function handler(req, res) {
-  // Solo GET para activarlo fácilmente
   if (req.method !== 'GET') return res.status(405).end();
+
+  // Proteger con token secreto
+  const token  = req.query.token;
+  const secreto = process.env.SYNC_SECRET || process.env.ADMIN_PASS;
+  if (!token || token !== secreto) {
+    return res.status(401).json({ error: 'No autorizado' });
+  }
 
   try {
     const client = await conectar();
