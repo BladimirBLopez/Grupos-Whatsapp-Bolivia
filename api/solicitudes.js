@@ -34,7 +34,7 @@ export default async function handler(req, res) {
 
     // ── POST: crear solicitud pública ──
     if (req.method === 'POST') {
-      const { nombre, descripcion, ubicacion, link, plataforma, categoria, miembros, contacto } = req.body;
+      const { nombre, descripcion, ubicacion, link, plataforma, categoria, miembros, contacto, imagen } = req.body;
 
       if (!nombre || !link || !ubicacion) {
         return res.status(400).json({ error: 'Nombre, enlace y ciudad son requeridos' });
@@ -66,6 +66,7 @@ export default async function handler(req, res) {
         categoria:   categoria  || 'compra-venta',
         miembros:    Number(miembros) || 0,
         contacto:    contacto?.trim() || '',
+        imagen:      imagen?.trim() || '',
         estado:      'pendiente',
         fecha:       new Date().toISOString()
       };
