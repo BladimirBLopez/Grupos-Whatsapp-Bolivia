@@ -222,11 +222,15 @@ async function eliminarGrupo() {
     const response = await fetch(API_URL, { method: 'DELETE', headers: headersAdmin(), body: JSON.stringify({ id: grupoAEliminar }) });
     const result = await response.json();
     if (response.ok && result.success) {
-      await cargarGrupos();
+      // Eliminar del array local inmediatamente
+      gruposData = gruposData.filter(g => g.id !== grupoAEliminar);
+      renderizarTabla();
       actualizarEstadisticas();
       cerrarConfirmacion();
       mostrarNotificacion('🗑️ Grupo eliminado correctamente');
       grupoAEliminar = null;
+      // Recargar en background
+      cargarGrupos();
     } else {
       mostrarNotificacion('❌ Error: ' + (result.error || 'Error al eliminar'), 'error');
     }
