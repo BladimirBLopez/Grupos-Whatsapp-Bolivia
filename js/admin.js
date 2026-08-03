@@ -817,9 +817,13 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('searchGrupos')?.addEventListener('input', e => filtrarGruposAdmin(e.target.value));
   document.getElementById('btnNuevaCategoria')?.addEventListener('click', abrirModalCategoria);
 
-  document.getElementById('filtroCiudadAdmin')?.addEventListener('change', function() {
-    filtroCiudadActual = this.value;
-    renderizarTabla();
+  document.querySelectorAll('.chip-ciudad').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.chip-ciudad').forEach(c => c.classList.remove('activo'));
+      chip.classList.add('activo');
+      filtroCiudadActual = chip.dataset.ciudad;
+      renderizarTabla();
+    });
   });
 
   document.querySelectorAll('input[name="plataforma"]').forEach(radio => {

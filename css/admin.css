@@ -393,6 +393,45 @@ body {
 .btn-plataforma.facebook.activo { background: #1877F2; border-color: #1877F2; }
 .btn-plataforma.discord.activo  { background: #5865F2; border-color: #5865F2; }
 
+.filtro-ciudad-wrap {
+  margin-top: 0.6rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.filtro-ciudad-wrap::-webkit-scrollbar { display: none; }
+
+.filtro-ciudad {
+  display: flex;
+  gap: 0.4rem;
+  width: max-content;
+  padding-bottom: 2px;
+}
+
+.chip-ciudad {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1.5px solid #dde3e9;
+  background: #fff;
+  color: #6b7f8e;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Inter', sans-serif;
+}
+.chip-ciudad:hover { border-color: #aab; background: #f5f7fa; }
+.chip-ciudad.activo {
+  background: #F59E0B;
+  color: #fff;
+  border-color: #F59E0B;
+  box-shadow: 0 2px 8px rgba(245,158,11,0.35);
+}
+
 .badge-plataforma {
   display: inline-flex;
   align-items: center;
