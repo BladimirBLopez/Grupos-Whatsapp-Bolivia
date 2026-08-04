@@ -444,11 +444,31 @@ function actualizarHintEnlace(plataforma) {
 // FILTRAR TABLA
 // ============================================
 function filtrarGruposAdmin(texto) {
-  const filas = document.querySelectorAll('#adminGruposBody tr');
+  const tbody = document.getElementById('adminGruposBody');
+  const filas = document.querySelectorAll('#adminGruposBody tr:not(.fila-sin-resultados)');
   const q = (texto || '').toLowerCase();
+  let visibles = 0;
   filas.forEach(fila => {
-    fila.style.display = fila.textContent.toLowerCase().includes(q) ? '' : 'none';
+    const coincide = fila.textContent.toLowerCase().includes(q);
+    fila.style.display = coincide ? '' : 'none';
+    if (coincide) visibles++;
   });
+
+  let filaVacia = document.getElementById('filaSinResultadosBusqueda');
+  if (visibles === 0 && filas.length > 0) {
+    if (!filaVacia) {
+      filaVacia = document.createElement('tr');
+      filaVacia.id = 'filaSinResultadosBusqueda';
+      filaVacia.className = 'fila-sin-resultados';
+      filaVacia.innerHTML = `<td class="td-vacio" colspan="8" style="text-align:center;padding:2rem;color:#8ba0ae;">
+        <i class="fas fa-search" style="font-size:1.5rem;display:block;margin-bottom:0.5rem;"></i>
+        No se encontró ningún grupo que coincida con "<strong>${texto}</strong>"
+      </td>`;
+      tbody.appendChild(filaVacia);
+    }
+  } else if (filaVacia) {
+    filaVacia.remove();
+  }
 }
 
 // ============================================
