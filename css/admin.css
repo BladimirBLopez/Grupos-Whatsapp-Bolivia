@@ -581,7 +581,7 @@ select.select-pro:focus {
   .admin-header { padding: 0.8rem 1rem; }
   .admin-header h1 { font-size: 1rem; }
   .admin-actions { flex-direction: column; }
-  .admin-actions button { width: 100%; justify-content: center; }
+  .admin-actions > button { width: 100%; justify-content: center; }
   .admin-stats { grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
   .stat-card { padding: 0.8rem; flex-direction: column; text-align: center; }
   .stat-card i { font-size: 1.2rem; }
