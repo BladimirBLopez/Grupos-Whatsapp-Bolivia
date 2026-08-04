@@ -488,6 +488,17 @@ select.select-pro:focus {
   flex-shrink: 0;
 }
 
+.badge-categoria {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
 /* Selector plataforma en modal */
 .selector-plataforma {
   display: flex;

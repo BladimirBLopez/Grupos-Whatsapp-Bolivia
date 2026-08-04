@@ -43,8 +43,8 @@ function getCategoria(slug) {
 
 function badgeCategoria(slug) {
   const c = getCategoria(slug);
-  return `<span style="background:#25D36620;color:#25D366;border:1px solid #25D36640;border-radius:20px;padding:2px 8px;font-size:0.65rem;font-weight:600;">
-    ${c.emoji} ${c.label}
+  return `<span class="badge-categoria" title="${c.label}" style="background:#25D36620;border:1px solid #25D36640;">
+    ${c.emoji}
   </span>`;
 }
 
