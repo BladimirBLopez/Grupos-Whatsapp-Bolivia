@@ -79,14 +79,35 @@ async function registrarVisita(id) {
 // ============================================
 // REPORTAR LINK CAÍDO
 // ============================================
-async function reportarLink(id, nombre) {
+let reporteIdPendiente = null;
+
+function reportarLink(id, nombre) {
   if (!id) return;
-  if (!confirm(`¿Reportar el enlace de "${nombre}" como caído?`)) return;
+  reporteIdPendiente = id;
+  document.getElementById('confirmReporteTexto').textContent = `¿Reportar el enlace de "${nombre}" como caído?`;
+  document.getElementById('confirmReporteModal').style.display = 'flex';
+}
+
+function cerrarConfirmReporte() {
+  document.getElementById('confirmReporteModal').style.display = 'none';
+  reporteIdPendiente = null;
+}
+
+async function confirmarReporte() {
+  const id = reporteIdPendiente;
+  cerrarConfirmReporte();
+  if (!id) return;
   try {
     const res = await fetch('/api/grupos', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({accion:'reporte',id}) });
     if (res.ok) mostrarToast('⚠️ Reporte enviado, gracias por avisar');
   } catch(e) { mostrarToast('❌ Error al enviar reporte'); }
 }
+
+document.getElementById('cancelReporteBtn')?.addEventListener('click', cerrarConfirmReporte);
+document.getElementById('aceptarReporteBtn')?.addEventListener('click', confirmarReporte);
+document.getElementById('confirmReporteModal')?.addEventListener('click', function(e) {
+  if (e.target === this) cerrarConfirmReporte();
+});
 
 // ============================================
 // TOAST
