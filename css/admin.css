@@ -384,6 +384,87 @@ select.select-pro:focus {
   min-width: 150px;
 }
 
+/* ============================================
+   DROPDOWN CUSTOM (reemplaza <select> nativo)
+   ============================================ */
+.dropdown-custom {
+  position: relative;
+  flex: 1 1 160px;
+  min-width: 150px;
+}
+
+.dropdown-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  border: 1.5px solid #dde3e9;
+  background: #fff;
+  color: #2c3f4f;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.dropdown-toggle:hover { border-color: #aab; }
+.dropdown-custom.abierto .dropdown-toggle {
+  border-color: #25D366;
+  box-shadow: 0 0 0 3px rgba(37,211,102,0.1);
+}
+.dropdown-toggle-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dropdown-chevron {
+  font-size: 0.75rem;
+  color: #8ba0ae;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.dropdown-custom.abierto .dropdown-chevron { transform: rotate(180deg); }
+
+.dropdown-panel {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1.5px solid #dde3e9;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(26,44,62,0.15);
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 50;
+  padding: 6px;
+}
+.dropdown-custom.abierto .dropdown-panel { display: block; }
+
+.dropdown-option {
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #2c3f4f;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.15s;
+}
+.dropdown-option:hover { background: #f0f4f8; }
+.dropdown-option.activo {
+  background: #e9f9ef;
+  color: #128C7E;
+  font-weight: 700;
+}
+
 .checkbox-group { display: flex; align-items: center; }
 .checkbox-group label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 500; }
 .checkbox-group input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; flex-shrink: 0; }

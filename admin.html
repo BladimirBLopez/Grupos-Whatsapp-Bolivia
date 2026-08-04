@@ -142,27 +142,39 @@
       <i class="fas fa-plus-circle"></i> Nuevo Grupo
     </button>
     <div class="filtros-selects">
-      <select id="filtroPlataformaAdmin" class="select-pro">
-        <option value="todas">📡 Todas las plataformas</option>
-        <option value="whatsapp">WhatsApp</option>
-        <option value="telegram">Telegram</option>
-        <option value="facebook">Facebook</option>
-        <option value="discord">Discord</option>
-      </select>
+      <div class="dropdown-custom" id="dropdownPlataforma">
+        <button type="button" class="dropdown-toggle" id="dropdownPlataformaBtn">
+          <span class="dropdown-toggle-label">📡 Todas las plataformas</span>
+          <i class="fas fa-chevron-down dropdown-chevron"></i>
+        </button>
+        <div class="dropdown-panel" id="dropdownPlataformaPanel">
+          <div class="dropdown-option activo" data-value="todas">📡 Todas las plataformas</div>
+          <div class="dropdown-option" data-value="whatsapp"><i class="fab fa-whatsapp" style="color:#25D366;"></i> WhatsApp</div>
+          <div class="dropdown-option" data-value="telegram"><i class="fab fa-telegram" style="color:#229ED9;"></i> Telegram</div>
+          <div class="dropdown-option" data-value="facebook"><i class="fab fa-facebook" style="color:#1877F2;"></i> Facebook</div>
+          <div class="dropdown-option" data-value="discord"><i class="fab fa-discord" style="color:#5865F2;"></i> Discord</div>
+        </div>
+      </div>
 
-      <select id="filtroCiudadAdmin" class="select-pro">
-        <option value="todas">📍 Todas las ciudades</option>
-        <option value="Santa Cruz">Santa Cruz</option>
-        <option value="La Paz">La Paz</option>
-        <option value="Cochabamba">Cochabamba</option>
-        <option value="Sucre">Sucre</option>
-        <option value="Tarija">Tarija</option>
-        <option value="Potosí">Potosí</option>
-        <option value="Oruro">Oruro</option>
-        <option value="Beni">Beni</option>
-        <option value="Pando">Pando</option>
-        <option value="Nacional">Todo Bolivia</option>
-      </select>
+      <div class="dropdown-custom" id="dropdownCiudad">
+        <button type="button" class="dropdown-toggle" id="dropdownCiudadBtn">
+          <span class="dropdown-toggle-label">📍 Todas las ciudades</span>
+          <i class="fas fa-chevron-down dropdown-chevron"></i>
+        </button>
+        <div class="dropdown-panel" id="dropdownCiudadPanel">
+          <div class="dropdown-option activo" data-value="todas">📍 Todas las ciudades</div>
+          <div class="dropdown-option" data-value="Santa Cruz">Santa Cruz</div>
+          <div class="dropdown-option" data-value="La Paz">La Paz</div>
+          <div class="dropdown-option" data-value="Cochabamba">Cochabamba</div>
+          <div class="dropdown-option" data-value="Sucre">Sucre</div>
+          <div class="dropdown-option" data-value="Tarija">Tarija</div>
+          <div class="dropdown-option" data-value="Potosí">Potosí</div>
+          <div class="dropdown-option" data-value="Oruro">Oruro</div>
+          <div class="dropdown-option" data-value="Beni">Beni</div>
+          <div class="dropdown-option" data-value="Pando">Pando</div>
+          <div class="dropdown-option" data-value="Nacional">Todo Bolivia</div>
+        </div>
+      </div>
     </div>
   </div>
 

@@ -817,18 +817,48 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('searchGrupos')?.addEventListener('input', e => filtrarGruposAdmin(e.target.value));
   document.getElementById('btnNuevaCategoria')?.addEventListener('click', abrirModalCategoria);
 
-  document.getElementById('filtroCiudadAdmin')?.addEventListener('change', function() {
-    filtroCiudadActual = this.value;
+  // ===== Dropdown custom (reemplaza <select> nativo en filtros) =====
+  function initDropdownCustom(wrapperId, onSelect) {
+    const wrapper = document.getElementById(wrapperId);
+    if (!wrapper) return;
+    const btn = wrapper.querySelector('.dropdown-toggle');
+    const label = wrapper.querySelector('.dropdown-toggle-label');
+    const panel = wrapper.querySelector('.dropdown-panel');
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const yaAbierto = wrapper.classList.contains('abierto');
+      document.querySelectorAll('.dropdown-custom.abierto').forEach(w => w.classList.remove('abierto'));
+      if (!yaAbierto) wrapper.classList.add('abierto');
+    });
+
+    panel.querySelectorAll('.dropdown-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        panel.querySelectorAll('.dropdown-option').forEach(o => o.classList.remove('activo'));
+        opt.classList.add('activo');
+        label.textContent = opt.textContent.trim();
+        wrapper.classList.remove('abierto');
+        onSelect(opt.dataset.value);
+      });
+    });
+  }
+
+  initDropdownCustom('dropdownPlataforma', (valor) => {
+    filtroPlataformaActual = valor;
     renderizarTabla();
+  });
+
+  initDropdownCustom('dropdownCiudad', (valor) => {
+    filtroCiudadActual = valor;
+    renderizarTabla();
+  });
+
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.dropdown-custom.abierto').forEach(w => w.classList.remove('abierto'));
   });
 
   document.querySelectorAll('input[name="plataforma"]').forEach(radio => {
     radio.addEventListener('change', () => actualizarHintEnlace(radio.value));
-  });
-
-  document.getElementById('filtroPlataformaAdmin')?.addEventListener('change', function() {
-    filtroPlataformaActual = this.value;
-    renderizarTabla();
   });
 
   // Auto-fetch al pegar o escribir enlace
