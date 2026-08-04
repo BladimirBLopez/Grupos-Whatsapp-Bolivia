@@ -621,5 +621,9 @@ select.select-pro:focus {
     display: none;
   }
 
+  .admin-table td.td-vacio {
+    display: table-cell !important;
+  }
+
   .admin-table-container { overflow-x: auto; }
 }

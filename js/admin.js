@@ -107,8 +107,8 @@ function renderizarTabla() {
   }
 
   if (datos.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:2rem;color:#8ba0ae;">
-      <i class="fas fa-inbox" style="font-size:1.5rem;display:block;margin-bottom:0.5rem;"></i>No hay grupos
+    tbody.innerHTML = `<tr><td class="td-vacio" colspan="8" style="text-align:center;padding:2rem;color:#8ba0ae;">
+      <i class="fas fa-inbox" style="font-size:1.5rem;display:block;margin-bottom:0.5rem;"></i>No hay grupos que coincidan con este filtro
     </td></tr>`;
     return;
   }
