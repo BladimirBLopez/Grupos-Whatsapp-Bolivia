@@ -16,6 +16,7 @@ let gruposData = [];
 let grupoAEliminar = null;
 let filtroPlataformaActual = 'todas';
 let filtroCiudadActual = 'todas';
+let filtroSoloReportados = false;
 let formModificado = false;
 let categoriasData = [];
 let dragSrcIndex = null;
@@ -105,6 +106,9 @@ function renderizarTabla() {
   if (filtroCiudadActual !== 'todas') {
     datos = datos.filter(g => g.ubicacion === filtroCiudadActual);
   }
+  if (filtroSoloReportados) {
+    datos = datos.filter(g => (g.reportes || 0) > 0);
+  }
 
   if (datos.length === 0) {
     tbody.innerHTML = `<tr><td class="td-vacio" colspan="8" style="text-align:center;padding:2rem;color:#8ba0ae;">
@@ -116,6 +120,7 @@ function renderizarTabla() {
   tbody.innerHTML = datos.map(grupo => {
     const idStr = grupo.id || '';
     const grupoJSON = JSON.stringify(grupo).replace(/"/g, '&quot;');
+    const nombreSeguroTitle = (grupo.nombre || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
     return `
     <tr data-id="${idStr}">
       <td>${idStr.slice(-6)}</td>
@@ -124,6 +129,7 @@ function renderizarTabla() {
           ${grupo.imagen ? `<img src="${grupo.imagen}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;margin-right:4px;vertical-align:middle;" onerror="this.style.display='none'">` : ''}
           ${grupo.nombre || 'Sin nombre'}
           ${grupo.destacado ? '<span class="badge-destacado-admin"><i class="fas fa-star"></i></span>' : ''}
+          ${(grupo.reportes || 0) > 0 ? `<span class="badge-reportes" title="Reportado ${grupo.reportes} vez(es). Tocar para marcar como revisado" onclick="event.stopPropagation();resetearReportes('${idStr}','${nombreSeguroTitle}')"><i class="fas fa-flag"></i> ${grupo.reportes}</span>` : ''}
         </div>
       </td>
       <td>${badgePlataforma(grupo.plataforma || 'whatsapp')}</td>
@@ -156,12 +162,38 @@ function actualizarEstadisticas() {
   const total     = gruposData.length;
   const destacados = gruposData.filter(g => g.destacado).length;
   const ciudades  = new Set(gruposData.map(g => g.ubicacion).filter(Boolean)).size;
+  const reportados = gruposData.filter(g => (g.reportes || 0) > 0).length;
   const elTotal    = document.getElementById('totalGrupos');
   const elDest     = document.getElementById('totalDestacados');
   const elCiudades = document.getElementById('totalCiudades');
+  const elReport   = document.getElementById('totalReportados');
   if (elTotal)    elTotal.textContent    = total;
   if (elDest)     elDest.textContent     = destacados;
   if (elCiudades) elCiudades.textContent = ciudades;
+  if (elReport)   elReport.textContent   = reportados;
+}
+
+function filtrarSoloReportados() {
+  filtroSoloReportados = !filtroSoloReportados;
+  mostrarSeccion('grupos');
+  renderizarTabla();
+}
+
+async function resetearReportes(id, nombre) {
+  if (!confirm(`\u00bfMarcar como revisado el link de "${nombre}"? Esto pone el contador de reportes en 0.`)) return;
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: headersAdmin(),
+      body: JSON.stringify({ accion: 'resetear-reportes', id })
+    });
+    if (res.ok) {
+      const g = gruposData.find(g => g.id === id);
+      if (g) g.reportes = 0;
+      actualizarEstadisticas();
+      renderizarTabla();
+    }
+  } catch(e) { alert('Error al resetear reportes'); }
 }
 
 // ============================================

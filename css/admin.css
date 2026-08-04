@@ -204,6 +204,21 @@ body {
   font-size: 0.7rem;
 }
 
+.badge-reportes {
+  background: #ffe3e3;
+  color: #e74c3c;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 4px;
+}
+.badge-reportes:hover { background: #ffcccc; }
+
 .acciones-btns { display: flex; gap: 6px; }
 
 .acciones-btns button {

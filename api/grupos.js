@@ -74,6 +74,11 @@ export default async function handler(req, res) {
         return res.status(200).json({ success: true });
       }
 
+      if (accion === 'resetear-reportes' && id) {
+        await col.updateOne({ _id: new ObjectId(id) }, { $set: { reportes: 0 } });
+        return res.status(200).json({ success: true });
+      }
+
       if (!grupo?.nombre || !grupo?.link) {
         return res.status(400).json({ error: 'Faltan nombre o link' });
       }
