@@ -375,10 +375,12 @@ select.select-pro:focus {
 
 .filtros-selects {
   display: flex;
+  align-items: flex-start;
   gap: 0.5rem;
   flex-wrap: wrap;
   margin-top: 0.6rem;
 }
+.dropdown-custom { align-self: flex-start; }
 .filtros-selects select.select-pro {
   flex: 1 1 160px;
   min-width: 150px;
