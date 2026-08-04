@@ -141,29 +141,28 @@
     <button class="btn-primary" id="btnNuevoGrupo">
       <i class="fas fa-plus-circle"></i> Nuevo Grupo
     </button>
-    <div class="filtro-plataforma">
-      <button class="btn-plataforma activo" data-plataforma="todas">Todas</button>
-      <button class="btn-plataforma whatsapp" data-plataforma="whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</button>
-      <button class="btn-plataforma telegram" data-plataforma="telegram"><i class="fab fa-telegram"></i> Telegram</button>
-      <button class="btn-plataforma facebook" data-plataforma="facebook"><i class="fab fa-facebook"></i> Facebook</button>
-      <button class="btn-plataforma discord" data-plataforma="discord"><i class="fab fa-discord"></i> Discord</button>
-    </div>
+    <div class="filtros-selects">
+      <select id="filtroPlataformaAdmin" class="select-pro">
+        <option value="todas">📡 Todas las plataformas</option>
+        <option value="whatsapp">WhatsApp</option>
+        <option value="telegram">Telegram</option>
+        <option value="facebook">Facebook</option>
+        <option value="discord">Discord</option>
+      </select>
 
-    <!-- Filtro ciudad -->
-    <div class="filtro-ciudad-wrap">
-      <div class="filtro-ciudad" id="filtroCiudadAdmin">
-        <button type="button" class="chip-ciudad activo" data-ciudad="todas"><i class="fas fa-map-marker-alt"></i> Todas</button>
-        <button type="button" class="chip-ciudad" data-ciudad="Santa Cruz">Santa Cruz</button>
-        <button type="button" class="chip-ciudad" data-ciudad="La Paz">La Paz</button>
-        <button type="button" class="chip-ciudad" data-ciudad="Cochabamba">Cochabamba</button>
-        <button type="button" class="chip-ciudad" data-ciudad="Sucre">Sucre</button>
-        <button type="button" class="chip-ciudad" data-ciudad="Tarija">Tarija</button>
-        <button type="button" class="chip-ciudad" data-ciudad="Potosí">Potosí</button>
-        <button type="button" class="chip-ciudad" data-ciudad="Oruro">Oruro</button>
-        <button type="button" class="chip-ciudad" data-ciudad="Beni">Beni</button>
-        <button type="button" class="chip-ciudad" data-ciudad="Pando">Pando</button>
-        <button type="button" class="chip-ciudad" data-ciudad="Nacional">Todo Bolivia</button>
-      </div>
+      <select id="filtroCiudadAdmin" class="select-pro">
+        <option value="todas">📍 Todas las ciudades</option>
+        <option value="Santa Cruz">Santa Cruz</option>
+        <option value="La Paz">La Paz</option>
+        <option value="Cochabamba">Cochabamba</option>
+        <option value="Sucre">Sucre</option>
+        <option value="Tarija">Tarija</option>
+        <option value="Potosí">Potosí</option>
+        <option value="Oruro">Oruro</option>
+        <option value="Beni">Beni</option>
+        <option value="Pando">Pando</option>
+        <option value="Nacional">Todo Bolivia</option>
+      </select>
     </div>
   </div>
 

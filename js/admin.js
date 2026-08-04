@@ -817,26 +817,18 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('searchGrupos')?.addEventListener('input', e => filtrarGruposAdmin(e.target.value));
   document.getElementById('btnNuevaCategoria')?.addEventListener('click', abrirModalCategoria);
 
-  document.querySelectorAll('.chip-ciudad').forEach(chip => {
-    chip.addEventListener('click', () => {
-      document.querySelectorAll('.chip-ciudad').forEach(c => c.classList.remove('activo'));
-      chip.classList.add('activo');
-      filtroCiudadActual = chip.dataset.ciudad;
-      renderizarTabla();
-    });
+  document.getElementById('filtroCiudadAdmin')?.addEventListener('change', function() {
+    filtroCiudadActual = this.value;
+    renderizarTabla();
   });
 
   document.querySelectorAll('input[name="plataforma"]').forEach(radio => {
     radio.addEventListener('change', () => actualizarHintEnlace(radio.value));
   });
 
-  document.querySelectorAll('.btn-plataforma').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.btn-plataforma').forEach(b => b.classList.remove('activo'));
-      btn.classList.add('activo');
-      filtroPlataformaActual = btn.dataset.plataforma;
-      renderizarTabla();
-    });
+  document.getElementById('filtroPlataformaAdmin')?.addEventListener('change', function() {
+    filtroPlataformaActual = this.value;
+    renderizarTabla();
   });
 
   // Auto-fetch al pegar o escribir enlace
