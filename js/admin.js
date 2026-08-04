@@ -65,8 +65,8 @@ function getPlataforma(key) {
 
 function badgePlataforma(key) {
   const p = getPlataforma(key);
-  return `<span class="badge-plataforma" style="background:${p.color}20; color:${p.color}; border:1px solid ${p.color}40;">
-    <i class="${p.icon}"></i> ${p.label}
+  return `<span class="badge-plataforma" title="${p.label}" style="background:${p.color}20; color:${p.color}; border:1px solid ${p.color}40;">
+    <i class="${p.icon}"></i>
   </span>`;
 }
 
