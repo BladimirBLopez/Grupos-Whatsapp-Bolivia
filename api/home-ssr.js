@@ -93,7 +93,7 @@ export default async function handler(req, res) {
       ? normales.map(tarjetaHtml).join('')
       : `<div class="empty-message">No se encontraron grupos</div>`;
 
-    const templatePath = path.join(process.cwd(), 'index.html');
+    const templatePath = path.join(process.cwd(), 'template-home.html');
     let html = fs.readFileSync(templatePath, 'utf8');
 
     html = html.replace(
