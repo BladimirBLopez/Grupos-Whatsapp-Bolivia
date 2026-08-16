@@ -107,7 +107,14 @@ export default async function handler(req, res) {
     );
 
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
+    // Solo cacheamos si realmente trajimos grupos.
+    // Si vino vacío (hiccup transitorio de Mongo), no lo guardamos en caché
+    // para que el próximo visitante fuerce una consulta fresca en vez de heredar el error.
+    if (grupos.length > 0) {
+      res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
+    } else {
+      res.setHeader('Cache-Control', 'no-store');
+    }
     return res.status(200).send(html);
 
   } catch (error) {
