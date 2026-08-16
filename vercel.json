@@ -72,6 +72,10 @@
     {
       "source": "/ssr-test",
       "destination": "/api/home-ssr.js"
+    },
+    {
+      "source": "/",
+      "destination": "/api/home-ssr.js"
     }
   ],
   "headers": [
