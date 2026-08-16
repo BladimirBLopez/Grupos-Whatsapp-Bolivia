@@ -27,6 +27,10 @@
     "api/destacados.js": {
       "memory": 128,
       "maxDuration": 10
+    },
+    "api/home-ssr.js": {
+      "memory": 256,
+      "maxDuration": 15
     }
   },
   "redirects": [
@@ -64,6 +68,10 @@
     {
       "source": "/api/destacados",
       "destination": "/api/destacados.js"
+    },
+    {
+      "source": "/ssr-test",
+      "destination": "/api/home-ssr.js"
     }
   ],
   "headers": [
