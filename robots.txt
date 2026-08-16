@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin.html
 Disallow: /api/
 
-Sitemap: https://qigruposbo.online/sitemap.xml
+Sitemap: https://www.qigruposbo.online/sitemap.xml
