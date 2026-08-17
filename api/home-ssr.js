@@ -97,8 +97,10 @@ export default async function handler(req, res) {
     const client = await conectar();
     const db = client.db('grupos_db');
     const col = db.collection('grupos');
+    const colCats = db.collection('categorias');
 
     const grupos = (await col.find({}).toArray()).map(g => ({ ...g, id: g._id.toString() }));
+    const categorias = await colCats.find({}).sort({ orden: 1 }).toArray();
     const normales = grupos.filter(g => !g.destacado).slice(0, 10);
 
     const tarjetasHtml = normales.length
@@ -116,6 +118,33 @@ export default async function handler(req, res) {
     html = html.replace(
       '<span id="heroCount">0</span>',
       `<span id="heroCount">${grupos.length}</span>`
+    );
+
+    const CIUDADES_EXPLORA = [
+      ['santa-cruz','Santa Cruz'], ['la-paz','La Paz'], ['cochabamba','Cochabamba'],
+      ['sucre','Sucre'], ['tarija','Tarija'], ['potosi','Potosí'],
+      ['oruro','Oruro'], ['beni','Beni'], ['pando','Pando']
+    ];
+
+    const linksCategorias = categorias.map(c =>
+      `<a href="/categoria/${c.slug}" style="display:inline-block;background:#f0f4f8;color:#1a2c3e;padding:6px 14px;border-radius:50px;font-size:0.75rem;text-decoration:none;margin:0 6px 6px 0;">${c.emoji||''} ${c.label}</a>`
+    ).join('');
+
+    const linksCiudades = CIUDADES_EXPLORA.map(([slug, nombre]) =>
+      `<a href="/ciudad/${slug}" style="display:inline-block;background:#f0f4f8;color:#1a2c3e;padding:6px 14px;border-radius:50px;font-size:0.75rem;text-decoration:none;margin:0 6px 6px 0;">📍 ${nombre}</a>`
+    ).join('');
+
+    const exploraHtml = `
+      <div style="margin:2rem 0;">
+        <h2 style="font-size:0.95rem;margin-bottom:0.6rem;">Explora por categoría</h2>
+        <div>${linksCategorias}</div>
+        <h2 style="font-size:0.95rem;margin:1.2rem 0 0.6rem;">Explora por ciudad</h2>
+        <div>${linksCiudades}</div>
+      </div>`;
+
+    html = html.replace(
+      '<div id="exploraSeo"></div>',
+      `<div id="exploraSeo">${exploraHtml}</div>`
     );
 
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
