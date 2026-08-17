@@ -27,6 +27,18 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
+function slugify(str) {
+  return String(str || '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function slugGrupo(grupo) {
+  return `${slugify(grupo.nombre) || 'grupo'}-${grupo.id}`;
+}
+
 function redirUrl(grupo) {
   return `/redir.html?url=${encodeURIComponent(grupo.link||'#')}&nombre=${encodeURIComponent(grupo.nombre||'Grupo')}&plat=${encodeURIComponent((grupo.plataforma||'whatsapp').toLowerCase())}&id=${encodeURIComponent(grupo.id||'')}`;
 }
@@ -55,7 +67,7 @@ function tarjetaHtml(grupo) {
       `}
       <div style="flex:1;min-width:0;">
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-          <h3 style="margin:0;flex:1;min-width:0;">${nombreSeguro||'Sin nombre'}</h3>
+          <h3 style="margin:0;flex:1;min-width:0;"><a href="/grupo/${slugGrupo(grupo)}" style="color:inherit;text-decoration:none;">${nombreSeguro||'Sin nombre'}</a></h3>
           <span class="badge-whatsapp" style="background:${color}20;color:${color};border:1px solid ${color}40;flex-shrink:0;">
             <i class="${icono}"></i> ${label}
           </span>
