@@ -43,6 +43,10 @@
     "api/ciudad-ssr.js": {
       "memory": 256,
       "maxDuration": 15
+    },
+    "api/sitemap-ssr.js": {
+      "memory": 256,
+      "maxDuration": 15
     }
   },
   "redirects": [
@@ -100,6 +104,10 @@
     {
       "source": "/ciudad/:slug",
       "destination": "/api/ciudad-ssr.js?slug=:slug"
+    },
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap-ssr.js"
     }
   ],
   "headers": [
