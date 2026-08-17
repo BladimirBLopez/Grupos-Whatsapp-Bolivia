@@ -35,6 +35,10 @@
     "api/grupo-ssr.js": {
       "memory": 256,
       "maxDuration": 15
+    },
+    "api/categoria-ssr.js": {
+      "memory": 256,
+      "maxDuration": 15
     }
   },
   "redirects": [
@@ -84,6 +88,10 @@
     {
       "source": "/grupo/:slug",
       "destination": "/api/grupo-ssr.js?slug=:slug"
+    },
+    {
+      "source": "/categoria/:slug",
+      "destination": "/api/categoria-ssr.js?slug=:slug"
     }
   ],
   "headers": [
