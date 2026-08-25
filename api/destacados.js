@@ -10,6 +10,19 @@ async function conectar() {
   return client;
 }
 
+function verificarToken(req) {
+  const token = req.headers['x-admin-token'];
+  if (!token) return false;
+  try {
+    const decoded = Buffer.from(token, 'base64').toString('utf8');
+    const partes  = decoded.split(':');
+    if (partes.length !== 3) return false;
+    const [usuario, expira, pass] = partes;
+    if (Date.now() > parseInt(expira)) return false;
+    return usuario === process.env.ADMIN_USER && pass === process.env.ADMIN_PASS;
+  } catch(e) { return false; }
+}
+
 export default async function handler(req, res) {
   const origen = process.env.ALLOWED_ORIGIN || 'https://qigruposbo.online';
   res.setHeader('Access-Control-Allow-Origin', origen);
@@ -23,8 +36,9 @@ export default async function handler(req, res) {
     const col = db.collection('destacados');
     const grp = db.collection('grupos');
 
-    // GET - listar solicitudes
+    // GET - listar solicitudes (solo admin)
     if (req.method === 'GET') {
+      if (!verificarToken(req)) return res.status(401).json({ error: 'No autorizado' });
       const { estado } = req.query;
       const filtro = estado ? { estado } : {};
       const lista = await col.find(filtro).sort({ fecha: -1 }).toArray();
@@ -51,8 +65,7 @@ export default async function handler(req, res) {
 
     // PUT - aprobar/rechazar (admin)
     if (req.method === 'PUT') {
-      const token = req.headers['x-admin-token'];
-      if (!token) return res.status(401).json({ error: 'No autorizado' });
+      if (!verificarToken(req)) return res.status(401).json({ error: 'No autorizado' });
 
       const { id, accion } = req.body;
       if (!id || !accion) return res.status(400).json({ error: 'Faltan datos' });
@@ -105,8 +118,7 @@ export default async function handler(req, res) {
 
     // DELETE
     if (req.method === 'DELETE') {
-      const token = req.headers['x-admin-token'];
-      if (!token) return res.status(401).json({ error: 'No autorizado' });
+      if (!verificarToken(req)) return res.status(401).json({ error: 'No autorizado' });
       const { id } = req.body;
       await col.deleteOne({ _id: new ObjectId(id) });
       return res.status(200).json({ success: true });
