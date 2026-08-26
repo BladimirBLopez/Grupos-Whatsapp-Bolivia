@@ -176,10 +176,21 @@ function actualizarEstadisticas() {
 
 function filtrarSoloReportados() {
   filtroSoloReportados = !filtroSoloReportados;
-  const banner = document.getElementById('bannerReportados');
-  if (banner) banner.style.display = filtroSoloReportados ? 'flex' : 'none';
   mostrarSeccion('grupos');
+
+  const banner    = document.getElementById('bannerReportados');
+  const panelCats = document.getElementById('panelCategorias');
+  const adminActs = document.querySelector('.admin-actions');
+
+  if (banner)    banner.style.display    = filtroSoloReportados ? 'flex' : 'none';
+  if (panelCats) panelCats.style.display = filtroSoloReportados ? 'none' : '';
+  if (adminActs) adminActs.style.display = filtroSoloReportados ? 'none' : '';
+
   renderizarTabla();
+
+  if (filtroSoloReportados && banner) {
+    banner.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 }
 
 async function resetearReportes(id, nombre) {
