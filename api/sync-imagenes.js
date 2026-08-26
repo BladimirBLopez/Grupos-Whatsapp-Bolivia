@@ -117,7 +117,7 @@ export default async function handler(req, res) {
     } : sinImagen;
     const grupos = await col.find(filtro).limit(limite).toArray();
 
-    const resultados = { total: grupos.length, actualizados: 0, errores: 0 };
+    const resultados = { total: grupos.length, actualizados: 0, errores: 0, subidos_a_cloudinary: 0, siguio_en_whatsapp: 0 };
 
     for (const grupo of grupos) {
       const info = await fetchGrupoInfo(grupo.link);
@@ -132,6 +132,11 @@ export default async function handler(req, res) {
           { $set: update }
         );
         resultados.actualizados++;
+        if (info.imagen.includes('cloudinary')) {
+          resultados.subidos_a_cloudinary++;
+        } else {
+          resultados.siguio_en_whatsapp++;
+        }
       } else {
         resultados.errores++;
       }
