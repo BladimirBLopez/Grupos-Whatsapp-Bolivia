@@ -115,6 +115,15 @@ export default async function handler(req, res) {
         { imagen: { $regex: 'whatsapp', $options: 'i' } }
       ]
     } : sinImagen;
+    // Modo listar: solo muestra cuáles son, sin intentar arreglarlos
+    if (req.query.listar === '1') {
+      const pendientes = await col.find(filtro).toArray();
+      return res.status(200).json({
+        total: pendientes.length,
+        grupos: pendientes.map(g => ({ nombre: g.nombre, link: g.link, id: g._id }))
+      });
+    }
+
     const grupos = await col.find(filtro).limit(limite).toArray();
 
     const resultados = { total: grupos.length, actualizados: 0, errores: 0, subidos_a_cloudinary: 0, siguio_en_whatsapp: 0 };
