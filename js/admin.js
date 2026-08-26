@@ -144,6 +144,7 @@ function renderizarTabla() {
       </td>
       <td>
         <div class="acciones-btns">
+          <button class="btn-link" title="Ver enlace del grupo" onclick="window.open('${(grupo.link||'').replace(/'/g,'%27')}','_blank')"><i class="fas fa-external-link-alt"></i></button>
           <button class="btn-edit" onclick="abrirModal(${grupoJSON})"><i class="fas fa-edit"></i></button>
           <button class="btn-delete" onclick="abrirConfirmacion('${idStr}')"><i class="fas fa-trash-alt"></i></button>
         </div>
@@ -175,6 +176,8 @@ function actualizarEstadisticas() {
 
 function filtrarSoloReportados() {
   filtroSoloReportados = !filtroSoloReportados;
+  const banner = document.getElementById('bannerReportados');
+  if (banner) banner.style.display = filtroSoloReportados ? 'flex' : 'none';
   mostrarSeccion('grupos');
   renderizarTabla();
 }

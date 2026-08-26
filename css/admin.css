@@ -233,6 +233,8 @@ body {
 .btn-edit:hover { background: #25D366; color: white; }
 .btn-delete { background: #fde8e8; color: #dc3545; }
 .btn-delete:hover { background: #dc3545; color: white; }
+.btn-link { background: #e8f2fd; color: #1877F2; }
+.btn-link:hover { background: #1877F2; color: white; }
 
 /* ===== SWITCH ===== */
 .switch {
