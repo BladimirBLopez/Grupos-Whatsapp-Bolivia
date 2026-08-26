@@ -406,7 +406,7 @@ function renderizarGrupos() {
     <div class="grupo-card" ${reportes>=3?'style="border-color:#ffcccc;"':''}>
       <div class="card-header">
         ${tieneImagen ? `
-        <img src="${grupo.imagen}" alt="${(grupo.nombre||'').replace(/"/g,'')}"
+        <img src="${escapeHtml(grupo.imagen)}" alt="${nombreSeguro}"
           class="grupo-foto" loading="lazy" onerror="this.style.display='none'">
         ` : `
         <div class="grupo-foto-placeholder" style="background:${color}22;">
