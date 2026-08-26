@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+
 // Rate limiting simple en memoria
 const intentos = new Map();
 const MAX_INTENTOS = 5;
@@ -39,8 +41,10 @@ export default async function handler(req, res) {
     // Reset intentos al login exitoso
     intentos.delete(ip);
     // Token con expiración (8 horas)
-    const expira = Date.now() + (8 * 60 * 60 * 1000);
-    const token  = Buffer.from(`${adminUser}:${expira}:${adminPass}`).toString('base64');
+    const expira  = Date.now() + (8 * 60 * 60 * 1000);
+    const payload = `${adminUser}:${expira}`;
+    const firma   = crypto.createHmac('sha256', adminPass).update(payload).digest('hex');
+    const token   = `${Buffer.from(payload).toString('base64')}.${firma}`;
     return res.status(200).json({ success: true, token });
   }
 

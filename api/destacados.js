@@ -1,4 +1,5 @@
 import { MongoClient, ObjectId } from 'mongodb';
+import crypto from 'crypto';
 
 let cachedClient = null;
 
@@ -14,12 +15,16 @@ function verificarToken(req) {
   const token = req.headers['x-admin-token'];
   if (!token) return false;
   try {
-    const decoded = Buffer.from(token, 'base64').toString('utf8');
-    const partes  = decoded.split(':');
-    if (partes.length !== 3) return false;
-    const [usuario, expira, pass] = partes;
+    const [payloadB64, firma] = token.split('.');
+    if (!payloadB64 || !firma) return false;
+    const payload = Buffer.from(payloadB64, 'base64').toString('utf8');
+    const [usuario, expira] = payload.split(':');
+    if (!usuario || !expira) return false;
+    const firmaEsperada = crypto.createHmac('sha256', process.env.ADMIN_PASS).update(payload).digest('hex');
+    if (firma.length !== firmaEsperada.length) return false;
+    if (!crypto.timingSafeEqual(Buffer.from(firma), Buffer.from(firmaEsperada))) return false;
     if (Date.now() > parseInt(expira)) return false;
-    return usuario === process.env.ADMIN_USER && pass === process.env.ADMIN_PASS;
+    return usuario === process.env.ADMIN_USER;
   } catch(e) { return false; }
 }
 
