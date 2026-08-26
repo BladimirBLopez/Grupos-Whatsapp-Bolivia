@@ -96,7 +96,7 @@ export default async function handler(req, res) {
     const nombreSeguro = escapeHtml(grupo.nombre);
     const descSegura = escapeHtml(grupo.descripcion || `Únete a este grupo de ${label} en ${grupo.ubicacion || 'Bolivia'}.`);
     const canonicalUrl = `https://www.qigruposbo.online/grupo/${slugGrupo(grupo)}`;
-    const imagenOg = (grupo.imagen && grupo.imagen.trim()) ? grupo.imagen : 'https://www.qigruposbo.online/css/images/og-image.jpg';
+    const imagenOg = (grupo.imagen && grupo.imagen.trim()) ? escapeHtml(grupo.imagen) : 'https://www.qigruposbo.online/css/images/og-image.jpg';
     const redir = redirUrl(grupo);
 
     // Grupos relacionados: misma categoría, excluyendo este, máx 6
@@ -152,7 +152,7 @@ export default async function handler(req, res) {
 
   <div class="grupo-card" style="margin-top:0.5rem;">
     <div class="card-header">
-      ${grupo.imagen ? `<img src="${grupo.imagen}" alt="${nombreSeguro}" class="grupo-foto">` : `
+      ${grupo.imagen ? `<img src="${escapeHtml(grupo.imagen)}" alt="${nombreSeguro}" class="grupo-foto">` : `
       <div class="grupo-foto-placeholder" style="background:${color}22;">
         <i class="${icono}" style="color:${color};font-size:1.3rem;"></i>
       </div>`}
