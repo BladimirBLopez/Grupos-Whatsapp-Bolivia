@@ -1,6 +1,8 @@
 import { MongoClient, ObjectId } from 'mongodb';
 import crypto from 'crypto';
 
+export const config = { maxDuration: 60 };
+
 let cachedClient = null;
 
 async function conectar() {
@@ -97,16 +99,23 @@ export default async function handler(req, res) {
     const client = await conectar();
     const col = client.db('grupos_db').collection('grupos');
 
-    // Obtener grupos sin imagen (o todos, si se pide ?todos=1)
-    const todos = req.query.todos === '1';
-    const filtro = todos ? {} : {
+    // Sin imagen, o con imagen todavía alojada en WhatsApp (rota o por vencer)
+    const todos   = req.query.todos === '1';
+    const limite  = Math.min(parseInt(req.query.limite) || 8, 20);
+    const sinImagen = {
       $or: [
         { imagen: { $exists: false } },
         { imagen: '' },
         { imagen: null }
       ]
     };
-    const grupos = await col.find(filtro).toArray();
+    const filtro = todos ? {
+      $or: [
+        ...sinImagen.$or,
+        { imagen: { $regex: 'whatsapp', $options: 'i' } }
+      ]
+    } : sinImagen;
+    const grupos = await col.find(filtro).limit(limite).toArray();
 
     const resultados = { total: grupos.length, actualizados: 0, errores: 0 };
 
