@@ -639,6 +639,13 @@ async function eliminarCategoria(id, nombre) {
 function mostrarSeccion(seccion) {
   const esGrupos = seccion === 'grupos';
 
+  // Si se navega a otra pestaña, quitar el filtro de "solo reportados"
+  if (!esGrupos && filtroSoloReportados) {
+    filtroSoloReportados = false;
+    const banner = document.getElementById('bannerReportados');
+    if (banner) banner.style.display = 'none';
+  }
+
   document.getElementById('seccionSolicitudes').style.display = seccion === 'solicitudes' ? 'block' : 'none';
 
   // Ocultar/mostrar elementos de grupos
