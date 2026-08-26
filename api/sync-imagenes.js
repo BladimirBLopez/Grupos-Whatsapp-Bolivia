@@ -1,4 +1,5 @@
 import { MongoClient, ObjectId } from 'mongodb';
+import crypto from 'crypto';
 
 let cachedClient = null;
 
@@ -23,6 +24,38 @@ function decodeHtml(str) {
     .trim();
 }
 
+async function subirACloudinary(imageUrl) {
+  try {
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME || 'dkq95jus0';
+    const apiKey    = process.env.CLOUDINARY_API_KEY;
+    const apiSecret = process.env.CLOUDINARY_API_SECRET;
+    if (!apiKey || !apiSecret) return imageUrl;
+
+    const timestamp = Math.floor(Date.now() / 1000);
+    const folder = 'qigruposbo';
+    const aFirmar = `folder=${folder}&timestamp=${timestamp}${apiSecret}`;
+    const signature = crypto.createHash('sha1').update(aFirmar).digest('hex');
+
+    const body = new URLSearchParams({
+      file: imageUrl,
+      api_key: apiKey,
+      timestamp: String(timestamp),
+      folder,
+      signature
+    });
+
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+      method: 'POST',
+      body,
+      signal: AbortSignal.timeout(15000)
+    });
+    const data = await res.json();
+    return data.secure_url || imageUrl;
+  } catch (e) {
+    return imageUrl;
+  }
+}
+
 async function fetchGrupoInfo(url) {
   try {
     if (!url || !url.includes('whatsapp.com')) return null;
@@ -34,7 +67,8 @@ async function fetchGrupoInfo(url) {
     const html = await res.text();
 
     const imageMatch = html.match(/<meta property="og:image" content="([^"]+)"/i);
-    const imagen = imageMatch ? decodeHtml(imageMatch[1]) : null;
+    let imagen = imageMatch ? decodeHtml(imageMatch[1]) : null;
+    if (imagen) imagen = await subirACloudinary(imagen);
 
     const descMatch = html.match(/<meta property="og:description" content="([^"]+)"/i);
     let descripcion = descMatch ? decodeHtml(descMatch[1]) : null;
@@ -63,14 +97,16 @@ export default async function handler(req, res) {
     const client = await conectar();
     const col = client.db('grupos_db').collection('grupos');
 
-    // Obtener grupos sin imagen
-    const grupos = await col.find({
+    // Obtener grupos sin imagen (o todos, si se pide ?todos=1)
+    const todos = req.query.todos === '1';
+    const filtro = todos ? {} : {
       $or: [
         { imagen: { $exists: false } },
         { imagen: '' },
         { imagen: null }
       ]
-    }).toArray();
+    };
+    const grupos = await col.find(filtro).toArray();
 
     const resultados = { total: grupos.length, actualizados: 0, errores: 0 };
 

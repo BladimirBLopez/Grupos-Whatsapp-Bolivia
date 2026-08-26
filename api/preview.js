@@ -1,3 +1,37 @@
+import crypto from 'crypto';
+
+async function subirACloudinary(imageUrl) {
+  try {
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME || 'dkq95jus0';
+    const apiKey    = process.env.CLOUDINARY_API_KEY;
+    const apiSecret = process.env.CLOUDINARY_API_SECRET;
+    if (!apiKey || !apiSecret) return imageUrl;
+
+    const timestamp = Math.floor(Date.now() / 1000);
+    const folder = 'qigruposbo';
+    const aFirmar = `folder=${folder}&timestamp=${timestamp}${apiSecret}`;
+    const signature = crypto.createHash('sha1').update(aFirmar).digest('hex');
+
+    const body = new URLSearchParams({
+      file: imageUrl,
+      api_key: apiKey,
+      timestamp: String(timestamp),
+      folder,
+      signature
+    });
+
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+      method: 'POST',
+      body,
+      signal: AbortSignal.timeout(15000)
+    });
+    const data = await res.json();
+    return data.secure_url || imageUrl;
+  } catch (e) {
+    return imageUrl;
+  }
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -75,7 +109,7 @@ export default async function handler(req, res) {
     let imagen = null;
     const imageMatch = html.match(/<meta property="og:image" content="([^"]+)"/i);
     if (imageMatch) {
-      imagen = decodeHtml(imageMatch[1]);
+      imagen = await subirACloudinary(decodeHtml(imageMatch[1]));
     }
 
     // Extraer descripción
