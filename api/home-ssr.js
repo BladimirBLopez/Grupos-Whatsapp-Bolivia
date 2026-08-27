@@ -101,7 +101,7 @@ export default async function handler(req, res) {
 
     const grupos = (await col.find({}).toArray()).map(g => ({ ...g, id: g._id.toString() }));
     const categorias = await colCats.find({}).sort({ orden: 1 }).toArray();
-    const normales = grupos.filter(g => !g.destacado).slice(0, 10);
+    const normales = grupos.filter(g => !g.destacado).slice(0, 20);
 
     const tarjetasHtml = normales.length
       ? normales.map(tarjetaHtml).join('')

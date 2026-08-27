@@ -197,6 +197,24 @@ function iniciarPagina() {
   renderizarCategoriasCirculares();
   renderizarGrupos();
   configurarEventListeners();
+  aplicarBusquedaDesdeURL();
+}
+
+// Si se llega con ?q=algo (ej. desde Google usando el buscador del sitio),
+// abre el buscador ya con ese término aplicado
+function aplicarBusquedaDesdeURL() {
+  const params = new URLSearchParams(window.location.search);
+  const q = params.get('q');
+  if (!q) return;
+  abrirBuscador();
+  const input = document.getElementById('searchInputNav');
+  if (input) {
+    input.value = q;
+    busquedaActual = q;
+    plataformaSeleccionada = 'todos';
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    renderizarGrupos();
+  }
 }
 
 function renderizarCategoriasCirculares() {

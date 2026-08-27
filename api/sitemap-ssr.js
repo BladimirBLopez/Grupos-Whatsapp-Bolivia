@@ -21,8 +21,9 @@ function slugify(str) {
 
 const CIUDADES_SLUGS = ['santa-cruz','la-paz','cochabamba','sucre','tarija','potosi','oruro','beni','pando'];
 
-function urlEntry(loc, changefreq, priority) {
-  return `  <url>\n    <loc>${loc}</loc>\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
+function urlEntry(loc, changefreq, priority, lastmod) {
+  const lm = lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : '';
+  return `  <url>\n    <loc>${loc}</loc>${lm}\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
 }
 
 export default async function handler(req, res) {
@@ -37,22 +38,25 @@ export default async function handler(req, res) {
 
     const base = 'https://www.qigruposbo.online';
     const entries = [];
+    const hoy = new Date().toISOString().slice(0, 10);
 
-    entries.push(urlEntry(`${base}/`, 'daily', '1.0'));
-    entries.push(urlEntry(`${base}/anadir.html`, 'monthly', '0.6'));
-    entries.push(urlEntry(`${base}/destacar.html`, 'monthly', '0.5'));
+    entries.push(urlEntry(`${base}/`, 'daily', '1.0', hoy));
+    entries.push(urlEntry(`${base}/anadir.html`, 'monthly', '0.6', hoy));
+    entries.push(urlEntry(`${base}/destacar.html`, 'monthly', '0.5', hoy));
 
     categorias.forEach(c => {
-      entries.push(urlEntry(`${base}/categoria/${c.slug}`, 'daily', '0.8'));
+      entries.push(urlEntry(`${base}/categoria/${c.slug}`, 'daily', '0.8', hoy));
     });
 
     CIUDADES_SLUGS.forEach(slug => {
-      entries.push(urlEntry(`${base}/ciudad/${slug}`, 'daily', '0.8'));
+      entries.push(urlEntry(`${base}/ciudad/${slug}`, 'daily', '0.8', hoy));
     });
 
     grupos.forEach(g => {
       const slug = `${slugify(g.nombre) || 'grupo'}-${g._id.toString()}`;
-      entries.push(urlEntry(`${base}/grupo/${slug}`, 'weekly', '0.6'));
+      let lastmod = hoy;
+      try { lastmod = g._id.getTimestamp().toISOString().slice(0, 10); } catch(e) {}
+      entries.push(urlEntry(`${base}/grupo/${slug}`, 'weekly', '0.6', lastmod));
     });
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries.join('\n')}\n</urlset>`;
