@@ -44,7 +44,7 @@ function tarjetaHtml(grupo) {
   const tieneImagen = grupo.imagen && grupo.imagen.trim() && !grupo.imagen.includes('undefined');
 
   return `
-  <div class="grupo-card">
+  <div class="grupo-card" data-plat="${plat}">
     <div class="card-header">
       ${tieneImagen ? `
       <img src="${grupo.imagen}" alt="${nombreSeguro}" class="grupo-foto" loading="lazy">
@@ -144,10 +144,30 @@ export default async function handler(req, res) {
     <p>${grupos.length} grupos activos de WhatsApp, Telegram y Facebook</p>
   </div>
 
+  <div class="plataforma-filtros" id="filtroPlataforma">
+    <div class="filter-chip active" data-platform="todos">🌐 Todas</div>
+    <div class="filter-chip" data-platform="whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</div>
+    <div class="filter-chip" data-platform="telegram"><i class="fab fa-telegram"></i> Telegram</div>
+    <div class="filter-chip" data-platform="facebook"><i class="fab fa-facebook"></i> Facebook</div>
+    <div class="filter-chip" data-platform="instagram"><i class="fab fa-instagram"></i> Instagram</div>
+  </div>
+
   <div id="gruposContainer" class="grupos-grid">${tarjetasHtml}</div>
 
   <div class="footer-note" style="margin-top:2rem;">🇧🇴 Qigrupos Bolivia &mdash; Grupos verificados</div>
 </div>
+<script>
+document.querySelectorAll('#filtroPlataforma .filter-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('#filtroPlataforma .filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    const plat = chip.dataset.platform;
+    document.querySelectorAll('.grupo-card').forEach(card => {
+      card.style.display = (plat === 'todos' || card.dataset.plat === plat) ? '' : 'none';
+    });
+  });
+});
+</script>
 </body>
 </html>`;
 
