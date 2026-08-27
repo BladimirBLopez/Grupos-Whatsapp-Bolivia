@@ -682,15 +682,23 @@ function configurarEventListeners() {
   document.querySelectorAll('.city-item').forEach(item => {
     item.addEventListener('click', e => {
       e.stopPropagation();
-      document.querySelectorAll('.city-item').forEach(i => i.classList.remove('active'));
-      item.classList.add('active');
-      ciudadSeleccionada = item.dataset.city;
-      document.getElementById('selectedCityName').textContent =
-        ciudadSeleccionada === 'todos' ? 'Todos los departamentos' : ciudadSeleccionada;
-      document.getElementById('cityModal').style.display = 'none';
-      gruposMostrados = GRUPOS_POR_PAGINA;
-      renderizarGrupos();
-      actualizarContadoresCiudades();
+      const ciudad = item.dataset.city;
+
+      // "Todos" se queda filtrando en la misma pagina
+      if (ciudad === 'todos') {
+        document.querySelectorAll('.city-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        ciudadSeleccionada = 'todos';
+        document.getElementById('selectedCityName').textContent = 'Todos los departamentos';
+        document.getElementById('cityModal').style.display = 'none';
+        gruposMostrados = GRUPOS_POR_PAGINA;
+        renderizarGrupos();
+        actualizarContadoresCiudades();
+        return;
+      }
+
+      // Una ciudad especifica navega a su pagina dedicada (mejor para SEO)
+      window.location.href = `/ciudad/${slugify(ciudad)}`;
     });
   });
 
