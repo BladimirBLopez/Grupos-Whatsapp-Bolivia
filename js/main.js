@@ -3,6 +3,7 @@
 // ============================================
 let gruposData = [];
 let ciudadSeleccionada     = 'todos';
+let ciudadModalDesdeFiltros = false;
 let plataformaSeleccionada = 'todos';
 let categoriaSeleccionada  = 'todas';
 let busquedaActual         = '';
@@ -685,12 +686,21 @@ function configurarEventListeners() {
     document.getElementById('cityModal').style.display = 'flex';
   });
 
-  document.getElementById('closeCityModalBtn')?.addEventListener('click', () =>
-    document.getElementById('cityModal').style.display = 'none');
+  document.getElementById('closeCityModalBtn')?.addEventListener('click', () => {
+    document.getElementById('cityModal').style.display = 'none';
+    if (ciudadModalDesdeFiltros) {
+      ciudadModalDesdeFiltros = false;
+      document.getElementById('filtrosModal').style.display = 'flex';
+    }
+  });
   document.getElementById('cityModal')?.addEventListener('click', e => {
     if (e.target === e.currentTarget) {
       e.stopPropagation();
       e.currentTarget.style.display = 'none';
+      if (ciudadModalDesdeFiltros) {
+        ciudadModalDesdeFiltros = false;
+        document.getElementById('filtrosModal').style.display = 'flex';
+      }
     }
   });
 
@@ -708,6 +718,7 @@ function configurarEventListeners() {
   });
 
   document.getElementById('abrirCiudadDesdeFiltrosBtn')?.addEventListener('click', () => {
+    ciudadModalDesdeFiltros = true;
     document.getElementById('filtrosModal').style.display = 'none';
     document.getElementById('cityModal').style.display = 'flex';
   });
@@ -741,6 +752,10 @@ function configurarEventListeners() {
         gruposMostrados = GRUPOS_POR_PAGINA;
         renderizarGrupos();
         actualizarContadoresCiudades();
+        if (ciudadModalDesdeFiltros) {
+          ciudadModalDesdeFiltros = false;
+          document.getElementById('filtrosModal').style.display = 'flex';
+        }
         return;
       }
 
