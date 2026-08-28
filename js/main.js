@@ -527,7 +527,8 @@ function resetFiltros() {
   document.querySelector('.filter-chip[data-platform="whatsapp"]')?.classList.add('active');
   document.querySelectorAll('.cat-item').forEach(c => c.classList.remove('active'));
   document.querySelector('.cat-item[data-cat="todas"]')?.classList.add('active');
-  document.getElementById('selectedCityName').textContent = 'Todos los departamentos';
+  const scnTodos = document.getElementById('selectedCityName');
+  if (scnTodos) scnTodos.textContent = 'Todos los departamentos';
   const scpTodos = document.getElementById('selectedCityNamePanel');
   if (scpTodos) scpTodos.textContent = 'Todos los departamentos';
   const si = document.getElementById('searchInput');
@@ -745,7 +746,8 @@ function configurarEventListeners() {
         document.querySelectorAll('.city-item').forEach(i => i.classList.remove('active'));
         item.classList.add('active');
         ciudadSeleccionada = 'todos';
-        document.getElementById('selectedCityName').textContent = 'Todos los departamentos';
+        const scnTodos = document.getElementById('selectedCityName');
+  if (scnTodos) scnTodos.textContent = 'Todos los departamentos';
   const scpTodos = document.getElementById('selectedCityNamePanel');
   if (scpTodos) scpTodos.textContent = 'Todos los departamentos';
         document.getElementById('cityModal').style.display = 'none';
