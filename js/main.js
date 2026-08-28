@@ -199,6 +199,30 @@ function iniciarPagina() {
   renderizarGrupos();
   configurarEventListeners();
   aplicarBusquedaDesdeURL();
+  inicializarBloqueoScroll();
+}
+
+// Bloquea el scroll del fondo mientras cualquier modal/panel este abierto,
+// sin importar desde donde se abra o se cierre (observa el estilo, no cada click)
+function inicializarBloqueoScroll() {
+  const modales = ['cityModal', 'filtrosModal', 'confirmReporteModal', 'searchOverlay']
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+  if (modales.length === 0) return;
+
+  const actualizar = () => {
+    const algunoAbierto = modales.some(m => {
+      const d = m.style.display;
+      return d && d !== 'none';
+    });
+    document.body.style.overflow = algunoAbierto ? 'hidden' : '';
+  };
+
+  modales.forEach(m => {
+    new MutationObserver(actualizar).observe(m, { attributes: true, attributeFilter: ['style'] });
+  });
+
+  actualizar();
 }
 
 // Si se llega con ?q=algo (ej. desde Google usando el buscador del sitio),
