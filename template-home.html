@@ -104,6 +104,14 @@
   <!-- ===== GRUPO DESTACADO ===== -->
   <div id="grupoDestacadoFijo"></div>
 
+  <!-- ===== BOTON FILTROS UNIFICADO (nuevo) ===== -->
+  <div class="filtros-btn-wrap">
+    <button class="filtros-btn" id="abrirFiltrosBtn">
+      <i class="fas fa-sliders-h"></i> Filtros
+      <span class="filtros-badge" id="filtrosBadge" style="display:none;">0</span>
+    </button>
+  </div>
+
   <!-- ===== CATEGORÍAS CIRCULARES — dinámicas desde MongoDB ===== -->
   <div class="categorias-scroll" id="categoriasScroll">
     <div class="cat-item active" data-cat="todas">
@@ -203,6 +211,46 @@
 </nav>
 
 <!-- ===== MODAL CIUDADES ===== -->
+<div id="filtrosModal" class="modal-city">
+  <div class="modal-city-content">
+    <div class="modal-city-header">
+      <h3><i class="fas fa-sliders-h"></i> Filtros</h3>
+      <button class="close-city-modal" id="closeFiltrosModalBtn">&times;</button>
+    </div>
+    <div style="padding:1rem;overflow-y:auto;">
+      <p style="font-size:0.78rem;color:#8ba0ae;font-weight:600;margin:0 0 0.5rem;text-transform:uppercase;">Categoría</p>
+      <div class="categorias-scroll" id="categoriasScrollPanel" style="margin-bottom:1.2rem;">
+        <div class="cat-item active" data-cat="todas">
+          <div class="cat-icon">🔍</div>
+          <span class="cat-label">Todas</span>
+        </div>
+      </div>
+
+      <p style="font-size:0.78rem;color:#8ba0ae;font-weight:600;margin:0 0 0.5rem;text-transform:uppercase;">Plataforma</p>
+      <div class="plataforma-filtros" style="margin-bottom:1.2rem;">
+        <div class="filter-chip active" data-platform="todos">🌐 Todas</div>
+        <div class="filter-chip" data-platform="whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</div>
+        <div class="filter-chip" data-platform="telegram"><i class="fab fa-telegram"></i> Telegram</div>
+        <div class="filter-chip" data-platform="facebook"><i class="fab fa-facebook"></i> Facebook</div>
+        <div class="filter-chip" data-platform="instagram"><i class="fab fa-instagram"></i> Instagram</div>
+      </div>
+
+      <p style="font-size:0.78rem;color:#8ba0ae;font-weight:600;margin:0 0 0.5rem;text-transform:uppercase;">Ciudad</p>
+      <div class="city-selector-btn" id="abrirCiudadDesdeFiltrosBtn" style="margin-bottom:0.4rem;">
+        <div class="city-selected">
+          <i class="fas fa-map-marker-alt"></i>
+          <span id="selectedCityNamePanel">Todos los departamentos</span>
+        </div>
+        <i class="fas fa-chevron-down"></i>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;padding:0.8rem 1rem 1.1rem;border-top:1px solid #eff6fa;">
+      <button id="limpiarFiltrosBtn" style="flex:1;background:#f1f5f8;color:#5a6b78;border:none;border-radius:12px;padding:0.8rem;font-weight:600;cursor:pointer;">Limpiar filtros</button>
+      <button id="aplicarFiltrosBtn" style="flex:1;background:#25D366;color:white;border:none;border-radius:12px;padding:0.8rem;font-weight:600;cursor:pointer;">Aplicar</button>
+    </div>
+  </div>
+</div>
+
 <div id="cityModal" class="modal-city">
   <div class="modal-city-content">
     <div class="modal-city-header">

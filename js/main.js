@@ -218,22 +218,22 @@ function aplicarBusquedaDesdeURL() {
 }
 
 function renderizarCategoriasCirculares() {
-  const scroll = document.getElementById('categoriasScroll');
-  if (!scroll || categoriasGlobal.length === 0) return;
+  const contenedores = ['categoriasScroll', 'categoriasScrollPanel']
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+  if (contenedores.length === 0 || categoriasGlobal.length === 0) return;
 
-  // Eliminar categorías previas excepto "Todas"
-  scroll.querySelectorAll('.cat-item:not([data-cat="todas"])').forEach(el => el.remove());
-
-  // Agregar categorías desde MongoDB
-  categoriasGlobal.forEach(cat => {
-    const div = document.createElement('div');
-    div.className = 'cat-item';
-    div.dataset.cat = cat.slug;
-    div.innerHTML = `<div class="cat-icon">${cat.emoji}</div><span class="cat-label">${cat.label}</span>`;
-    scroll.appendChild(div);
+  contenedores.forEach(scroll => {
+    scroll.querySelectorAll('.cat-item:not([data-cat="todas"])').forEach(el => el.remove());
+    categoriasGlobal.forEach(cat => {
+      const div = document.createElement('div');
+      div.className = 'cat-item';
+      div.dataset.cat = cat.slug;
+      div.innerHTML = `<div class="cat-icon">${cat.emoji}</div><span class="cat-label">${cat.label}</span>`;
+      scroll.appendChild(div);
+    });
   });
 
-  // Re-bind listeners categorías
   document.querySelectorAll('.cat-item').forEach(item => {
     item.addEventListener('click', () => {
       document.querySelectorAll('.cat-item').forEach(c => c.classList.remove('active'));
@@ -403,6 +403,8 @@ function renderizarGrupos() {
   const el = document.getElementById('resultCount');
   if (el) el.textContent = total;
 
+  actualizarBadgeFiltros();
+
   if (total === 0) {
     container.innerHTML = `<div class="empty-message"><i class="fas fa-search" style="font-size:2rem;display:block;margin-bottom:0.5rem;"></i>No se encontraron grupos</div>`;
     return;
@@ -525,11 +527,28 @@ function resetFiltros() {
   document.querySelectorAll('.cat-item').forEach(c => c.classList.remove('active'));
   document.querySelector('.cat-item[data-cat="todas"]')?.classList.add('active');
   document.getElementById('selectedCityName').textContent = 'Todos los departamentos';
+  const scpTodos = document.getElementById('selectedCityNamePanel');
+  if (scpTodos) scpTodos.textContent = 'Todos los departamentos';
   const si = document.getElementById('searchInput');
   if (si) si.value = '';
 
   renderizarGrupos();
   actualizarContadoresCiudades();
+}
+
+function actualizarBadgeFiltros() {
+  const badge = document.getElementById('filtrosBadge');
+  if (!badge) return;
+  let activos = 0;
+  if (categoriaSeleccionada !== 'todas') activos++;
+  if (plataformaSeleccionada !== 'todos' && plataformaSeleccionada !== 'whatsapp') activos++;
+  if (ciudadSeleccionada !== 'todos') activos++;
+  if (activos > 0) {
+    badge.textContent = activos;
+    badge.style.display = 'inline-flex';
+  } else {
+    badge.style.display = 'none';
+  }
 }
 
 // ============================================
@@ -675,6 +694,32 @@ function configurarEventListeners() {
     }
   });
 
+  document.getElementById('abrirFiltrosBtn')?.addEventListener('click', () => {
+    cerrarBuscador();
+    document.getElementById('filtrosModal').style.display = 'flex';
+  });
+  document.getElementById('closeFiltrosModalBtn')?.addEventListener('click', () =>
+    document.getElementById('filtrosModal').style.display = 'none');
+  document.getElementById('filtrosModal')?.addEventListener('click', e => {
+    if (e.target === e.currentTarget) {
+      e.stopPropagation();
+      e.currentTarget.style.display = 'none';
+    }
+  });
+
+  document.getElementById('abrirCiudadDesdeFiltrosBtn')?.addEventListener('click', () => {
+    document.getElementById('filtrosModal').style.display = 'none';
+    document.getElementById('cityModal').style.display = 'flex';
+  });
+
+  document.getElementById('limpiarFiltrosBtn')?.addEventListener('click', () => {
+    resetFiltros();
+    document.getElementById('filtrosModal').style.display = 'none';
+  });
+  document.getElementById('aplicarFiltrosBtn')?.addEventListener('click', () => {
+    document.getElementById('filtrosModal').style.display = 'none';
+  });
+
   document.getElementById('openCityModalBtn')?.addEventListener('click', e => {
     e.stopPropagation();
   });
@@ -690,6 +735,8 @@ function configurarEventListeners() {
         item.classList.add('active');
         ciudadSeleccionada = 'todos';
         document.getElementById('selectedCityName').textContent = 'Todos los departamentos';
+  const scpTodos = document.getElementById('selectedCityNamePanel');
+  if (scpTodos) scpTodos.textContent = 'Todos los departamentos';
         document.getElementById('cityModal').style.display = 'none';
         gruposMostrados = GRUPOS_POR_PAGINA;
         renderizarGrupos();
