@@ -744,8 +744,13 @@ function configurarEventListeners() {
         return;
       }
 
-      // Una ciudad especifica navega a su pagina dedicada (mejor para SEO)
-      window.location.href = `/ciudad/${slugify(ciudad)}`;
+      // Una ciudad especifica navega a su pagina dedicada (mejor para SEO),
+      // llevando consigo la categoria y plataforma si el usuario ya las eligio
+      const params = new URLSearchParams();
+      if (categoriaSeleccionada !== 'todas') params.set('categoria', categoriaSeleccionada);
+      if (plataformaSeleccionada !== 'todos') params.set('plataforma', plataformaSeleccionada);
+      const query = params.toString();
+      window.location.href = `/ciudad/${slugify(ciudad)}${query ? '?' + query : ''}`;
     });
   });
 

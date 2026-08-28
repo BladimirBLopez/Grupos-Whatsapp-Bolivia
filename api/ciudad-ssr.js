@@ -87,7 +87,7 @@ function tarjetaHtml(grupo) {
 
 export default async function handler(req, res) {
   try {
-    const { slug } = req.query;
+    const { slug, categoria: categoriaFiltro, plataforma: plataformaFiltro } = req.query;
     const nombreCiudad = CIUDADES[slug];
     if (!nombreCiudad) {
       res.status(404).send('Ciudad no encontrada');
@@ -101,12 +101,24 @@ export default async function handler(req, res) {
     const localesRaw = await col.find({ ubicacion: nombreCiudad }).limit(50).toArray();
     const nacionalesRaw = await col.find({ ubicacion: 'Nacional' }).limit(20).toArray();
 
-    const locales = localesRaw.map(g => ({ ...g, id: g._id.toString() }));
-    const nacionales = nacionalesRaw.map(g => ({ ...g, id: g._id.toString() }));
+    let locales = localesRaw.map(g => ({ ...g, id: g._id.toString() }));
+    let nacionales = nacionalesRaw.map(g => ({ ...g, id: g._id.toString() }));
+
+    // Aplicar filtros que llegan desde el panel de Filtros del home (opcionales)
+    if (categoriaFiltro) {
+      locales = locales.filter(g => (g.categoria || 'compra-venta') === categoriaFiltro);
+      nacionales = nacionales.filter(g => (g.categoria || 'compra-venta') === categoriaFiltro);
+    }
+    if (plataformaFiltro) {
+      locales = locales.filter(g => (g.plataforma || 'whatsapp').toLowerCase() === plataformaFiltro);
+      nacionales = nacionales.filter(g => (g.plataforma || 'whatsapp').toLowerCase() === plataformaFiltro);
+    }
 
     const localesHtml = locales.length
       ? locales.map(tarjetaHtml).join('')
-      : `<div class="empty-message">Todavía no hay grupos locales en ${escapeHtml(nombreCiudad)}</div>`;
+      : (categoriaFiltro || plataformaFiltro)
+        ? `<div class="empty-message">No hay grupos que coincidan con ese filtro en ${escapeHtml(nombreCiudad)}</div>`
+        : `<div class="empty-message">Todavía no hay grupos locales en ${escapeHtml(nombreCiudad)}</div>`;
 
     const nacionalesHtml = nacionales.length
       ? `<div style="margin-top:2rem;">
@@ -165,12 +177,17 @@ export default async function handler(req, res) {
   </div>
 
   <div class="plataforma-filtros" id="filtroPlataforma">
-    <div class="filter-chip active" data-platform="todos">🌐 Todas</div>
-    <div class="filter-chip" data-platform="whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</div>
-    <div class="filter-chip" data-platform="telegram"><i class="fab fa-telegram"></i> Telegram</div>
-    <div class="filter-chip" data-platform="facebook"><i class="fab fa-facebook"></i> Facebook</div>
-    <div class="filter-chip" data-platform="instagram"><i class="fab fa-instagram"></i> Instagram</div>
+    <div class="filter-chip${!plataformaFiltro ? ' active' : ''}" data-platform="todos">🌐 Todas</div>
+    <div class="filter-chip${plataformaFiltro === 'whatsapp' ? ' active' : ''}" data-platform="whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</div>
+    <div class="filter-chip${plataformaFiltro === 'telegram' ? ' active' : ''}" data-platform="telegram"><i class="fab fa-telegram"></i> Telegram</div>
+    <div class="filter-chip${plataformaFiltro === 'facebook' ? ' active' : ''}" data-platform="facebook"><i class="fab fa-facebook"></i> Facebook</div>
+    <div class="filter-chip${plataformaFiltro === 'instagram' ? ' active' : ''}" data-platform="instagram"><i class="fab fa-instagram"></i> Instagram</div>
   </div>
+
+  ${categoriaFiltro ? `<div style="display:flex;align-items:center;gap:8px;background:#e9f9ef;border-radius:10px;padding:0.6rem 0.9rem;margin-bottom:1rem;font-size:0.85rem;color:#075E54;">
+    <i class="fas fa-filter"></i> Categoría: <strong>${escapeHtml(categoriaFiltro)}</strong>
+    <a href="/ciudad/${slug}${plataformaFiltro ? `?plataforma=${encodeURIComponent(plataformaFiltro)}` : ''}" style="margin-left:auto;color:#075E54;text-decoration:none;font-weight:600;">Quitar &times;</a>
+  </div>` : ''}
 
   <div id="gruposContainer" class="grupos-grid">${localesHtml}</div>
 
