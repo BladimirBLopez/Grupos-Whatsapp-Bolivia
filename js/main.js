@@ -311,7 +311,7 @@ function mostrarGrupoDestacado() {
         <!-- Header con foto -->
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:0.7rem;">
           ${tieneImg ? `
-          <img src="${d.imagen}" alt="${d.nombre||''}"
+          <img src="${escapeHtml(optimizarImg(d.imagen))}" alt="${escapeHtml(d.nombre||'')}"
             style="width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid #FFD700;flex-shrink:0;"
             onerror="this.style.display='none'">
           ` : `
