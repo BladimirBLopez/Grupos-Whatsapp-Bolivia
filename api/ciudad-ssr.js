@@ -47,6 +47,10 @@ function slugGrupo(grupo) {
   return `${slugify(grupo.nombre) || 'grupo'}-${grupo.id}`;
 }
 
+function redirUrl(grupo) {
+  return `/redir.html?url=${encodeURIComponent(grupo.link||'#')}&nombre=${encodeURIComponent(grupo.nombre||'Grupo')}&plat=${encodeURIComponent((grupo.plataforma||'whatsapp').toLowerCase())}&id=${encodeURIComponent(grupo.id||'')}`;
+}
+
 function tarjetaHtml(grupo) {
   const plat  = (grupo.plataforma || 'whatsapp').toLowerCase();
   const icono = PLATAFORMA_ICONO[plat] || PLATAFORMA_ICONO.otro;
@@ -54,6 +58,7 @@ function tarjetaHtml(grupo) {
   const label = PLATAFORMA_LABEL[plat] || 'Otro';
   const nombreSeguro = escapeHtml(grupo.nombre);
   const tieneImagen = grupo.imagen && grupo.imagen.trim() && !grupo.imagen.includes('undefined');
+  const redir = redirUrl(grupo);
 
   return `
   <div class="grupo-card" data-plat="${plat}">
@@ -81,6 +86,11 @@ function tarjetaHtml(grupo) {
     <div class="stats">
       <span class="stat-item"><i class="fas fa-users"></i> ${grupo.miembros||0}</span>
       <span class="stat-item"><i class="fas fa-eye"></i> ${grupo.visitas||0}</span>
+    </div>
+    <div style="padding:0 0.7rem 0.7rem;">
+      <a href="${redir}" class="join-btn" style="background:${color};width:100%;margin:0;">
+        <i class="${icono}"></i> Unirse al grupo
+      </a>
     </div>
   </div>`;
 }
