@@ -135,8 +135,10 @@ export default async function handler(req, res) {
         : `<div class="empty-message">Todavía no hay grupos locales en ${escapeHtml(nombreCiudad)}</div>`;
 
     const nacionalesHtml = nacionales.length
-      ? `<div style="margin-top:2rem;">
-          <h2 style="font-size:1rem;margin-bottom:0.8rem;">📍 Grupos que atienden todo Bolivia</h2>
+      ? `<div style="margin-top:2.2rem;padding-top:1.5rem;border-top:2px dashed #dde8ee;">
+          <div style="display:inline-flex;align-items:center;gap:6px;background:#eaf3fb;color:#1877F2;border-radius:20px;padding:0.4rem 0.9rem;font-size:0.8rem;font-weight:700;margin-bottom:1rem;">
+            🇧🇴 Estos grupos atienden TODA Bolivia (no solo ${escapeHtml(nombreCiudad)})
+          </div>
           <div class="grupos-grid">${nacionales.map(tarjetaHtml).join('')}</div>
         </div>`
       : '';
