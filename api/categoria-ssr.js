@@ -75,10 +75,14 @@ function tarjetaHtml(grupo) {
       <span class="stat-item"><i class="fas fa-users"></i> ${grupo.miembros||0}</span>
       <span class="stat-item"><i class="fas fa-eye"></i> ${grupo.visitas||0}</span>
     </div>
-    <div style="padding:0 0.7rem 0.7rem;">
-      <a href="${redir}" class="join-btn" style="background:${color};width:100%;margin:0;">
+    <div style="display:flex;gap:0.5rem;padding:0 0.7rem 0.7rem;">
+      <a href="${redir}" class="join-btn" style="background:${color};flex:1;margin:0;">
         <i class="${icono}"></i> Unirse al grupo
       </a>
+      <button onclick="reportarLinkSSR('${grupo.id}','${nombreSeguro}')"
+        style="background:#fff;border:1.5px solid #e0e0e0;color:#8ba0ae;border-radius:50px;padding:0 12px;font-size:0.7rem;cursor:pointer;display:flex;align-items:center;gap:4px;"
+        title="Reportar link caido"><i class="fas fa-flag"></i>
+      </button>
     </div>
   </div>`;
 }
@@ -166,6 +170,50 @@ export default async function handler(req, res) {
 
   <div class="footer-note" style="margin-top:2rem;">🇧🇴 Qigrupos Bolivia &mdash; Grupos verificados</div>
 </div>
+
+<div id="confirmReporteModal" class="modal-confirm">
+  <div class="modal-confirm-content">
+    <div class="modal-confirm-icon"><i class="fas fa-flag"></i></div>
+    <h3>¿Reportar este enlace?</h3>
+    <p id="confirmReporteTexto"></p>
+    <div class="modal-confirm-actions">
+      <button class="btn-confirm-cancelar" id="cancelReporteBtn">Cancelar</button>
+      <button class="btn-confirm-aceptar" id="aceptarReporteBtn"><i class="fas fa-flag"></i> Si, reportar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let reporteIdPendienteSSR = null;
+
+function reportarLinkSSR(id, nombre) {
+  if (!id) return;
+  reporteIdPendienteSSR = id;
+  document.getElementById('confirmReporteTexto').textContent = 'Reportar el enlace de "' + nombre + '" como caido?';
+  document.getElementById('confirmReporteModal').style.display = 'flex';
+}
+
+function cerrarConfirmReporteSSR() {
+  document.getElementById('confirmReporteModal').style.display = 'none';
+  reporteIdPendienteSSR = null;
+}
+
+async function confirmarReporteSSR() {
+  const id = reporteIdPendienteSSR;
+  cerrarConfirmReporteSSR();
+  if (!id) return;
+  try {
+    const res = await fetch('/api/grupos', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({accion:'reporte',id}) });
+    if (res.ok) alert('Reporte enviado, gracias por avisar');
+  } catch(e) { alert('Error al enviar el reporte'); }
+}
+
+document.getElementById('cancelReporteBtn')?.addEventListener('click', cerrarConfirmReporteSSR);
+document.getElementById('aceptarReporteBtn')?.addEventListener('click', confirmarReporteSSR);
+document.getElementById('confirmReporteModal')?.addEventListener('click', function(e) {
+  if (e.target === this) cerrarConfirmReporteSSR();
+});
+</script>
 <script>
 document.querySelectorAll('#filtroPlataforma .filter-chip').forEach(chip => {
   chip.addEventListener('click', () => {
