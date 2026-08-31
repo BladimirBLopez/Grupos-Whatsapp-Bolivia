@@ -15,6 +15,11 @@ async function conectar() {
   return client;
 }
 
+function optimizarImg(url) {
+  if (!url || !url.includes('res.cloudinary.com') || !url.includes('/upload/')) return url;
+  return url.replace('/upload/', '/upload/f_auto,q_auto,w_100,h_100,c_fill/');
+}
+
 function escapeHtml(str) {
   return String(str || '')
     .replace(/&/g, '&amp;')
@@ -52,7 +57,7 @@ function tarjetaHtml(grupo) {
   <div class="grupo-card" data-plat="${plat}">
     <div class="card-header">
       ${tieneImagen ? `
-      <img src="${grupo.imagen}" alt="${nombreSeguro}" class="grupo-foto" loading="lazy">
+      <img src="${escapeHtml(optimizarImg(grupo.imagen))}" alt="${nombreSeguro}" class="grupo-foto" loading="lazy">
       ` : `
       <div class="grupo-foto-placeholder" style="background:${color}22;">
         <i class="${icono}" style="color:${color};font-size:1.1rem;"></i>

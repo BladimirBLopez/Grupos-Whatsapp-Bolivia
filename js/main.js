@@ -387,6 +387,11 @@ function ejecutarBusqueda(hacerScroll = false) {
 // ============================================
 // RENDERIZAR GRUPOS
 // ============================================
+function optimizarImg(url) {
+  if (!url || !url.includes('res.cloudinary.com') || !url.includes('/upload/')) return url;
+  return url.replace('/upload/', '/upload/f_auto,q_auto,w_100,h_100,c_fill/');
+}
+
 function escapeHtml(str) {
   if (!str) return '';
   return str
@@ -451,7 +456,7 @@ function renderizarGrupos() {
     <div class="grupo-card" ${reportes>=3?'style="border-color:#ffcccc;"':''}>
       <div class="card-header">
         ${tieneImagen ? `
-        <img src="${escapeHtml(grupo.imagen)}" alt="${nombreSeguro}"
+        <img src="${escapeHtml(optimizarImg(grupo.imagen))}" alt="${nombreSeguro}"
           class="grupo-foto" loading="lazy" onerror="this.style.display='none'">
         ` : `
         <div class="grupo-foto-placeholder" style="background:${color}22;">
