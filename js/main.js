@@ -802,10 +802,15 @@ function configurarEventListeners() {
     });
   });
 
-  // Navbar inferior - Ciudad no se marca como activo
+  // Navbar inferior - Ciudad no se marca como activo, abre el modal de ciudad
   document.querySelectorAll('.bottom-nav-item').forEach(item => {
-    item.addEventListener('click', () => {
-      if (item.id === 'navCiudad') return; // Ciudad abre modal, no se marca activo
+    item.addEventListener('click', e => {
+      if (item.id === 'navCiudad') {
+        e.preventDefault();
+        cerrarBuscador();
+        document.getElementById('cityModal').style.display = 'flex';
+        return;
+      }
       document.querySelectorAll('.bottom-nav-item').forEach(i => i.classList.remove('active'));
       item.classList.add('active');
     });
