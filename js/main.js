@@ -286,7 +286,7 @@ function mostrarGrupoDestacado() {
   const banner = document.getElementById('grupoDestacadoFijo');
   if (!banner) return;
   const d = gruposData.find(g => g.destacado === true);
-  if (!d) { banner.innerHTML = ''; return; }
+  if (!d) { banner.innerHTML = ''; banner.style.minHeight = '0'; return; }
 
   const plat  = d.plataforma || 'whatsapp';
   const icono = iconoPlataforma(plat);
