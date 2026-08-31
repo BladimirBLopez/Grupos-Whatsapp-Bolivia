@@ -113,19 +113,15 @@ export default async function handler(req, res) {
     const col = db.collection('grupos');
 
     const localesRaw = await col.find({ ubicacion: nombreCiudad }).limit(50).toArray();
-    const nacionalesRaw = await col.find({ ubicacion: 'Nacional' }).limit(20).toArray();
 
     let locales = localesRaw.map(g => ({ ...g, id: g._id.toString() }));
-    let nacionales = nacionalesRaw.map(g => ({ ...g, id: g._id.toString() }));
 
     // Aplicar filtros que llegan desde el panel de Filtros del home (opcionales)
     if (categoriaFiltro) {
       locales = locales.filter(g => (g.categoria || 'compra-venta') === categoriaFiltro);
-      nacionales = nacionales.filter(g => (g.categoria || 'compra-venta') === categoriaFiltro);
     }
     if (plataformaFiltro) {
       locales = locales.filter(g => (g.plataforma || 'whatsapp').toLowerCase() === plataformaFiltro);
-      nacionales = nacionales.filter(g => (g.plataforma || 'whatsapp').toLowerCase() === plataformaFiltro);
     }
 
     const localesHtml = locales.length
@@ -134,16 +130,7 @@ export default async function handler(req, res) {
         ? `<div class="empty-message">No hay grupos que coincidan con ese filtro en ${escapeHtml(nombreCiudad)}</div>`
         : `<div class="empty-message">Todavía no hay grupos locales en ${escapeHtml(nombreCiudad)}</div>`;
 
-    const nacionalesHtml = nacionales.length
-      ? `<div style="margin-top:2.2rem;padding-top:1.5rem;border-top:2px dashed #dde8ee;">
-          <div style="display:inline-flex;align-items:center;gap:6px;background:#eaf3fb;color:#1877F2;border-radius:20px;padding:0.4rem 0.9rem;font-size:0.8rem;font-weight:700;margin-bottom:1rem;">
-            🇧🇴 Estos grupos atienden TODA Bolivia (no solo ${escapeHtml(nombreCiudad)})
-          </div>
-          <div class="grupos-grid">${nacionales.map(tarjetaHtml).join('')}</div>
-        </div>`
-      : '';
-
-    const totalGrupos = locales.length + nacionales.length;
+    const totalGrupos = locales.length;
     const canonicalUrl = `https://www.qigruposbo.online/ciudad/${slug}`;
     const titulo = `Grupos de WhatsApp, Telegram y Facebook en ${nombreCiudad} | Qigrupos Bolivia`;
     const descripcion = `Encuentra grupos de WhatsApp, Telegram y Facebook en ${nombreCiudad}, Bolivia. Compra/venta, empleos, inmuebles y más. ${totalGrupos} grupos activos.`;
@@ -207,7 +194,6 @@ export default async function handler(req, res) {
 
   <div id="gruposContainer" class="grupos-grid">${localesHtml}</div>
 
-  ${nacionalesHtml}
 
   <div class="footer-note" style="margin-top:2rem;">🇧🇴 Qigrupos Bolivia &mdash; Grupos verificados</div>
 </div>
