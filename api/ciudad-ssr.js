@@ -136,6 +136,7 @@ export default async function handler(req, res) {
         : `<div class="empty-message">Todavía no hay grupos locales en ${escapeHtml(nombreCiudad)}</div>`;
 
     const totalGrupos = locales.length;
+    const plataformaLabelH1 = plataformaFiltro ? (PLATAFORMA_LABEL[plataformaFiltro] || 'WhatsApp') : 'WhatsApp, Telegram y Facebook';
     const canonicalUrl = `https://www.qigruposbo.online/ciudad/${slug}`;
     const titulo = `Grupos de WhatsApp, Telegram y Facebook en ${nombreCiudad} | Qigrupos Bolivia`;
     const descripcion = `Encuentra grupos de WhatsApp, Telegram y Facebook en ${nombreCiudad}, Bolivia. Compra/venta, empleos, inmuebles y más. ${totalGrupos} grupos activos.`;
@@ -184,7 +185,7 @@ export default async function handler(req, res) {
   </div>
 
   <div class="hero" style="padding-top:0.5rem;">
-    <h1 style="font-size:1.3rem;">📍 Grupos en <span>${escapeHtml(nombreCiudad)}</span></h1>
+    <h1 style="font-size:1.3rem;">📍 Grupos de ${plataformaLabelH1} en <span>${escapeHtml(nombreCiudad)}</span></h1>
     <p>${totalGrupos} grupos activos de WhatsApp, Telegram y Facebook</p>
   </div>
 
