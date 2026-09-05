@@ -205,7 +205,10 @@ function iniciarPagina() {
 // Bloquea el scroll del fondo mientras cualquier modal/panel este abierto,
 // sin importar desde donde se abra o se cierre (observa el estilo, no cada click)
 function inicializarBloqueoScroll() {
-  const modales = ['cityModal', 'filtrosModal', 'confirmReporteModal', 'searchOverlay']
+  // searchOverlay NO se incluye aqui: es una barra angosta arriba, no un modal
+  // de pantalla completa, y el usuario debe poder seguir deslizando los
+  // resultados mientras escribe.
+  const modales = ['cityModal', 'filtrosModal', 'confirmReporteModal']
     .map(id => document.getElementById(id))
     .filter(Boolean);
   if (modales.length === 0) return;
