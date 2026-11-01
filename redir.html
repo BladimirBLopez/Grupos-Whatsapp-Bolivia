@@ -329,5 +329,35 @@
   const timer = setInterval(tick, 1000);
 </script>
 
+<script>
+(function () {
+  try {
+    if (localStorage.getItem('qi_noTrack')) return;
+    var q = new URLSearchParams(location.search);
+    var g = (q.get('nombre') || '').trim().slice(0, 80);
+    if (!g) return;
+    var pl = (q.get('plat') || 'otro').toLowerCase();
+    var s = sessionStorage.getItem('qi_sid');
+    if (!s) { s = Math.random().toString(36).slice(2, 12); sessionStorage.setItem('qi_sid', s); }
+    var o = 'otro';
+    try {
+      var rp = new URL(document.referrer);
+      if (rp.hostname.replace(/^www\./, '') === location.hostname.replace(/^www\./, '')) {
+        var x = rp.pathname;
+        o = x === '/' ? 'home' : x.indexOf('/grupos-whatsapp/') === 0 ? 'ciudad' : x.indexOf('/categoria/') === 0 ? 'categoria' : x.indexOf('/grupo/') === 0 ? 'grupo' : 'otro';
+      }
+    } catch (e) {}
+    function enviar(tipo) {
+      var body = JSON.stringify({ accion: 'evento', e: tipo, g: g, pl: pl, o: o, s: s });
+      if (navigator.sendBeacon) navigator.sendBeacon('/api/grupos', new Blob([body], { type: 'application/json' }));
+      else fetch('/api/grupos', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body, keepalive: true });
+    }
+    var k = 'qi_j_' + g;
+    if (!sessionStorage.getItem(k)) { sessionStorage.setItem(k, '1'); enviar('join'); }
+    var b = document.getElementById('btnUnirse');
+    if (b) b.addEventListener('click', function () { enviar('go'); });
+  } catch (e) {}
+})();
+</script>
 </body>
 </html>

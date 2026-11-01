@@ -49,6 +49,7 @@ export default async function handler(req, res) {
     // ── GET ─────────────────────────────────────────────────────────
     if (req.method === 'GET') {
       const { plataforma, categoria } = req.query;
+      if (req.query.metricas === 'eventos') return await resumenEventos(req, res, db);
       if (req.query.metricas) return await resumenMetricas(req, res, db);
       const filtro = {};
       if (plataforma && PLATAFORMAS_VALIDAS.includes(plataforma)) filtro.plataforma = plataforma;
@@ -67,6 +68,7 @@ export default async function handler(req, res) {
     if (req.method === 'POST') {
       const { grupo, accion, id } = req.body;
       if (accion === 'track') return await registrarTrack(req, res, db);
+      if (accion === 'evento') return await registrarEvento(req, res, db);
       if (accion !== 'visita' && accion !== 'reporte' && !verificarToken(req)) {
         return res.status(401).json({ error: 'No autorizado' });
       }
@@ -242,5 +244,101 @@ async function resumenMetricas(req, res, db) {
     totalSesiones: sesionesRaw[0] ? sesionesRaw[0].n : 0,
     porDia, paginas, fuentes, paises, ciudades, dispositivos,
     topGrupos: topGrupos.map(g => ({ nombre: g.nombre, visitas: g.visitas || 0, ubicacion: g.ubicacion || '' }))
+  });
+}
+
+// ── EVENTOS: clics en Unirse y búsquedas (colección aparte) ─────────
+let indiceEventosCreado = false;
+
+function limpiarBusqueda(q) {
+  q = String(q || '').toLowerCase().replace(/\s+/g, ' ').trim().slice(0, 60);
+  if (q.length < 2) return '';
+  const plano = q.replace(/[\s.\-]/g, '');
+  if (/@|www|https?:|\d{6,}/.test(plano)) return '';
+  return q;
+}
+
+async function registrarEvento(req, res, db) {
+  try {
+    const ua = String(req.headers['user-agent'] || '');
+    if (!ua || /bot|crawl|spider|slurp|preview|facebookexternalhit|headless|lighthouse|pingdom|uptime|curl|wget|python|node-fetch/i.test(ua)) {
+      return res.status(204).end();
+    }
+    const b = req.body || {};
+    if (!['join', 'go', 'busq'].includes(b.e)) return res.status(204).end();
+    const doc = {
+      t: new Date(),
+      e: b.e,
+      s: String(b.s || '').replace(/[^a-z0-9]/gi, '').slice(0, 16),
+      c: String(req.headers['x-vercel-ip-country'] || '').slice(0, 2).toUpperCase()
+    };
+    if (b.e === 'busq') {
+      const q = limpiarBusqueda(b.q);
+      if (!q) return res.status(204).end();
+      doc.q = q;
+      doc.r = b.r === 0 ? 0 : 1;
+    } else {
+      const g = String(b.g || '').trim().slice(0, 80);
+      if (!g) return res.status(204).end();
+      const pl = String(b.pl || '').toLowerCase();
+      doc.g = g;
+      doc.pl = ['whatsapp', 'telegram', 'facebook', 'discord'].includes(pl) ? pl : 'otro';
+      doc.o = ['home', 'ciudad', 'categoria', 'grupo'].includes(b.o) ? b.o : 'otro';
+    }
+    const ev = db.collection('eventos');
+    if (!indiceEventosCreado) {
+      await ev.createIndex({ t: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 90 });
+      indiceEventosCreado = true;
+    }
+    await ev.insertOne(doc);
+    return res.status(204).end();
+  } catch (e) {
+    return res.status(204).end();
+  }
+}
+
+async function resumenEventos(req, res, db) {
+  if (!verificarToken(req)) return res.status(401).json({ error: 'No autorizado' });
+  const d = parseInt(req.query.dias, 10);
+  const dias = [7, 30, 90].includes(d) ? d : 30;
+  const desde = new Date(Date.now() - dias * 86400000);
+  const ev = db.collection('eventos');
+  const base = { t: { $gte: desde } };
+  const topQ = (extra) => ev.aggregate([
+    { $match: { ...base, e: 'busq', ...extra } },
+    { $group: { _id: '$q', n: { $sum: 1 } } },
+    { $sort: { n: -1 } },
+    { $limit: 10 }
+  ]).toArray().then(r => r.map(x => ({ k: x._id, n: x.n })));
+
+  const [grupos, origenes, busquedas, sinResultados, tot] = await Promise.all([
+    ev.aggregate([
+      { $match: { ...base, e: { $in: ['join', 'go'] } } },
+      { $group: { _id: { g: '$g', pl: '$pl' },
+          clics: { $sum: { $cond: [{ $eq: ['$e', 'join'] }, 1, 0] } },
+          confirmados: { $sum: { $cond: [{ $eq: ['$e', 'go'] }, 1, 0] } } } },
+      { $sort: { clics: -1, confirmados: -1 } },
+      { $limit: 10 }
+    ]).toArray(),
+    ev.aggregate([
+      { $match: { ...base, e: 'join' } },
+      { $group: { _id: '$o', n: { $sum: 1 } } },
+      { $sort: { n: -1 } },
+      { $limit: 8 }
+    ]).toArray(),
+    topQ({}),
+    topQ({ r: 0 }),
+    ev.aggregate([{ $match: base }, { $group: { _id: '$e', n: { $sum: 1 } } }]).toArray()
+  ]);
+
+  const totales = {};
+  tot.forEach(x => { totales[x._id] = x.n; });
+  return res.status(200).json({
+    dias,
+    totales,
+    grupos: grupos.map(x => ({ g: x._id.g, pl: x._id.pl, clics: x.clics, confirmados: x.confirmados })),
+    origenes: origenes.map(x => ({ k: x._id, n: x.n })),
+    busquedas,
+    sinResultados
   });
 }

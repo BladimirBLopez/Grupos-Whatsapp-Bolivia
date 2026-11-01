@@ -58,6 +58,17 @@
     return h + '</div></div>';
   }
 
+  function bloqueEventos(ev) {
+    var t = ev.totales || {};
+    var conv = t.join ? Math.round((t.go || 0) / t.join * 100) : 0;
+    return '<div style="font-weight:700;font-size:1.05rem;color:#1a2c3e;margin:1.2rem 0 .6rem;">Clics en Unirse y búsquedas</div>' +
+      '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem;">' +
+      card('Clics en Unirse', t.join || 0) + card('Pulsaron Unirme ahora', t.go || 0) + card('Conversión', conv + '%') + card('Búsquedas', t.busq || 0) + '</div>' +
+      lista('Grupos con más clics en Unirse', (ev.grupos || []).map(function (x) { return { label: x.g + ' (' + x.pl + ') · ' + x.confirmados + ' confirmados', n: x.clics }; })) +
+      lista('Desde dónde hacen clic', (ev.origenes || []).map(function (x) { return { label: x.k || 'otro', n: x.n }; })) +
+      lista('Búsquedas más frecuentes', (ev.busquedas || []).map(function (x) { return { label: x.k, n: x.n }; })) +
+      lista('Búsquedas sin resultados (lo que falta en tu web)', (ev.sinResultados || []).map(function (x) { return { label: x.k, n: x.n }; }));
+  }
   window.cargarMetricas = async function () {
     sec.innerHTML = '<div style="padding:1rem;color:#6b7f8e;">Cargando métricas…</div>';
     try {
@@ -82,6 +93,10 @@
         lista('Dispositivos', d.dispositivos.map(function (x) { return { label: x.k === 'movil' ? 'Móvil' : 'PC', n: x.n }; })) +
         lista('Grupos con más visitas (acumulado)', d.topGrupos.map(function (g) { return { label: g.nombre + (g.ubicacion ? ' · ' + g.ubicacion : ''), n: g.visitas || 0 }; })) +
         '<div style="font-size:.75rem;color:#9aa8b4;">Sin IP ni cookies. Se excluyen bots y tu sesión de admin. Los datos se borran solos a los 90 días.</div>';
+      try {
+        var r2 = await fetch('/api/grupos?metricas=eventos&dias=' + dias, { headers: { 'x-admin-token': getToken() } });
+        if (r2.ok) { h += bloqueEventos(await r2.json()); }
+      } catch (e2) {}
       sec.innerHTML = h;
     } catch (e) {
       sec.innerHTML = '<div style="padding:1rem;color:#c0392b;">No se pudieron cargar las métricas (' + esc(e.message) + ').</div>';
