@@ -244,6 +244,7 @@ document.querySelectorAll('#filtroPlataforma .filter-chip').forEach(chip => {
   });
 });
 </script>
+<script src="/js/track.js" defer></script>
 </body>
 </html>`;
 

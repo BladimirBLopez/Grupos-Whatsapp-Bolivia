@@ -1,0 +1,100 @@
+(function () {
+  var dias = 30;
+  var tabRef = document.getElementById('tabDestacados');
+  var secRef = document.getElementById('seccionDestacados');
+  if (!tabRef || !secRef) return;
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  var tab = tabRef.cloneNode(true);
+  tab.id = 'tabMetricas';
+  tab.removeAttribute('onclick');
+  tab.onclick = function () { mostrarSeccion('metricas'); };
+  tab.innerHTML = '<i class="fas fa-chart-line"></i> Métricas';
+  tab.style.background = 'transparent';
+  tab.style.color = '#6b7f8e';
+  tabRef.parentNode.insertBefore(tab, tabRef.nextSibling);
+
+  var sec = document.createElement('div');
+  sec.id = 'seccionMetricas';
+  sec.style.display = 'none';
+  secRef.parentNode.insertBefore(sec, secRef.nextSibling);
+
+  var nombrePais = null;
+  try { nombrePais = new Intl.DisplayNames(['es'], { type: 'region' }); } catch (e) {}
+
+  function card(t, v) {
+    return '<div style="flex:1;min-width:130px;background:#fff;border-radius:14px;padding:1rem;box-shadow:0 2px 8px rgba(0,0,0,.06);">' +
+      '<div style="font-size:.75rem;color:#6b7f8e;">' + esc(t) + '</div>' +
+      '<div style="font-size:1.6rem;font-weight:700;color:#1a2c3e;">' + esc(v) + '</div></div>';
+  }
+
+  function lista(titulo, filas) {
+    var max = filas.reduce(function (m, f) { return Math.max(m, f.n); }, 1);
+    var h = '<div style="background:#fff;border-radius:14px;padding:1rem;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:1rem;">' +
+      '<div style="font-weight:600;margin-bottom:.6rem;color:#1a2c3e;">' + esc(titulo) + '</div>';
+    if (!filas.length) h += '<div style="color:#9aa8b4;font-size:.85rem;">Sin datos todavía</div>';
+    filas.forEach(function (f) {
+      h += '<div style="margin-bottom:.45rem;font-size:.85rem;">' +
+        '<div style="display:flex;justify-content:space-between;gap:8px;"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(f.label) + '</span><b>' + f.n + '</b></div>' +
+        '<div style="height:5px;background:#eef2f5;border-radius:4px;"><div style="height:5px;width:' + Math.round(f.n / max * 100) + '%;background:#25D366;border-radius:4px;"></div></div></div>';
+    });
+    return h + '</div>';
+  }
+
+  function grafico(porDia) {
+    var max = porDia.reduce(function (m, d) { return Math.max(m, d.vistas); }, 1);
+    var h = '<div style="background:#fff;border-radius:14px;padding:1rem;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:1rem;">' +
+      '<div style="font-weight:600;margin-bottom:.6rem;color:#1a2c3e;">Visitas por día</div>' +
+      '<div style="display:flex;align-items:flex-end;gap:3px;height:110px;overflow-x:auto;">';
+    porDia.forEach(function (d) {
+      h += '<div title="' + esc(d.dia) + ': ' + d.vistas + ' vistas, ' + d.sesiones + ' sesiones" style="flex:1;min-width:8px;height:' + Math.max(3, Math.round(d.vistas / max * 100)) + '%;background:#25D366;border-radius:3px 3px 0 0;"></div>';
+    });
+    if (!porDia.length) h += '<div style="color:#9aa8b4;font-size:.85rem;">Sin datos todavía</div>';
+    return h + '</div></div>';
+  }
+
+  window.cargarMetricas = async function () {
+    sec.innerHTML = '<div style="padding:1rem;color:#6b7f8e;">Cargando métricas…</div>';
+    try {
+      var res = await fetch('/api/grupos?metricas=1&dias=' + dias, { headers: { 'x-admin-token': getToken() } });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      var d = await res.json();
+      var btns = [7, 30, 90].map(function (n) {
+        var act = n === dias;
+        return '<button onclick="cambiarDiasMetricas(' + n + ')" style="padding:6px 14px;border:none;border-radius:50px;cursor:pointer;font-weight:600;background:' + (act ? '#25D366' : '#eef2f5') + ';color:' + (act ? '#fff' : '#6b7f8e') + ';">' + n + ' días</button>';
+      }).join(' ');
+      var h = '<div style="display:flex;gap:6px;margin:0 0 1rem;flex-wrap:wrap;">' + btns + '</div>' +
+        '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem;">' + card('Páginas vistas', d.totalVistas) + card('Sesiones', d.totalSesiones) + '</div>' +
+        grafico(d.porDia) +
+        lista('Páginas más vistas', d.paginas.map(function (x) { return { label: x.k, n: x.n }; })) +
+        lista('De dónde llegan', d.fuentes.map(function (x) { return { label: x.k || 'directo', n: x.n }; })) +
+        lista('Países', d.paises.map(function (x) {
+          var l = x.k || 'Desconocido';
+          try { if (nombrePais && x.k) l = nombrePais.of(x.k); } catch (e) {}
+          return { label: l, n: x.n };
+        })) +
+        lista('Ciudades', d.ciudades.map(function (x) { return { label: (x.k.ciudad || '?') + (x.k.pais ? ' (' + x.k.pais + ')' : ''), n: x.n }; })) +
+        lista('Dispositivos', d.dispositivos.map(function (x) { return { label: x.k === 'movil' ? 'Móvil' : 'PC', n: x.n }; })) +
+        lista('Grupos con más visitas (acumulado)', d.topGrupos.map(function (g) { return { label: g.nombre + (g.ubicacion ? ' · ' + g.ubicacion : ''), n: g.visitas || 0 }; })) +
+        '<div style="font-size:.75rem;color:#9aa8b4;">Sin IP ni cookies. Se excluyen bots y tu sesión de admin. Los datos se borran solos a los 90 días.</div>';
+      sec.innerHTML = h;
+    } catch (e) {
+      sec.innerHTML = '<div style="padding:1rem;color:#c0392b;">No se pudieron cargar las métricas (' + esc(e.message) + ').</div>';
+    }
+  };
+
+  window.cambiarDiasMetricas = function (n) { dias = n; window.cargarMetricas(); };
+
+  window.alCambiarSeccion = function (seccion) {
+    var es = seccion === 'metricas';
+    sec.style.display = es ? 'block' : 'none';
+    tab.style.background = es ? '#3B82F6' : 'transparent';
+    tab.style.color = es ? '#fff' : '#6b7f8e';
+    if (es) window.cargarMetricas();
+  };
+})();

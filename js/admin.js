@@ -1,5 +1,6 @@
 // js/admin.js
 const API_URL = '/api/grupos';
+try { localStorage.setItem('qi_noTrack', '1'); } catch (e) {}
 
 function getToken() {
   return sessionStorage.getItem('qigrupos_token') || '';
@@ -681,6 +682,7 @@ function mostrarSeccion(seccion) {
 
   if (seccion === 'solicitudes') cargarSolicitudes();
   if (esDestacados) cargarDestacados();
+  if (window.alCambiarSeccion) window.alCambiarSeccion(seccion);
 }
 
 // ============================================

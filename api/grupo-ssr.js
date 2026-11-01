@@ -257,6 +257,7 @@ export default async function handler(req, res) {
 
   <div class="footer-note" style="margin-top:2rem;">🇧🇴 Qigrupos Bolivia &mdash; Grupos verificados</div>
 </div>
+<script src="/js/track.js" defer></script>
 </body>
 </html>`;
 

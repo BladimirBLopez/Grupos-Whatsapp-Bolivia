@@ -49,6 +49,7 @@ export default async function handler(req, res) {
     // ── GET ─────────────────────────────────────────────────────────
     if (req.method === 'GET') {
       const { plataforma, categoria } = req.query;
+      if (req.query.metricas) return await resumenMetricas(req, res, db);
       const filtro = {};
       if (plataforma && PLATAFORMAS_VALIDAS.includes(plataforma)) filtro.plataforma = plataforma;
       if (categoria  && CATEGORIAS_VALIDAS.includes(categoria))   filtro.categoria  = categoria;
@@ -65,6 +66,7 @@ export default async function handler(req, res) {
     // ── POST ─────────────────────────────────────────────────────────
     if (req.method === 'POST') {
       const { grupo, accion, id } = req.body;
+      if (accion === 'track') return await registrarTrack(req, res, db);
       if (accion !== 'visita' && accion !== 'reporte' && !verificarToken(req)) {
         return res.status(401).json({ error: 'No autorizado' });
       }
@@ -150,4 +152,95 @@ export default async function handler(req, res) {
     console.error('Error MongoDB:', error.message);
     return res.status(500).json({ error: error.message });
   }
+}
+
+// ── MÉTRICAS PROPIAS (sin IP ni cookies) ─────────────────────────────
+let indiceMetricasCreado = false;
+
+function clasificarFuente(ref) {
+  let host = '';
+  try { host = new URL(ref).hostname.replace(/^www\./, '').toLowerCase(); } catch (e) {}
+  if (!host) return 'directo';
+  if (host === 'qigruposbo.online' || host.endsWith('.qigruposbo.online')) return 'interno';
+  if (/(^|\.)google\./.test(host)) return 'Google';
+  if (/(^|\.)(facebook\.com|fb\.com|fb\.me)$/.test(host)) return 'Facebook';
+  if (/instagram\.com$/.test(host)) return 'Instagram';
+  if (/(whatsapp\.com|wa\.me)$/.test(host)) return 'WhatsApp';
+  if (/(t\.me|telegram\.org)$/.test(host)) return 'Telegram';
+  if (/(bing\.com|duckduckgo\.com|yahoo\.com)$/.test(host)) return host;
+  if (/(^|\.)(x\.com|twitter\.com|t\.co)$/.test(host)) return 'X';
+  if (/tiktok\.com$/.test(host)) return 'TikTok';
+  return host.slice(0, 60);
+}
+
+async function registrarTrack(req, res, db) {
+  try {
+    const ua = String(req.headers['user-agent'] || '');
+    if (!ua || /bot|crawl|spider|slurp|preview|facebookexternalhit|headless|lighthouse|pingdom|uptime|curl|wget|python|node-fetch/i.test(ua)) {
+      return res.status(204).end();
+    }
+    const b = req.body || {};
+    const p = String(b.p || '').split('?')[0].split('#')[0].slice(0, 200);
+    if (!/^\/[A-Za-z0-9\-_\/.%]*$/.test(p)) return res.status(204).end();
+    let ciudad = '';
+    try { ciudad = decodeURIComponent(String(req.headers['x-vercel-ip-city'] || '')).slice(0, 60); } catch (e) {}
+    const doc = {
+      t: new Date(),
+      p,
+      f: clasificarFuente(String(b.r || '').slice(0, 300)),
+      c: String(req.headers['x-vercel-ip-country'] || '').slice(0, 2).toUpperCase(),
+      ci: ciudad,
+      d: b.m === 'movil' ? 'movil' : 'pc',
+      s: String(b.s || '').replace(/[^a-z0-9]/gi, '').slice(0, 16)
+    };
+    const m = db.collection('metricas');
+    if (!indiceMetricasCreado) {
+      await m.createIndex({ t: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 90 });
+      indiceMetricasCreado = true;
+    }
+    await m.insertOne(doc);
+    return res.status(204).end();
+  } catch (e) {
+    return res.status(204).end();
+  }
+}
+
+async function resumenMetricas(req, res, db) {
+  if (!verificarToken(req)) return res.status(401).json({ error: 'No autorizado' });
+  const d = parseInt(req.query.dias, 10);
+  const dias = [7, 30, 90].includes(d) ? d : 30;
+  const desde = new Date(Date.now() - dias * 86400000);
+  const m = db.collection('metricas');
+  const match = { t: { $gte: desde } };
+  const top = (campo, extra) => m.aggregate([
+    { $match: extra ? { ...match, ...extra } : match },
+    { $group: { _id: campo, n: { $sum: 1 } } },
+    { $sort: { n: -1 } },
+    { $limit: 10 }
+  ]).toArray().then(r => r.map(x => ({ k: x._id, n: x.n })));
+
+  const [porDiaRaw, sesionesRaw, paginas, fuentes, paises, ciudades, dispositivos, topGrupos] = await Promise.all([
+    m.aggregate([
+      { $match: match },
+      { $group: { _id: { dia: { $dateToString: { format: '%Y-%m-%d', date: '$t', timezone: 'America/La_Paz' } }, s: '$s' }, v: { $sum: 1 } } },
+      { $group: { _id: '$_id.dia', vistas: { $sum: '$v' }, sesiones: { $sum: 1 } } },
+      { $sort: { _id: 1 } }
+    ]).toArray(),
+    m.aggregate([{ $match: match }, { $group: { _id: '$s' } }, { $count: 'n' }]).toArray(),
+    top('$p'),
+    top('$f', { f: { $ne: 'interno' } }),
+    top('$c'),
+    top({ pais: '$c', ciudad: '$ci' }),
+    top('$d'),
+    db.collection('grupos').find({}, { projection: { nombre: 1, visitas: 1, ubicacion: 1 } }).sort({ visitas: -1 }).limit(10).toArray()
+  ]);
+
+  const porDia = porDiaRaw.map(x => ({ dia: x._id, vistas: x.vistas, sesiones: x.sesiones }));
+  return res.status(200).json({
+    dias,
+    totalVistas: porDia.reduce((a, x) => a + x.vistas, 0),
+    totalSesiones: sesionesRaw[0] ? sesionesRaw[0].n : 0,
+    porDia, paginas, fuentes, paises, ciudades, dispositivos,
+    topGrupos: topGrupos.map(g => ({ nombre: g.nombre, visitas: g.visitas || 0, ubicacion: g.ubicacion || '' }))
+  });
 }
