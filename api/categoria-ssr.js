@@ -116,8 +116,14 @@ export default async function handler(req, res) {
 
     const catLabel = categoria.label || 'Otros';
     const canonicalUrl = `https://www.qigruposbo.online/categoria/${slug}`;
-    const titulo = `Grupos de ${catLabel} en Bolivia - WhatsApp, Telegram y Facebook | Qigrupos Bolivia`;
-    const descripcion = `Encuentra grupos de ${catLabel} en Bolivia. ${grupos.length} grupos activos de WhatsApp, Telegram y Facebook en Santa Cruz, La Paz, Cochabamba y más.`;
+    const CAT_NOMBRE = { 'compra-venta': 'Compra y Venta', empleos: 'Empleos', inmuebles: 'Inmuebles', ropa: 'Ropa', citas: 'Citas y Amigos', futbol: 'Fútbol', streaming: 'Streaming' };
+    const catSeo = CAT_NOMBRE[slug] || null;
+    const esOtro = slug === 'otro';
+    const h1Texto = esOtro ? 'Otros grupos' : `Grupos de ${catSeo ? 'WhatsApp de ' + catSeo : catLabel}`;
+    const titulo = esOtro ? 'Otros grupos de WhatsApp en Bolivia | Qigrupos' : `Grupos de ${catSeo ? 'WhatsApp de ' + catSeo : catLabel} en Bolivia | Qigrupos`;
+    const descripcion = esOtro
+      ? `Otros grupos de WhatsApp, Telegram y Facebook de Bolivia: ${grupos.length} grupos en Santa Cruz, La Paz, Cochabamba y más.`
+      : `Únete a grupos de WhatsApp de ${(catSeo || catLabel).toLowerCase()} en Bolivia: ${grupos.length} grupos en Santa Cruz, La Paz, Cochabamba y más. También Telegram y Facebook.`;
 
     const html = `<!DOCTYPE html>
 <html lang="es">
@@ -126,7 +132,7 @@ export default async function handler(req, res) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
   <title>${escapeHtml(titulo)}</title>
   <meta name="description" content="${escapeHtml(descripcion)}">
-  <meta name="robots" content="index, follow">
+  <meta name="robots" content="${grupos.length ? 'index, follow' : 'noindex, follow'}">
   <meta name="geo.region" content="BO">
   <meta name="geo.country" content="Bolivia">
   <meta property="og:title" content="${escapeHtml(titulo)}">
@@ -166,7 +172,7 @@ export default async function handler(req, res) {
   </div>
 
   <div class="hero" style="padding-top:0.5rem;">
-    <h1 style="font-size:1.3rem;">${categoria.emoji || '🗂️'} Grupos de ${escapeHtml(catLabel)}<span> en Bolivia</span></h1>
+    <h1 style="font-size:1.3rem;">${categoria.emoji || '🗂️'} ${escapeHtml(h1Texto)}<span> en Bolivia</span></h1>
     <p>${grupos.length} grupos activos de WhatsApp, Telegram y Facebook</p>
   </div>
 
