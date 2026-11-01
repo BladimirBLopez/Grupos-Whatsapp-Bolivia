@@ -258,6 +258,7 @@ export default async function handler(req, res) {
   <div class="footer-note" style="margin-top:2rem;">🇧🇴 Qigrupos Bolivia &mdash; Grupos verificados</div>
 </div>
 <script src="/js/track.js" defer></script>
+<script defer src="https://cloud.umami.is/script.js" data-website-id="31f20884-a3cb-4060-9bbd-c835aec913c7" data-domains="www.qigruposbo.online,qigruposbo.online"></script>
 </body>
 </html>`;
 

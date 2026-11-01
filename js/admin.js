@@ -1,6 +1,6 @@
 // js/admin.js
 const API_URL = '/api/grupos';
-try { localStorage.setItem('qi_noTrack', '1'); } catch (e) {}
+try { localStorage.setItem('qi_noTrack', '1'); localStorage.setItem('umami.disabled', '1'); } catch (e) {}
 
 function getToken() {
   return sessionStorage.getItem('qigrupos_token') || '';
