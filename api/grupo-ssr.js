@@ -182,7 +182,7 @@ export default async function handler(req, res) {
       <span class="stat-item"><i class="fas fa-eye"></i> ${grupo.visitas||0} visitas</span>
     </div>
     <div style="padding:0 0.7rem 0.7rem;">
-      <a href="${redir}" class="join-btn" style="background:${color};width:100%;">
+      <a href="${redir}" rel="nofollow" class="join-btn" style="background:${color};width:100%;">
         <i class="${icono}"></i> Unirse al grupo
       </a>
     </div>

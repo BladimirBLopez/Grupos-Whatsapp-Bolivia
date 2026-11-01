@@ -81,7 +81,7 @@ function tarjetaHtml(grupo) {
       <span class="stat-item"><i class="fas fa-eye"></i> ${grupo.visitas||0}</span>
     </div>
     <div style="display:flex;gap:0.5rem;padding:0 0.7rem 0.7rem;">
-      <a href="${redir}" class="join-btn" style="background:${color};flex:1;margin:0;">
+      <a href="${redir}" rel="nofollow" class="join-btn" style="background:${color};flex:1;margin:0;">
         <i class="${icono}"></i> Unirse al grupo
       </a>
       <button onclick="reportarLinkSSR('${grupo.id}','${nombreSeguro}')"

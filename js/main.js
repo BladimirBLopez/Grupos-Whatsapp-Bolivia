@@ -354,7 +354,7 @@ function mostrarGrupoDestacado() {
         </div>
 
         <!-- Botón -->
-        <a href="${redir}" onclick="registrarVisita('${d.id}')"
+        <a href="${redir}" rel="nofollow" onclick="registrarVisita('${d.id}')"
           style="display:flex;align-items:center;justify-content:center;gap:7px;background:linear-gradient(135deg,${color},${color}cc);color:#fff;padding:11px;border-radius:50px;font-weight:800;font-size:0.9rem;text-decoration:none;box-shadow:0 4px 14px ${color}44;">
           <i class="${icono}"></i> Unirme ahora
         </a>
@@ -487,7 +487,7 @@ function renderizarGrupos() {
         <span class="stat-item"><i class="fas fa-eye"></i> ${grupo.visitas||0}</span>
       </div>
       <div style="display:flex;gap:0.5rem;margin:0 0.7rem 0.7rem;">
-        <a href="${redir}" onclick="registrarVisita('${grupo.id}')" class="join-btn" style="background:${color};flex:1;margin:0;">
+        <a href="${redir}" rel="nofollow" onclick="registrarVisita('${grupo.id}')" class="join-btn" style="background:${color};flex:1;margin:0;">
           <i class="${icono}"></i> Unirse al grupo
         </a>
         <button onclick="reportarLink('${grupo.id}','${nombreSeguro}')"
