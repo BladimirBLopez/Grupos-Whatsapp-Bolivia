@@ -138,8 +138,16 @@ export default async function handler(req, res) {
     const totalGrupos = locales.length;
     const plataformaLabelH1 = plataformaFiltro ? (PLATAFORMA_LABEL[plataformaFiltro] || 'WhatsApp') : 'WhatsApp, Telegram y Facebook';
     const canonicalUrl = `https://www.qigruposbo.online/grupos-whatsapp/${slug}`;
-    const titulo = `Grupos de WhatsApp, Telegram y Facebook en ${nombreCiudad} | Qigrupos Bolivia`;
-    const descripcion = `Encuentra grupos de WhatsApp, Telegram y Facebook en ${nombreCiudad}, Bolivia. Compra/venta, empleos, inmuebles y más. ${totalGrupos} grupos activos.`;
+    const titulo = `Grupos de WhatsApp en ${nombreCiudad}, Bolivia | Qigrupos`;
+    const descripcion = `Únete a grupos de WhatsApp en ${nombreCiudad}, Bolivia: compra y venta, empleos, inmuebles y más. También Telegram y Facebook.${totalGrupos ? ` ${totalGrupos} grupos activos.` : ''}`;
+
+    const CAT_TXT = { 'compra-venta': 'compra y venta', empleos: 'empleos', inmuebles: 'inmuebles', ropa: 'ropa', citas: 'citas y amigos', futbol: 'fútbol', otro: 'otros' };
+    const conteoCat = {};
+    locales.forEach(g => { const c = g.categoria || 'compra-venta'; conteoCat[c] = (conteoCat[c] || 0) + 1; });
+    const resumenCat = Object.entries(conteoCat).filter(([c]) => c !== 'otro').sort((a, b) => b[1] - a[1]).slice(0, 4).map(([c, n]) => `${CAT_TXT[c] || c} (${n})`).join(', ');
+    const introCiudad = (!categoriaFiltro && !plataformaFiltro && totalGrupos)
+      ? `<p class="intro-ciudad" style="margin:0 0 1rem;font-size:.95rem;line-height:1.5;color:#4a5a6a;">Directorio de grupos de WhatsApp, Telegram y Facebook en ${escapeHtml(nombreCiudad)}${nombreCiudad === 'Santa Cruz' ? ' (Santa Cruz de la Sierra)' : ''}, Bolivia. ${totalGrupos} grupos publicados${resumenCat ? ': ' + resumenCat : ''}. Elige un grupo y únete con un solo toque.</p>`
+      : '';
 
     const html = `<!DOCTYPE html>
 <html lang="es">
@@ -185,7 +193,7 @@ export default async function handler(req, res) {
   </div>
 
   <div class="hero" style="padding-top:0.5rem;">
-    <h1 style="font-size:1.3rem;">📍 Grupos de ${plataformaLabelH1} en <span>${escapeHtml(nombreCiudad)}</span></h1>
+    <h1 style="font-size:1.3rem;">📍 Grupos de ${plataformaFiltro ? plataformaLabelH1 : 'WhatsApp'} en <span>${escapeHtml(nombreCiudad)}</span></h1>
     <p>${totalGrupos} grupos activos de WhatsApp, Telegram y Facebook</p>
   </div>
 
@@ -202,6 +210,7 @@ export default async function handler(req, res) {
     <a href="/grupos-whatsapp/${slug}${plataformaFiltro ? `?plataforma=${encodeURIComponent(plataformaFiltro)}` : ''}" style="margin-left:auto;color:#075E54;text-decoration:none;font-weight:600;">Quitar &times;</a>
   </div>` : ''}
 
+  ${introCiudad}
   <div id="gruposContainer" class="grupos-grid">${localesHtml}</div>
 
 
