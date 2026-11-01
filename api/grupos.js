@@ -49,6 +49,7 @@ export default async function handler(req, res) {
     // ── GET ─────────────────────────────────────────────────────────
     if (req.method === 'GET') {
       const { plataforma, categoria } = req.query;
+      if (req.query.metricas === 'avanzado') return await resumenAvanzado(req, res, db);
       if (req.query.metricas === 'eventos') return await resumenEventos(req, res, db);
       if (req.query.metricas) return await resumenMetricas(req, res, db);
       const filtro = {};
@@ -340,5 +341,114 @@ async function resumenEventos(req, res, db) {
     origenes: origenes.map(x => ({ k: x._id, n: x.n })),
     busquedas,
     sinResultados
+  });
+}
+
+// ── MÉTRICAS AVANZADAS ───────────────────────────────────────────────
+const DEPARTAMENTOS_BO = {
+  'santa cruz de la sierra': 'Santa Cruz', 'santa cruz': 'Santa Cruz', 'montero': 'Santa Cruz', 'warnes': 'Santa Cruz',
+  'la guardia': 'Santa Cruz', 'cotoca': 'Santa Cruz', 'camiri': 'Santa Cruz', 'el torno': 'Santa Cruz',
+  'la paz': 'La Paz', 'el alto': 'La Paz', 'viacha': 'La Paz', 'achocalla': 'La Paz', 'copacabana': 'La Paz',
+  'cochabamba': 'Cochabamba', 'quillacollo': 'Cochabamba', 'sacaba': 'Cochabamba', 'colcapirhua': 'Cochabamba',
+  'tiquipaya': 'Cochabamba', 'vinto': 'Cochabamba', 'punata': 'Cochabamba',
+  'sucre': 'Chuquisaca', 'monteagudo': 'Chuquisaca',
+  'tarija': 'Tarija', 'yacuiba': 'Tarija', 'villamontes': 'Tarija', 'bermejo': 'Tarija',
+  'potosi': 'Potosí', 'uyuni': 'Potosí', 'villazon': 'Potosí', 'tupiza': 'Potosí', 'llallagua': 'Potosí',
+  'oruro': 'Oruro', 'challapata': 'Oruro',
+  'trinidad': 'Beni', 'riberalta': 'Beni', 'guayaramerin': 'Beni', 'rurrenabaque': 'Beni',
+  'cobija': 'Pando'
+};
+
+function normCiudad(c) {
+  return String(c || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+}
+
+function tipoTrafico(f) {
+  if (!f || f === 'directo') return 'Directo';
+  if (f === 'Google' || /bing|duckduckgo|yahoo/.test(f)) return 'Búsqueda (Google y otros)';
+  if (['Facebook', 'Instagram', 'WhatsApp', 'Telegram', 'X', 'TikTok'].includes(f)) return 'Redes sociales';
+  return 'Otros sitios';
+}
+
+function tipoPagina(p) {
+  if (p === '/') return 'Inicio';
+  if (p.indexOf('/grupos-whatsapp/') === 0) return 'Ciudades';
+  if (p.indexOf('/categoria/') === 0) return 'Categorías';
+  if (p.indexOf('/grupo/') === 0) return 'Páginas de grupo';
+  return 'Otras (añadir, destacar…)';
+}
+
+async function resumenAvanzado(req, res, db) {
+  if (!verificarToken(req)) return res.status(401).json({ error: 'No autorizado' });
+  const dq = parseInt(req.query.dias, 10);
+  const dias = [7, 30, 90].includes(dq) ? dq : 30;
+  const ahora = Date.now();
+  const desde = new Date(ahora - dias * 86400000);
+  const hace30 = new Date(ahora - 30 * 60000);
+  const tz = 'America/La_Paz';
+  const m = db.collection('metricas');
+  const match = { t: { $gte: desde } };
+  const hayAnterior = dias * 2 <= 90;
+  const prevMatch = { t: { $gte: new Date(ahora - 2 * dias * 86400000), $lt: desde } };
+  const opt = { allowDiskUse: true };
+
+  const [vistas, ses, calorRaw, fuentesRaw, paginasRaw, ciudadesRaw, activos, prevVistas, prevSesRaw] = await Promise.all([
+    m.countDocuments(match),
+    m.aggregate([
+      { $match: { ...match, s: { $ne: '' } } },
+      { $sort: { t: 1 } },
+      { $group: { _id: '$s', n: { $sum: 1 }, entrada: { $first: '$p' } } },
+      { $facet: {
+        entradas: [
+          { $group: { _id: '$entrada', sesiones: { $sum: 1 }, rebotes: { $sum: { $cond: [{ $eq: ['$n', 1] }, 1, 0] } } } },
+          { $sort: { sesiones: -1 } },
+          { $limit: 10 }
+        ],
+        totales: [
+          { $group: { _id: null, sesiones: { $sum: 1 }, rebotes: { $sum: { $cond: [{ $eq: ['$n', 1] }, 1, 0] } }, paginas: { $sum: '$n' } } }
+        ]
+      } }
+    ], opt).toArray(),
+    m.aggregate([
+      { $match: match },
+      { $group: { _id: { d: { $dayOfWeek: { date: '$t', timezone: tz } }, h: { $hour: { date: '$t', timezone: tz } } }, n: { $sum: 1 } } }
+    ]).toArray(),
+    m.aggregate([{ $match: { ...match, f: { $ne: 'interno' } } }, { $group: { _id: '$f', n: { $sum: 1 } } }]).toArray(),
+    m.aggregate([{ $match: match }, { $group: { _id: '$p', n: { $sum: 1 } } }, { $sort: { n: -1 } }, { $limit: 500 }]).toArray(),
+    m.aggregate([{ $match: { ...match, c: 'BO' } }, { $group: { _id: '$ci', n: { $sum: 1 } } }]).toArray(),
+    m.distinct('s', { t: { $gte: hace30 }, s: { $ne: '' } }),
+    hayAnterior ? m.countDocuments(prevMatch) : Promise.resolve(null),
+    hayAnterior ? m.aggregate([{ $match: { ...prevMatch, s: { $ne: '' } } }, { $group: { _id: '$s' } }, { $count: 'n' }]).toArray() : Promise.resolve(null)
+  ]);
+
+  const sumar = (arr, fn) => {
+    const o = {};
+    arr.forEach(x => { const k = fn(x._id); o[k] = (o[k] || 0) + x.n; });
+    return Object.entries(o).map(([k, n]) => ({ k, n })).sort((a, b) => b.n - a.n);
+  };
+
+  const fac = (ses && ses[0]) || { entradas: [], totales: [] };
+  const tot = fac.totales[0] || { sesiones: 0, rebotes: 0, paginas: 0 };
+  const calor = Array.from({ length: 7 }, () => Array(24).fill(0));
+  calorRaw.forEach(x => {
+    const di = (x._id.d + 5) % 7;
+    if (di >= 0 && di < 7 && x._id.h >= 0 && x._id.h < 24) calor[di][x._id.h] += x.n;
+  });
+
+  return res.status(200).json({
+    dias,
+    kpis: {
+      vistas,
+      sesiones: tot.sesiones,
+      paginasPorSesion: tot.sesiones ? Math.round(tot.paginas / tot.sesiones * 10) / 10 : 0,
+      rebote: tot.sesiones ? Math.round(tot.rebotes / tot.sesiones * 100) : 0
+    },
+    anterior: hayAnterior ? { vistas: prevVistas || 0, sesiones: prevSesRaw && prevSesRaw[0] ? prevSesRaw[0].n : 0 } : null,
+    ahora: { sesiones: activos.length },
+    calor,
+    trafico: sumar(fuentesRaw, tipoTrafico),
+    tiposPagina: sumar(paginasRaw, tipoPagina),
+    departamentos: sumar(ciudadesRaw, c => DEPARTAMENTOS_BO[normCiudad(c)] || (c ? 'Otra ciudad de Bolivia' : 'Sin dato de ciudad')),
+    entradas: fac.entradas.map(x => ({ k: x._id, n: x.sesiones, rebote: x.sesiones ? Math.round(x.rebotes / x.sesiones * 100) : 0 }))
   });
 }
