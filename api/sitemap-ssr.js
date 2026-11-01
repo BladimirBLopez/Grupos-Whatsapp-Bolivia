@@ -26,6 +26,18 @@ function urlEntry(loc, changefreq, priority, lastmod) {
   return `  <url>\n    <loc>${loc}</loc>${lm}\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
 }
 
+// Fecha real de creacion del grupo (viene del _id de Mongo). null si no se puede leer.
+function fechaGrupo(g) {
+  try { return g._id.getTimestamp().toISOString().slice(0, 10); } catch (e) { return null; }
+}
+
+// Devuelve la fecha mas reciente entre dos (formato YYYY-MM-DD se compara como texto).
+function masReciente(a, b) {
+  if (!b) return a || null;
+  if (!a) return b;
+  return b > a ? b : a;
+}
+
 export default async function handler(req, res) {
   try {
     const client = await conectar();
@@ -38,25 +50,42 @@ export default async function handler(req, res) {
 
     const base = 'https://www.qigruposbo.online';
     const entries = [];
-    const hoy = new Date().toISOString().slice(0, 10);
 
-    entries.push(urlEntry(`${base}/`, 'daily', '1.0', hoy));
-    entries.push(urlEntry(`${base}/anadir.html`, 'monthly', '0.6', hoy));
-    entries.push(urlEntry(`${base}/destacar.html`, 'monthly', '0.5', hoy));
+    let fechaSitio = null;
+    const fechaPorCat = {};
+    const fechaPorCiudad = {};
 
-    categorias.forEach(c => {
-      entries.push(urlEntry(`${base}/categoria/${c.slug}`, 'daily', '0.8', hoy));
+    grupos.forEach(g => {
+      const f = fechaGrupo(g);
+      fechaSitio = masReciente(fechaSitio, f);
+      if (g.categoria) {
+        fechaPorCat[g.categoria] = masReciente(fechaPorCat[g.categoria], f);
+      }
+      const cs = slugify(g.ubicacion);
+      if (CIUDADES_SLUGS.includes(cs)) {
+        fechaPorCiudad[cs] = masReciente(fechaPorCiudad[cs], f);
+      }
     });
 
+    entries.push(urlEntry(`${base}/`, 'daily', '1.0', fechaSitio));
+    entries.push(urlEntry(`${base}/anadir.html`, 'monthly', '0.6', null));
+    entries.push(urlEntry(`${base}/destacar.html`, 'monthly', '0.5', null));
+
+    // Solo categorias con al menos 1 grupo (mismo criterio que el noindex de categoria-ssr)
+    categorias.forEach(c => {
+      if (!(c.slug in fechaPorCat)) return;
+      entries.push(urlEntry(`${base}/categoria/${c.slug}`, 'daily', '0.8', fechaPorCat[c.slug]));
+    });
+
+    // Solo ciudades con al menos 1 grupo (mismo criterio que el noindex de ciudad-ssr)
     CIUDADES_SLUGS.forEach(slug => {
-      entries.push(urlEntry(`${base}/grupos-whatsapp/${slug}`, 'daily', '0.8', hoy));
+      if (!(slug in fechaPorCiudad)) return;
+      entries.push(urlEntry(`${base}/grupos-whatsapp/${slug}`, 'daily', '0.8', fechaPorCiudad[slug]));
     });
 
     grupos.forEach(g => {
       const slug = `${slugify(g.nombre) || 'grupo'}-${g._id.toString()}`;
-      let lastmod = hoy;
-      try { lastmod = g._id.getTimestamp().toISOString().slice(0, 10); } catch(e) {}
-      entries.push(urlEntry(`${base}/grupo/${slug}`, 'weekly', '0.6', lastmod));
+      entries.push(urlEntry(`${base}/grupo/${slug}`, 'weekly', '0.6', fechaGrupo(g)));
     });
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries.join('\n')}\n</urlset>`;

@@ -156,7 +156,7 @@ export default async function handler(req, res) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
   <title>${escapeHtml(titulo)}</title>
   <meta name="description" content="${escapeHtml(descripcion)}">
-  <meta name="robots" content="index, follow">
+  <meta name="robots" content="${localesRaw.length ? "index, follow" : "noindex, follow"}">
   <meta name="geo.region" content="BO">
   <meta name="geo.country" content="Bolivia">
   <meta property="og:title" content="${escapeHtml(titulo)}">
