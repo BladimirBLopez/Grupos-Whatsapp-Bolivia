@@ -54,6 +54,11 @@
       "source": "/index.html",
       "destination": "/",
       "permanent": true
+    },
+    {
+      "source": "/ciudad/:slug",
+      "destination": "/grupos-whatsapp/:slug",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -102,7 +107,7 @@
       "destination": "/api/categoria-ssr.js?slug=:slug"
     },
     {
-      "source": "/ciudad/:slug",
+      "source": "/grupos-whatsapp/:slug",
       "destination": "/api/ciudad-ssr.js?slug=:slug"
     },
     {

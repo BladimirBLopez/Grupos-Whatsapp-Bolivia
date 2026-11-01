@@ -136,7 +136,7 @@ export default async function handler(req, res) {
     ).join('');
 
     const linksCiudades = CIUDADES_EXPLORA.map(([slug, nombre]) =>
-      `<a href="/ciudad/${slug}" style="display:inline-block;background:#f0f4f8;color:#1a2c3e;padding:6px 14px;border-radius:50px;font-size:0.75rem;text-decoration:none;margin:0 6px 6px 0;">📍 ${nombre}</a>`
+      `<a href="/grupos-whatsapp/${slug}" style="display:inline-block;background:#f0f4f8;color:#1a2c3e;padding:6px 14px;border-radius:50px;font-size:0.75rem;text-decoration:none;margin:0 6px 6px 0;">📍 ${nombre}</a>`
     ).join('');
 
     const exploraHtml = `

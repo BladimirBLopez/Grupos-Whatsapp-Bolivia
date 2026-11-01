@@ -799,7 +799,7 @@ function configurarEventListeners() {
       if (categoriaSeleccionada !== 'todas') params.set('categoria', categoriaSeleccionada);
       if (plataformaSeleccionada !== 'todos') params.set('plataforma', plataformaSeleccionada);
       const query = params.toString();
-      window.location.href = `/ciudad/${slugify(ciudad)}${query ? '?' + query : ''}`;
+      window.location.href = `/grupos-whatsapp/${slugify(ciudad)}${query ? '?' + query : ''}`;
     });
   });
 

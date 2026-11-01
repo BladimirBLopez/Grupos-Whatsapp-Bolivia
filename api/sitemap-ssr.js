@@ -49,7 +49,7 @@ export default async function handler(req, res) {
     });
 
     CIUDADES_SLUGS.forEach(slug => {
-      entries.push(urlEntry(`${base}/ciudad/${slug}`, 'daily', '0.8', hoy));
+      entries.push(urlEntry(`${base}/grupos-whatsapp/${slug}`, 'daily', '0.8', hoy));
     });
 
     grupos.forEach(g => {

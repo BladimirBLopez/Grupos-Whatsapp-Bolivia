@@ -137,7 +137,7 @@ export default async function handler(req, res) {
 
     const totalGrupos = locales.length;
     const plataformaLabelH1 = plataformaFiltro ? (PLATAFORMA_LABEL[plataformaFiltro] || 'WhatsApp') : 'WhatsApp, Telegram y Facebook';
-    const canonicalUrl = `https://www.qigruposbo.online/ciudad/${slug}`;
+    const canonicalUrl = `https://www.qigruposbo.online/grupos-whatsapp/${slug}`;
     const titulo = `Grupos de WhatsApp, Telegram y Facebook en ${nombreCiudad} | Qigrupos Bolivia`;
     const descripcion = `Encuentra grupos de WhatsApp, Telegram y Facebook en ${nombreCiudad}, Bolivia. Compra/venta, empleos, inmuebles y más. ${totalGrupos} grupos activos.`;
 
@@ -199,7 +199,7 @@ export default async function handler(req, res) {
 
   ${categoriaFiltro ? `<div style="display:flex;align-items:center;gap:8px;background:#e9f9ef;border-radius:10px;padding:0.6rem 0.9rem;margin-bottom:1rem;font-size:0.85rem;color:#075E54;">
     <i class="fas fa-filter"></i> Categoría: <strong>${escapeHtml(categoriaFiltro)}</strong>
-    <a href="/ciudad/${slug}${plataformaFiltro ? `?plataforma=${encodeURIComponent(plataformaFiltro)}` : ''}" style="margin-left:auto;color:#075E54;text-decoration:none;font-weight:600;">Quitar &times;</a>
+    <a href="/grupos-whatsapp/${slug}${plataformaFiltro ? `?plataforma=${encodeURIComponent(plataformaFiltro)}` : ''}" style="margin-left:auto;color:#075E54;text-decoration:none;font-weight:600;">Quitar &times;</a>
   </div>` : ''}
 
   <div id="gruposContainer" class="grupos-grid">${localesHtml}</div>
