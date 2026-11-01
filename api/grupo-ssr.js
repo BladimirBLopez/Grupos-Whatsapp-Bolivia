@@ -37,6 +37,55 @@ function slugify(str) {
     .replace(/^-+|-+$/g, '');
 }
 
+const CIUDADES_VALIDAS = ['santa-cruz', 'la-paz', 'cochabamba', 'sucre', 'tarija', 'potosi', 'oruro', 'beni', 'pando'];
+const CAT_TXT = { 'compra-venta': 'compra y venta', empleos: 'empleos', inmuebles: 'inmuebles', ropa: 'ropa', citas: 'citas y amigos', futbol: 'fútbol', streaming: 'streaming' };
+
+function limpiarTexto(str) {
+  return String(str || '')
+    .normalize('NFKD')
+    .replace(/[\u{1F150}-\u{1F169}]/gu, c => String.fromCharCode(65 + c.codePointAt(0) - 0x1F150))
+    .replace(/[\u{1F170}-\u{1F189}]/gu, c => String.fromCharCode(65 + c.codePointAt(0) - 0x1F170))
+    .replace(/[\p{Extended_Pictographic}\p{Regional_Indicator}\u200D\uFE0E\uFE0F]/gu, '')
+    .normalize('NFC')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function limpiarNombreGrupo(nombre) {
+  let n = limpiarTexto(nombre)
+    .replace(/\s*\|\s*/g, ' - ')
+    .replace(/\.(?=[A-Za-zÁÉÍÓÚÑáéíóúñ])/g, ' ')
+    .replace(/\s+([,.;:!?])/g, '$1')
+    .replace(/^[\s\-_.*•·~]+|[\s\-_.*•·~]+$/g, '')
+    .replace(/\s+/g, ' ');
+  return n.length >= 3 ? n : '';
+}
+
+function armarTituloGrupo(nombre, label, ciudad) {
+  if (!nombre) return `Grupo de ${label} en ${ciudad} | Qigrupos`;
+  const sufijo = ` - Grupo de ${label} en ${ciudad}`;
+  let n = nombre;
+  const max = Math.max(62 - sufijo.length, 18);
+  if (n.length > max) {
+    n = n.slice(0, max).replace(/\s+\S*$/, '').trim() || n.slice(0, max);
+    n = n.replace(/[\s,;:\-]+$/, '').replace(/(\s+(de|del|y|e|o|la|las|el|los|en|a|por|para|con))+$/i, '').replace(/[\s,;:\-]+$/, '');
+  }
+  let t = n + sufijo;
+  if ((t + ' | Qigrupos').length <= 66) t += ' | Qigrupos';
+  return t;
+}
+
+function armarMetaDescGrupo(grupo, label, catTxt, ciudad) {
+  const miembros = Number(grupo.miembros) || 0;
+  let d = `Grupo de ${label}${catTxt ? ' de ' + catTxt : ''} en ${ciudad}${ciudad === 'Bolivia' ? '' : ', Bolivia'}${miembros > 0 ? ' con ' + miembros + ' miembros' : ''}.`;
+  const extra = limpiarTexto(grupo.descripcion);
+  const repetido = /^grupo de /i.test(extra) && extra.length < 70;
+  if (extra.length >= 25 && !/group invite/i.test(extra) && !repetido) d += ' ' + extra;
+  else d += ' Únete desde Qigrupos Bolivia.';
+  if (d.length > 158) d = d.slice(0, 155).replace(/\s+\S*$/, '') + '...';
+  return d;
+}
+
 function slugGrupo(grupo) {
   return `${slugify(grupo.nombre) || 'grupo'}-${grupo.id}`;
 }
@@ -103,10 +152,23 @@ export default async function handler(req, res) {
     const canonicalUrl = `https://www.qigruposbo.online/grupo/${slugGrupo(grupo)}`;
     const imagenOg = (grupo.imagen && grupo.imagen.trim()) ? escapeHtml(grupo.imagen) : 'https://www.qigruposbo.online/css/images/og-image.jpg';
     const redir = redirUrl(grupo);
+    const ciudadSlug = slugify(grupo.ubicacion);
+    const ciudadUrl = CIUDADES_VALIDAS.includes(ciudadSlug) ? `/grupos-whatsapp/${ciudadSlug}` : null;
+    const ciudadTxt = (grupo.ubicacion && grupo.ubicacion !== 'Nacional') ? grupo.ubicacion : 'Bolivia';
+    const nombreLimpio = limpiarNombreGrupo(grupo.nombre);
+    const tituloSeo = armarTituloGrupo(nombreLimpio, label, ciudadTxt);
+    const metaDesc = armarMetaDescGrupo(grupo, label, CAT_TXT[cat], ciudadTxt);
+    const crumb2Name = ciudadUrl ? escapeHtml(grupo.ubicacion) : catLabel;
+    const crumb2Url = ciudadUrl ? `https://www.qigruposbo.online${ciudadUrl}` : `https://www.qigruposbo.online/categoria/${cat}`;
 
     // Grupos relacionados: misma categoría, excluyendo este, máx 6
-    const relacionados = (await col.find({ categoria: cat, _id: { $ne: doc._id } }).limit(6).toArray())
-      .map(g => ({ ...g, id: g._id.toString() }));
+    let relacionadosDocs = await col.find({ categoria: cat, ubicacion: grupo.ubicacion, _id: { $ne: doc._id } }).limit(6).toArray();
+    if (relacionadosDocs.length < 6) {
+      const yaIds = [doc._id, ...relacionadosDocs.map(g => g._id)];
+      const mas = await col.find({ categoria: cat, _id: { $nin: yaIds } }).limit(6 - relacionadosDocs.length).toArray();
+      relacionadosDocs = relacionadosDocs.concat(mas);
+    }
+    const relacionados = relacionadosDocs.map(g => ({ ...g, id: g._id.toString() }));
 
     const relacionadosHtml = relacionados.length
       ? `<div style="margin-top:2rem;">
@@ -120,8 +182,8 @@ export default async function handler(req, res) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
-  <title>${nombreSeguro} - Grupo de ${label} en ${escapeHtml(grupo.ubicacion||'Bolivia')} | Qigrupos Bolivia</title>
-  <meta name="description" content="${descSegura}">
+  <title>${escapeHtml(tituloSeo)}</title>
+  <meta name="description" content="${escapeHtml(metaDesc)}">
   <meta name="robots" content="index, follow">
   <meta name="geo.region" content="BO">
   <meta name="geo.country" content="Bolivia">
@@ -139,7 +201,7 @@ export default async function handler(req, res) {
     "@type": "BreadcrumbList",
     "itemListElement": [
       {"@type":"ListItem","position":1,"name":"Inicio","item":"https://www.qigruposbo.online/"},
-      {"@type":"ListItem","position":2,"name":"${catLabel}","item":"https://www.qigruposbo.online/categoria/${cat}"},
+      {"@type":"ListItem","position":2,"name":"${crumb2Name}","item":"${crumb2Url}"},
       {"@type":"ListItem","position":3,"name":"${nombreSeguro}","item":"${canonicalUrl}"}
     ]
   }
@@ -177,7 +239,7 @@ export default async function handler(req, res) {
     </div>
     <div class="descripcion">${descSegura}</div>
     <div class="ubicacion">
-      <i class="fas fa-map-marker-alt"></i> ${escapeHtml(grupo.ubicacion||'Bolivia')}
+      <i class="fas fa-map-marker-alt"></i> ${ciudadUrl ? `<a href="${ciudadUrl}" style="color:inherit;text-decoration:underline;">${escapeHtml(grupo.ubicacion)}</a>` : escapeHtml(grupo.ubicacion||'Bolivia')}
       <span style="margin-left:auto;font-size:0.65rem;color:#8ba0ae;">${emoji} ${catLabel}</span>
     </div>
     <div class="stats">
