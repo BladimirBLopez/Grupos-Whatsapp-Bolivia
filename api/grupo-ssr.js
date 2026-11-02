@@ -212,38 +212,46 @@ export default async function handler(req, res) {
 </head>
 <body>
 <div class="container">
-  <div style="padding:1rem 0 0.5rem;">
-    <a href="/" style="color:#8ba0ae;font-size:0.8rem;text-decoration:none;"><i class="fas fa-arrow-left"></i> Volver al directorio</a>
+  <div class="hero hero-v2 hero-int hero-grupo">
+    <nav class="migas" aria-label="Migas de pan"><ol>
+      <li><a href="/">Inicio</a></li>
+      <li><a href="${crumb2Url}">${crumb2Name}</a></li>
+      <li aria-current="page">${nombreSeguro}</li>
+    </ol></nav>
   </div>
 
-  <div class="grupo-card" style="margin-top:0.5rem;">
+  <article class="grupo-card grupo-detalle">
     <div class="card-header">
-      ${grupo.imagen ? `<img src="${escapeHtml(optimizarImg(grupo.imagen))}" alt="${nombreSeguro}" class="grupo-foto">` : `
-      <div class="grupo-foto-placeholder" style="background:${color}22;">
-        <i class="${icono}" style="color:${color};font-size:1.3rem;"></i>
-      </div>`}
-      <div style="flex:1;min-width:0;">
-        <h1 style="margin:0;font-size:1.2rem;">${nombreSeguro}</h1>
-        <span class="badge-whatsapp" style="background:${color}20;color:${color};border:1px solid ${color}40;">
-          <i class="${icono}"></i> ${label}
-        </span>
+      ${grupo.imagen
+        ? `<img src="${escapeHtml(optimizarImg(grupo.imagen))}" alt="${nombreSeguro}" class="grupo-foto" width="52" height="52">`
+        : `<div class="grupo-foto-placeholder" aria-hidden="true">${escapeHtml((String(limpiarNombreGrupo(grupo.nombre) || grupo.nombre || '').match(/[\p{L}\p{N}]/u) || ['G'])[0].toUpperCase())}</div>`}
+      <div class="card-info">
+        <h1>${nombreSeguro}</h1>
+        <div class="card-meta">
+          <span><i class="fas fa-map-marker-alt" aria-hidden="true"></i> ${ciudadUrl ? `<a href="${ciudadUrl}">${escapeHtml(grupo.ubicacion)}</a>` : escapeHtml(grupo.ubicacion||'Bolivia')}</span>
+          <span><i class="fas fa-users" aria-hidden="true"></i> ${grupo.miembros||0} miembros</span>
+        </div>
       </div>
     </div>
-    <div class="descripcion">${descSegura}</div>
-    <div class="ubicacion">
-      <i class="fas fa-map-marker-alt"></i> ${ciudadUrl ? `<a href="${ciudadUrl}" style="color:inherit;text-decoration:underline;">${escapeHtml(grupo.ubicacion)}</a>` : escapeHtml(grupo.ubicacion||'Bolivia')}
-      <span style="margin-left:auto;font-size:0.65rem;color:#8ba0ae;">${emoji} ${catLabel}</span>
+    <div class="card-tags">
+      <span class="pill">${catLabel}</span>
+      <span class="pill"><i class="${icono}" aria-hidden="true"></i> ${label}</span>
     </div>
-    <div class="stats">
-      <span class="stat-item"><i class="fas fa-users"></i> ${grupo.miembros||0} miembros</span>
-      <span class="stat-item"><i class="fas fa-eye"></i> ${grupo.visitas||0} visitas</span>
+    <p class="descripcion descripcion-full">${descSegura}</p>
+    <div class="card-actions">
+      <a href="${redir}" rel="nofollow" class="join-btn">Unirse al grupo</a>
     </div>
-    <div style="padding:0 0.7rem 0.7rem;">
-      <a href="${redir}" rel="nofollow" class="join-btn" style="background:${color};width:100%;">
-        <i class="${icono}"></i> Unirse al grupo
-      </a>
-    </div>
-  </div>
+  </article>
+
+  <section class="consejos" aria-labelledby="consejos-titulo">
+    <h2 id="consejos-titulo">Consejos para tu seguridad</h2>
+    <ul>
+      <li>Reúnete en un lugar público y revisa el producto antes de pagar.</li>
+      <li>Desconfía de precios demasiado bajos o de quien te apura a pagar.</li>
+      <li>No envíes dinero por adelantado a desconocidos ni compartas códigos de verificación.</li>
+      <li>Si algo parece una estafa, <a href="/contacto.html#reportar">repórtalo aquí</a>.</li>
+    </ul>
+  </section>
 
   ${relacionadosHtml}
 
