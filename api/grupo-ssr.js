@@ -95,21 +95,13 @@ function redirUrl(grupo) {
 }
 
 function tarjetaRelacionada(grupo) {
-  const plat  = (grupo.plataforma || 'whatsapp').toLowerCase();
-  const color = PLATAFORMA_COLOR[plat] || PLATAFORMA_COLOR.otro;
-  const icono = PLATAFORMA_ICONO[plat] || PLATAFORMA_ICONO.otro;
+  const inicial = (String(grupo.nombre || '').match(/[\p{L}\p{N}]/u) || ['G'])[0].toUpperCase();
   return `
-  <a href="/grupo/${slugGrupo(grupo)}" style="display:block;text-decoration:none;color:inherit;">
-    <div class="grupo-card">
-      <div class="card-header">
-        <div class="grupo-foto-placeholder" style="background:${color}22;">
-          <i class="${icono}" style="color:${color};font-size:1.1rem;"></i>
-        </div>
-        <div style="flex:1;min-width:0;">
-          <h3 style="margin:0;">${escapeHtml(grupo.nombre)}</h3>
-        </div>
-      </div>
-      <div class="ubicacion"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(grupo.ubicacion||'Bolivia')}</div>
+  <a href="/grupo/${slugGrupo(grupo)}" class="grupo-card grupo-mini">
+    <div class="grupo-foto-placeholder" aria-hidden="true">${escapeHtml(inicial)}</div>
+    <div class="card-info">
+      <h3>${escapeHtml(grupo.nombre)}</h3>
+      <div class="card-meta"><span><i class="fas fa-map-marker-alt" aria-hidden="true"></i> ${escapeHtml(grupo.ubicacion||'Bolivia')}</span></div>
     </div>
   </a>`;
 }

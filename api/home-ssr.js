@@ -51,50 +51,40 @@ function redirUrl(grupo) {
 function tarjetaHtml(grupo) {
   const plat  = (grupo.plataforma || 'whatsapp').toLowerCase();
   const icono = PLATAFORMA_ICONO[plat] || PLATAFORMA_ICONO.otro;
-  const color = PLATAFORMA_COLOR[plat] || PLATAFORMA_COLOR.otro;
   const label = PLATAFORMA_LABEL[plat] || 'Otro';
-  const cat   = grupo.categoria || 'compra-venta';
-  const emoji = CATEGORIA_EMOJI[cat] || '🗂️';
-  const catLabel = CATEGORIA_LABEL[cat] || 'Otros';
-  const redir = redirUrl(grupo);
   const nombreSeguro = escapeHtml(grupo.nombre);
   const tieneImagen = grupo.imagen && grupo.imagen.trim() && !grupo.imagen.includes('undefined');
+  const redir = redirUrl(grupo);
+  const ciudadTxt = escapeHtml(grupo.ubicacion || 'Bolivia');
+  const inicial = (String(grupo.nombre || '').match(/[\p{L}\p{N}]/u) || ['G'])[0].toUpperCase();
+  const catKey = grupo.categoria || '';
+  let catTxt = '';
+  if (typeof CATEGORIA_LABEL !== 'undefined' && CATEGORIA_LABEL[catKey]) catTxt = CATEGORIA_LABEL[catKey];
+  else if (typeof CAT_NOMBRE_URL !== 'undefined' && CAT_NOMBRE_URL[catKey]) catTxt = CAT_NOMBRE_URL[catKey];
 
   return `
-  <div class="grupo-card">
+  <article class="grupo-card">
     <div class="card-header">
-      ${tieneImagen ? `
-      <img src="${escapeHtml(optimizarImg(grupo.imagen))}" alt="${nombreSeguro}" class="grupo-foto" loading="lazy">
-      ` : `
-      <div class="grupo-foto-placeholder" style="background:${color}22;">
-        <i class="${icono}" style="color:${color};font-size:1.1rem;"></i>
-      </div>
-      `}
-      <div style="flex:1;min-width:0;">
-        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-          <h3 style="margin:0;flex:1;min-width:0;"><a href="/grupo/${slugGrupo(grupo)}" style="color:inherit;text-decoration:none;">${nombreSeguro||'Sin nombre'}</a></h3>
-          <span class="badge-whatsapp" style="background:${color}20;color:${color};border:1px solid ${color}40;flex-shrink:0;">
-            <i class="${icono}"></i> ${label}
-          </span>
+      ${tieneImagen
+        ? `<img src="${escapeHtml(optimizarImg(grupo.imagen))}" alt="${nombreSeguro}" class="grupo-foto" width="52" height="52" loading="lazy">`
+        : `<div class="grupo-foto-placeholder" aria-hidden="true">${escapeHtml(inicial)}</div>`}
+      <div class="card-info">
+        <h3><a href="/grupo/${slugGrupo(grupo)}">${nombreSeguro||'Sin nombre'}</a></h3>
+        <div class="card-meta">
+          <span><i class="fas fa-map-marker-alt" aria-hidden="true"></i> ${ciudadTxt}</span>
+          <span><i class="fas fa-users" aria-hidden="true"></i> ${grupo.miembros||0} miembros</span>
         </div>
       </div>
     </div>
-    ${grupo.descripcion?`<div class="descripcion">${escapeHtml(grupo.descripcion)}</div>`:''}
-    <div class="ubicacion">
-      <i class="fas fa-map-marker-alt"></i> ${escapeHtml(grupo.ubicacion||'Bolivia')}
-      <span style="margin-left:auto;font-size:0.65rem;color:#8ba0ae;">${emoji} ${catLabel}</span>
+    <div class="card-tags">
+      ${catTxt ? `<span class="pill">${escapeHtml(catTxt)}</span>` : ''}
+      <span class="pill"><i class="${icono}" aria-hidden="true"></i> ${label}</span>
     </div>
-    <div class="stats">
-      <span class="stat-item"><i class="fas fa-users"></i> ${grupo.miembros||0}</span>
-      <span class="stat-item"><i class="fas fa-chart-line"></i> ${grupo.activos||0}</span>
-      <span class="stat-item"><i class="fas fa-eye"></i> ${grupo.visitas||0}</span>
+    ${grupo.descripcion?`<p class="descripcion">${escapeHtml(grupo.descripcion)}</p>`:''}
+    <div class="card-actions">
+      <a href="${redir}" rel="nofollow" class="join-btn">Unirse al grupo</a>
     </div>
-    <div style="display:flex;gap:0.5rem;margin:0 0.7rem 0.7rem;">
-      <a href="${redir}" rel="nofollow" class="join-btn" style="background:${color};flex:1;margin:0;">
-        <i class="${icono}"></i> Unirse al grupo
-      </a>
-    </div>
-  </div>`;
+  </article>`;
 }
 
 export default async function handler(req, res) {

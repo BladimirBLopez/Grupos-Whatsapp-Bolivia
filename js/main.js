@@ -456,48 +456,30 @@ function renderizarGrupos() {
     const tieneImagen = grupo.imagen && grupo.imagen.trim() && !grupo.imagen.includes('undefined');
 
     return `
-    <div class="grupo-card" ${reportes>=3?'style="border-color:#ffcccc;"':''}>
+    <article class="grupo-card" ${reportes>=3?'style="border-color:#ffcccc;"':''}>
       <div class="card-header">
-        ${tieneImagen ? `
-        <img src="${escapeHtml(optimizarImg(grupo.imagen))}" alt="${nombreSeguro}"
-          class="grupo-foto" loading="lazy" onerror="this.style.display='none'">
-        ` : `
-        <div class="grupo-foto-placeholder" style="background:${color}22;">
-          <i class="${icono}" style="color:${color};font-size:1.1rem;"></i>
-        </div>
-        `}
-        <div style="flex:1;min-width:0;">
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-            <h3 style="margin:0;flex:1;min-width:0;"><a href="/grupo/${slugGrupo(grupo)}" style="color:inherit;text-decoration:none;">${escapeHtml(grupo.nombre)||'Sin nombre'}</a></h3>
-            <span class="badge-whatsapp" style="background:${color}20;color:${color};border:1px solid ${color}40;flex-shrink:0;">
-              <i class="${icono}"></i> ${label}
-            </span>
+        ${tieneImagen
+          ? `<img src="${escapeHtml(optimizarImg(grupo.imagen))}" alt="${nombreSeguro}" class="grupo-foto" width="52" height="52" loading="lazy" onerror="this.style.display='none'">`
+          : `<div class="grupo-foto-placeholder" aria-hidden="true">${escapeHtml((String(grupo.nombre||'').match(/[\p{L}\p{N}]/u)||['G'])[0].toUpperCase())}</div>`}
+        <div class="card-info">
+          <h3><a href="/grupo/${slugGrupo(grupo)}">${escapeHtml(grupo.nombre)||'Sin nombre'}</a></h3>
+          <div class="card-meta">
+            <span><i class="fas fa-map-marker-alt" aria-hidden="true"></i> ${escapeHtml(grupo.ubicacion||'Bolivia')}</span>
+            <span><i class="fas fa-users" aria-hidden="true"></i> ${grupo.miembros||0} miembros</span>
           </div>
         </div>
       </div>
-      ${reportes>=3?`<div style="margin:0 0.8rem 0.3rem;background:#fff3f3;border-radius:8px;padding:4px 8px;font-size:0.65rem;color:#e74c3c;font-weight:600;">⚠️ Link posiblemente caído (${reportes} reportes)</div>`:''}
-      ${grupo.descripcion?`<div class="descripcion">${escapeHtml(grupo.descripcion)}</div>`:''}
-      <div class="ubicacion">
-        <i class="fas fa-map-marker-alt"></i> ${grupo.ubicacion||'Bolivia'}
-        <span style="margin-left:auto;font-size:0.65rem;color:#8ba0ae;">${emojiCategoria(cat)} ${labelCategoria(cat)}</span>
+      <div class="card-tags">
+        <span class="pill">${labelCategoria(cat)}</span>
+        <span class="pill"><i class="${icono}" aria-hidden="true"></i> ${label}</span>
       </div>
-      <div class="stats">
-        <span class="stat-item"><i class="fas fa-users"></i> ${grupo.miembros||0}</span>
-        <span class="stat-item"><i class="fas fa-chart-line"></i> ${grupo.activos||0}</span>
-        <span class="stat-item"><i class="fas fa-eye"></i> ${grupo.visitas||0}</span>
+      ${reportes>=3?`<div class="card-warn">⚠️ Link posiblemente caído (${reportes} reportes)</div>`:''}
+      ${grupo.descripcion?`<p class="descripcion">${escapeHtml(grupo.descripcion)}</p>`:''}
+      <div class="card-actions">
+        <a href="${redir}" rel="nofollow" onclick="registrarVisita('${grupo.id}')" class="join-btn">Unirse al grupo</a>
+        <button type="button" class="report-btn" onclick="reportarLink('${grupo.id}','${nombreSeguro}')" title="Reportar link caído" aria-label="Reportar link caído"><i class="fas fa-flag"></i></button>
       </div>
-      <div style="display:flex;gap:0.5rem;margin:0 0.7rem 0.7rem;">
-        <a href="${redir}" rel="nofollow" onclick="registrarVisita('${grupo.id}')" class="join-btn" style="background:${color};flex:1;margin:0;">
-          <i class="${icono}"></i> Unirse al grupo
-        </a>
-        <button onclick="reportarLink('${grupo.id}','${nombreSeguro}')"
-          style="background:#fff;border:1.5px solid #e0e0e0;color:#8ba0ae;border-radius:50px;padding:0 12px;font-size:0.7rem;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all 0.2s;"
-          onmouseover="this.style.borderColor='#e74c3c';this.style.color='#e74c3c';"
-          onmouseout="this.style.borderColor='#e0e0e0';this.style.color='#8ba0ae';"
-          title="Reportar link caído"><i class="fas fa-flag"></i>
-        </button>
-      </div>
-    </div>`;
+    </article>`;
   }).join('');
 
   const hayMas = gruposMostrados < total;
