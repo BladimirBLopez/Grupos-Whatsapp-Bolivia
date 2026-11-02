@@ -32,6 +32,23 @@ async function subirACloudinary(imageUrl) {
   }
 }
 
+function detectarPlataforma(raw) {
+  let u;
+  try { u = new URL(String(raw || '').trim()); } catch (e) { return null; }
+  if (u.protocol !== 'https:' && u.protocol !== 'http:') return null;
+  u.protocol = 'https:';
+  u.username = '';
+  u.password = '';
+  u.port = '';
+  const h = u.hostname.toLowerCase().replace(/^www\./, '');
+  let plataforma = null;
+  if (h === 'chat.whatsapp.com' || h === 'whatsapp.com') plataforma = 'whatsapp';
+  else if (h === 't.me' || h === 'telegram.me' || h === 'telegram.dog') plataforma = 'telegram';
+  else if (h === 'facebook.com' || h === 'm.facebook.com' || h === 'web.facebook.com' || h === 'fb.com' || h === 'fb.me') plataforma = 'facebook';
+  if (!plataforma) return null;
+  return { plataforma, url: u.toString() };
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -42,11 +59,13 @@ export default async function handler(req, res) {
 
   const { url } = req.body;
   if (!url) return res.status(400).json({ error: 'URL requerida' });
+  const info = detectarPlataforma(url);
+  if (!info) return res.status(200).json({ success: false, error: 'Enlace no válido: usa WhatsApp, Telegram o Facebook' });
 
   try {
-    const response = await fetch(url, {
+    const response = await fetch(info.url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1)',
+        'User-Agent': info.plataforma === 'facebook' ? 'facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)' : 'Mozilla/5.0 (compatible; Googlebot/2.1)',
         'Accept': 'text/html,application/xhtml+xml',
         'Accept-Language': 'es-ES,es;q=0.9',
       },
@@ -58,6 +77,9 @@ export default async function handler(req, res) {
     }
 
     const html = await response.text();
+    if (!detectarPlataforma(response.url || info.url)) {
+      return res.status(200).json({ success: false, error: 'El enlace redirige a otro sitio' });
+    }
 
     // Función para decodificar entidades HTML
     function decodeHtml(str) {
@@ -105,11 +127,39 @@ export default async function handler(req, res) {
         .trim();
     }
 
+    // Validaciones y datos extra por plataforma
+    let miembros = null;
+    if (info.plataforma === 'facebook') {
+      const pideLogin = /\/login|checkpoint/i.test(response.url || '') || /^(facebook|log into facebook|log in to facebook|iniciar sesi[oó]n en facebook)$/i.test(nombre || '');
+      if (pideLogin || !nombre) {
+        return res.status(200).json({ success: false, error: 'Facebook pide iniciar sesión: escribe el nombre y sube la foto a mano' });
+      }
+    }
+    if (info.plataforma === 'telegram') {
+      if (!nombre || /^telegram:/i.test(nombre)) {
+        return res.status(200).json({ success: false, error: 'Enlace de Telegram no válido o no es un grupo/canal público' });
+      }
+      const extra = html.match(/<div class="tgme_page_extra">([\s\S]*?)<\/div>/i);
+      if (extra) {
+        const t = extra[1].replace(/&nbsp;|&#160;/g, ' ').replace(/<[^>]*>/g, ' ');
+        const m = t.match(/(\d[\d\s\u00a0,.]*)\s*(members|miembros|subscribers|suscriptores)/i);
+        if (m) {
+          const n = parseInt(m[1].replace(/\D/g, ''), 10);
+          if (n > 0) miembros = n;
+        }
+      }
+    }
+    if (nombre) nombre = nombre.replace(/\s*\|\s*Facebook\s*$/i, '').replace(/\s*-\s*Telegram\s*$/i, '').trim();
+
     // Extraer imagen
     let imagen = null;
     const imageMatch = html.match(/<meta property="og:image" content="([^"]+)"/i);
     if (imageMatch) {
-      imagen = await subirACloudinary(decodeHtml(imageMatch[1]));
+      const imgUrl = decodeHtml(imageMatch[1]);
+      // No subir logos genericos de Telegram/Facebook
+      if (!/t_logo|telegram\.org\/img|static\.xx\.fbcdn\.net\/rsrc|facebook\.com\/images/i.test(imgUrl)) {
+        imagen = await subirACloudinary(imgUrl);
+      }
     }
 
     // Extraer descripción
@@ -119,7 +169,7 @@ export default async function handler(req, res) {
     if (descMatch) {
       descripcion = decodeHtml(descMatch[1]);
       // Ignorar descripciones genéricas de WhatsApp
-      const genericas = ['invitación a grupo', 'invitation to group', 'join my whatsapp'];
+      const genericas = ['invitación a grupo', 'invitation to group', 'join my whatsapp', 'right away', 'ahora mismo', 'log in or sign up', 'inicia sesión'];
       if (genericas.some(g => descripcion.toLowerCase().includes(g))) {
         descripcion = null;
       }
@@ -129,7 +179,7 @@ export default async function handler(req, res) {
       return res.status(200).json({ success: false, error: 'No se encontró información del grupo' });
     }
 
-    return res.status(200).json({ success: true, nombre, imagen, descripcion });
+    return res.status(200).json({ success: true, nombre, imagen, descripcion, miembros, plataforma: info.plataforma });
 
   } catch (error) {
     return res.status(200).json({ success: false, error: 'Error: ' + error.message });

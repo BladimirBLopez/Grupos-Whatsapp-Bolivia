@@ -389,7 +389,7 @@ function cerrarConfirmacion() {
 // ============================================
 async function fetchPreview(url) {
   if (!url || !url.startsWith('http')) return;
-  if (!url.includes('whatsapp.com')) return;
+  if (!/whatsapp\.com|t\.me|telegram\.me|telegram\.dog|facebook\.com|fb\.com|fb\.me/i.test(url)) return;
 
   const btn = document.getElementById('btnPreview');
   if (btn) { btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; btn.disabled = true; }
