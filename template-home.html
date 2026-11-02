@@ -108,15 +108,13 @@
   <!-- ===== HERO ===== -->
   <div class="hero hero-v2" id="logoResetBtn" style="cursor:pointer;">
     <div class="hero-brand">Qigrupos Bolivia</div>
-    <div class="hero-counter">
-      <span class="dot"></span>
-      <span id="heroCount">0</span> grupos en el directorio
-    </div>
     <h1>Grupos de WhatsApp en <span>Bolivia.</span></h1>
     <p>Encuentra y únete a grupos de WhatsApp, Telegram y Facebook de tu ciudad. Gratis y sin registro.</p>
-    <button type="button" class="hero-search" onclick="event.stopPropagation();abrirBuscador();">
-      <i class="fas fa-search" aria-hidden="true"></i> Busca grupos de Bolivia...
-    </button>
+    <div class="hero-search" id="searchBarInner" role="search" onclick="event.stopPropagation();">
+      <i class="fas fa-search" aria-hidden="true"></i>
+      <input type="text" id="searchInputNav" placeholder="Busca grupos de Bolivia..." aria-label="Buscar grupos" autocomplete="off" enterkeyhint="search">
+      <button type="button" class="hero-clear" aria-label="Borrar búsqueda" onclick="var i=document.getElementById('searchInputNav');i.value='';i.dispatchEvent(new Event('input'));i.focus();">&times;</button>
+    </div>
   </div>
   <!-- ===== GRUPO DESTACADO ===== -->
   <div id="grupoDestacadoFijo" style="min-height:240px;"></div>
@@ -324,24 +322,7 @@
 <button id="btnAdminLogin" style="display:none;"></button>
 
 
-<!-- ===== BUSCADOR FLOTANTE ===== -->
-<div id="searchOverlay" style="
-  display:none;
-  position:fixed;
-  top:0; left:0; right:0;
-  z-index:8000;
-  background:#fff;
-  padding:0.8rem 1rem;
-  box-shadow:0 4px 20px rgba(0,0,0,0.15);
-  animation:slideDown 0.2s ease;
-">
-  <div style="display:flex;align-items:center;gap:8px;background:#f0f4f8;border-radius:50px;padding:0.5rem 1rem;border:2px solid transparent;transition:border-color 0.2s;" id="searchBarInner">
-    <i class="fas fa-search" style="color:#8ba0ae;font-size:0.9rem;flex-shrink:0;"></i>
-    <input type="text" id="searchInputNav" placeholder="Busca grupos de Bolivia..."
-      style="border:none;outline:none;flex:1;font-size:0.9rem;font-family:'Inter',sans-serif;background:transparent;color:#1a2c3e;">
-    <button onclick="cerrarBuscador()" style="background:none;border:none;cursor:pointer;color:#8ba0ae;font-size:1.2rem;line-height:1;padding:0;">&times;</button>
-  </div>
-</div>
+
 
 <style>
 @keyframes slideDown {

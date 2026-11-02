@@ -539,13 +539,12 @@ function actualizarBadgeFiltros() {
 // BUSCADOR FLOTANTE
 // ============================================
 function abrirBuscador() {
-  const overlay = document.getElementById('searchOverlay');
-  const input   = document.getElementById('searchInputNav');
-  if (!overlay) return;
-  // Cerrar modal ciudad si está abierto
-  document.getElementById('cityModal').style.display = 'none';
-  overlay.style.display = 'block';
-  setTimeout(() => input?.focus(), 100);
+  const input = document.getElementById('searchInputNav');
+  if (!input) return;
+  const cm = document.getElementById('cityModal');
+  if (cm) cm.style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  setTimeout(() => input.focus({ preventScroll: true }), 300);
   document.querySelectorAll('.bottom-nav-item').forEach(i => i.classList.remove('active'));
   document.getElementById('navBuscar')?.classList.add('active');
 }
