@@ -379,6 +379,11 @@ async function obtenerInfo() {
         status.className = 'link-status ok';
         status.textContent = '✅ Enlace válido';
       } else {
+        if (data.duplicado) {
+          status.className = 'link-status error';
+          status.textContent = '⚠️ ' + data.error;
+          return;
+        }
         status.className = 'link-status ok';
         status.textContent = (data.error && /Telegram|Facebook/.test(data.error)) ? '⚠️ ' + data.error : '✅ Enlace agregado';
       }

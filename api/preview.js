@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { MongoClient } from 'mongodb';
 
 async function subirACloudinary(imageUrl) {
   try {
@@ -32,6 +33,30 @@ async function subirACloudinary(imageUrl) {
   }
 }
 
+let cachedMongo = null;
+async function conectarMongo() {
+  if (cachedMongo) return cachedMongo;
+  const client = new MongoClient(process.env.MONGODB_URI);
+  await client.connect();
+  cachedMongo = client;
+  return client;
+}
+
+function normalizarLink(raw) {
+  try {
+    const u = new URL(String(raw || '').trim());
+    let h = u.hostname.toLowerCase().replace(/^www\./, '');
+    if (h === 'telegram.me' || h === 'telegram.dog') h = 't.me';
+    if (h === 'm.facebook.com' || h === 'web.facebook.com' || h === 'fb.com') h = 'facebook.com';
+    let p = u.pathname.replace(/\/+$/, '');
+    // Los codigos de invitacion privados (WhatsApp, t.me/+codigo) distinguen mayusculas
+    if ((h === 't.me' && !/^\/(\+|joinchat\/)/i.test(p)) || h === 'facebook.com') p = p.toLowerCase();
+    return h + p;
+  } catch (e) {
+    return String(raw || '').trim().split('?')[0].replace(/\/+$/, '').toLowerCase();
+  }
+}
+
 function detectarPlataforma(raw) {
   let u;
   try { u = new URL(String(raw || '').trim()); } catch (e) { return null; }
@@ -57,10 +82,28 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Método no permitido' });
 
-  const { url } = req.body;
+  const { url, omitirDuplicado } = req.body;
   if (!url) return res.status(400).json({ error: 'URL requerida' });
   const info = detectarPlataforma(url);
   if (!info) return res.status(200).json({ success: false, error: 'Enlace no válido: usa WhatsApp, Telegram o Facebook' });
+
+  // Duplicados: avisar ANTES de leer el enlace y subir la foto a Cloudinary
+  if (!omitirDuplicado) {
+    try {
+      const db = (await conectarMongo()).db('grupos_db');
+      const linkNorm = normalizarLink(info.url);
+      const grupos = await db.collection('grupos').find({}, { projection: { link: 1 } }).toArray();
+      if (grupos.some(g => g.link && normalizarLink(g.link) === linkNorm)) {
+        return res.status(200).json({ success: false, duplicado: true, error: 'Este grupo ya está publicado en el directorio' });
+      }
+      const sols = await db.collection('solicitudes').find({ estado: 'pendiente' }, { projection: { link: 1 } }).toArray();
+      if (sols.some(s => s.link && normalizarLink(s.link) === linkNorm)) {
+        return res.status(200).json({ success: false, duplicado: true, error: 'Este grupo ya tiene una solicitud pendiente de revisión' });
+      }
+    } catch (e) {
+      // si Mongo falla, seguimos sin revisar duplicados
+    }
+  }
 
   try {
     const response = await fetch(info.url, {

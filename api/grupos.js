@@ -16,6 +16,21 @@ async function conectar() {
   return client;
 }
 
+function normalizarLink(raw) {
+  try {
+    const u = new URL(String(raw || '').trim());
+    let h = u.hostname.toLowerCase().replace(/^www\./, '');
+    if (h === 'telegram.me' || h === 'telegram.dog') h = 't.me';
+    if (h === 'm.facebook.com' || h === 'web.facebook.com' || h === 'fb.com') h = 'facebook.com';
+    let p = u.pathname.replace(/\/+$/, '');
+    // Los codigos de invitacion privados (WhatsApp, t.me/+codigo) distinguen mayusculas
+    if ((h === 't.me' && !/^\/(\+|joinchat\/)/i.test(p)) || h === 'facebook.com') p = p.toLowerCase();
+    return h + p;
+  } catch (e) {
+    return String(raw || '').trim().split('?')[0].replace(/\/+$/, '').toLowerCase();
+  }
+}
+
 function verificarToken(req) {
   const token = req.headers['x-admin-token'] || req.body?.token;
   if (!token) return false;
@@ -94,7 +109,9 @@ export default async function handler(req, res) {
       }
 
       // Verificar link duplicado
-      const linkExistente = await col.findOne({ link: grupo.link.trim() });
+      const linkNorm = normalizarLink(grupo.link);
+      const todosLinks = await col.find({}, { projection: { link: 1 } }).toArray();
+      const linkExistente = todosLinks.find(g => g.link && normalizarLink(g.link) === linkNorm);
       if (linkExistente) {
         return res.status(400).json({ error: 'Este enlace ya está registrado en el directorio' });
       }

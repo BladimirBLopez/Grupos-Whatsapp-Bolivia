@@ -398,7 +398,7 @@ async function fetchPreview(url) {
     const res = await fetch('/api/preview', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url })
+      body: JSON.stringify({ url, omitirDuplicado: true })
     });
     const data = await res.json();
     if (data.success) {
