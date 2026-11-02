@@ -130,6 +130,7 @@ function renderizarTabla() {
           ${grupo.imagen ? `<img src="${grupo.imagen}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;margin-right:4px;vertical-align:middle;" onerror="this.style.display='none'">` : ''}
           ${grupo.nombre || 'Sin nombre'}
           ${grupo.destacado ? '<span class="badge-destacado-admin"><i class="fas fa-star"></i></span>' : ''}
+          ${grupo.enlaceEstado === 'muerto' ? '<span title="El enlace fallo ' + (grupo.enlaceFallos || 2) + ' revisiones seguidas" style="background:#fee2e2;color:#991b1b;border-radius:10px;padding:1px 8px;font-size:.7rem;font-weight:600;margin-left:6px;white-space:nowrap;">🔴 Enlace caído</span>' : (grupo.enlaceEstado === 'dudoso' ? '<span title="Fallo 1 revision, se vuelve a revisar manana" style="background:#fef3c7;color:#92400e;border-radius:10px;padding:1px 8px;font-size:.7rem;font-weight:600;margin-left:6px;white-space:nowrap;">🟡 Dudoso</span>' : '')}
           ${(grupo.reportes || 0) > 0 ? `<span class="badge-reportes" title="Reportado ${grupo.reportes} vez(es). Tocar para marcar como revisado" onclick="event.stopPropagation();resetearReportes('${idStr}','${nombreSeguroTitle}')"><i class="fas fa-flag"></i> ${grupo.reportes}</span>` : ''}
         </div>
       </td>
