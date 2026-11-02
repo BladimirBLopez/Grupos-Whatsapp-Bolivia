@@ -167,7 +167,7 @@ export default async function handler(req, res) {
     const descMatch = html.match(/<meta property="og:description" content="([^"]+)"/i)
       || html.match(/<meta name="description" content="([^"]+)"/i);
     if (descMatch) {
-      descripcion = decodeHtml(descMatch[1]);
+      descripcion = decodeHtml(descMatch[1]).replace(/\s+/g, ' ').trim();
       // Ignorar descripciones genéricas de WhatsApp
       const genericas = ['invitación a grupo', 'invitation to group', 'join my whatsapp', 'right away', 'ahora mismo', 'log in or sign up', 'inicia sesión'];
       if (genericas.some(g => descripcion.toLowerCase().includes(g))) {
