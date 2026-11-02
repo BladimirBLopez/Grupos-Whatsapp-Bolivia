@@ -30,7 +30,7 @@ function escapeHtml(str) {
 
 function slugify(str) {
   return String(str || '')
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
@@ -93,7 +93,9 @@ export default async function handler(req, res) {
     const colCats = db.collection('categorias');
     const col = db.collection('grupos');
 
-    const categoria = await colCats.findOne({ slug: slug });
+    const CATS_FIJAS = { futbol: { slug: 'futbol', label: 'Fútbol', emoji: '⚽' } };
+    let categoria = await colCats.findOne({ slug: slug });
+    if (!categoria && Object.prototype.hasOwnProperty.call(CATS_FIJAS, slug)) categoria = CATS_FIJAS[slug];
     if (!categoria) {
       res.status(404).send('Categoría no encontrada');
       return;
@@ -116,6 +118,27 @@ export default async function handler(req, res) {
     const descripcion = esOtro
       ? `Otros grupos de WhatsApp, Telegram y Facebook de Bolivia: ${grupos.length} grupos en Santa Cruz, La Paz, Cochabamba y más.`
       : `Únete a grupos de WhatsApp de ${(catSeo || catLabel).toLowerCase()} en Bolivia: ${grupos.length} grupos en Santa Cruz, La Paz, Cochabamba y más. También Telegram y Facebook.`;
+
+    const nombreItem = (n) => (String(n || '').replace(/[^\p{L}\p{N}\s.,&'()-]/gu, '').replace(/\s+/g, ' ').trim() || 'Grupo');
+    const jsonLdLista = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: titulo,
+      url: canonicalUrl,
+      description: descripcion,
+      inLanguage: 'es-BO',
+      isPartOf: { '@type': 'WebSite', name: 'Qigrupos Bolivia', url: 'https://www.qigruposbo.online/' },
+      mainEntity: {
+        '@type': 'ItemList',
+        numberOfItems: grupos.length,
+        itemListElement: grupos.slice(0, 20).map((g, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: nombreItem(g.nombre),
+          url: 'https://www.qigruposbo.online/grupo/' + slugGrupo(g)
+        }))
+      }
+    }).replace(/</g, '\\u003c');
 
     const html = `<!DOCTYPE html>
 <html lang="es">
@@ -145,6 +168,7 @@ export default async function handler(req, res) {
     ]
   }
   </script>
+  <script type="application/ld+json">${jsonLdLista}</script>
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">

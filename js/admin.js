@@ -33,7 +33,7 @@ const CATEGORIAS = {
   'inmuebles':    { label: 'Inmuebles',    emoji: '🏠', color: '#3B82F6' },
   'ropa':         { label: 'Ropas',        emoji: '👕', color: '#8B5CF6' },
   'citas':        { label: 'Citas/Amigos', emoji: '💬', color: '#EC4899' },
-  'futbol':       { label: 'Streaming',    emoji: '🎬', color: '#EF4444' },
+  'futbol':       { label: 'Fútbol',    emoji: '⚽', color: '#EF4444' },
   'otro':         { label: 'Otros',        emoji: '🗂️', color: '#8ba0ae' }
 };
 

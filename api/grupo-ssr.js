@@ -31,7 +31,7 @@ function escapeHtml(str) {
 
 function slugify(str) {
   return String(str || '')
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
@@ -131,6 +131,13 @@ export default async function handler(req, res) {
     }
     const grupo = { ...doc, id: doc._id.toString() };
 
+    const slugCorrecto = slugGrupo(grupo);
+    if (String(slug) !== slugCorrecto) {
+      res.setHeader('Location', `/grupo/${slugCorrecto}`);
+      res.setHeader('Cache-Control', 's-maxage=3600');
+      return res.status(301).end();
+    }
+
     const plat   = (grupo.plataforma || 'whatsapp').toLowerCase();
     const icono  = PLATAFORMA_ICONO[plat] || PLATAFORMA_ICONO.otro;
     const color  = PLATAFORMA_COLOR[plat] || PLATAFORMA_COLOR.otro;
@@ -148,6 +155,7 @@ export default async function handler(req, res) {
     const ciudadUrl = CIUDADES_VALIDAS.includes(ciudadSlug) ? `/grupos-whatsapp/${ciudadSlug}` : null;
     const ciudadTxt = (grupo.ubicacion && grupo.ubicacion !== 'Nacional') ? grupo.ubicacion : 'Bolivia';
     const nombreLimpio = limpiarNombreGrupo(grupo.nombre);
+    const nombreH = escapeHtml(nombreLimpio || grupo.nombre);
     const tituloSeo = armarTituloGrupo(nombreLimpio, label, ciudadTxt);
     const metaDesc = armarMetaDescGrupo(grupo, label, CAT_TXT[cat], ciudadTxt);
     const crumb2Name = ciudadUrl ? escapeHtml(grupo.ubicacion) : catLabel;
@@ -182,6 +190,17 @@ export default async function handler(req, res) {
         </section>`
       : '';
 
+    const jsonLdGrupo = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      name: tituloSeo,
+      url: canonicalUrl,
+      description: metaDesc,
+      inLanguage: 'es-BO',
+      isPartOf: { '@type': 'WebSite', name: 'Qigrupos Bolivia', url: 'https://www.qigruposbo.online/' },
+      about: { '@type': 'Thing', name: nombreLimpio || grupo.nombre }
+    }).replace(/</g, '\\u003c');
+
     const html = `<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -207,10 +226,11 @@ export default async function handler(req, res) {
     "itemListElement": [
       {"@type":"ListItem","position":1,"name":"Inicio","item":"https://www.qigruposbo.online/"},
       {"@type":"ListItem","position":2,"name":"${crumb2Name}","item":"${crumb2Url}"},
-      {"@type":"ListItem","position":3,"name":"${nombreSeguro}","item":"${canonicalUrl}"}
+      {"@type":"ListItem","position":3,"name":"${nombreH}","item":"${canonicalUrl}"}
     ]
   }
   </script>
+  <script type="application/ld+json">${jsonLdGrupo}</script>
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
@@ -229,7 +249,7 @@ export default async function handler(req, res) {
     <nav class="migas" aria-label="Migas de pan"><ol>
       <li><a href="/">Inicio</a></li>
       <li><a href="${crumb2Url}">${crumb2Name}</a></li>
-      <li aria-current="page">${nombreSeguro}</li>
+      <li aria-current="page">${nombreH}</li>
     </ol></nav>
   </div>
 
@@ -239,7 +259,7 @@ export default async function handler(req, res) {
         ? `<img src="${escapeHtml(optimizarImg(grupo.imagen))}" alt="${nombreSeguro}" class="grupo-foto" width="52" height="52">`
         : `<div class="grupo-foto-placeholder" aria-hidden="true">${escapeHtml((String(limpiarNombreGrupo(grupo.nombre) || grupo.nombre || '').match(/[\p{L}\p{N}]/u) || ['G'])[0].toUpperCase())}</div>`}
       <div class="card-info">
-        <h1>${nombreSeguro}</h1>
+        <h1>${nombreH}</h1>
         <div class="card-meta">
           <span><i class="fas fa-map-marker-alt" aria-hidden="true"></i> ${ciudadUrl ? `<a href="${ciudadUrl}">${escapeHtml(grupo.ubicacion)}</a>` : escapeHtml(grupo.ubicacion||'Bolivia')}</span>
           <span><i class="fas fa-users" aria-hidden="true"></i> ${grupo.miembros||0} miembros</span>

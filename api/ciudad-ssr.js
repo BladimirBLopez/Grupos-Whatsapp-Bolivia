@@ -42,7 +42,7 @@ function escapeHtml(str) {
 
 function slugify(str) {
   return String(str || '')
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
@@ -144,7 +144,8 @@ export default async function handler(req, res) {
     const plataformaLabelH1 = plataformaFiltro ? (PLATAFORMA_LABEL[plataformaFiltro] || 'WhatsApp') : 'WhatsApp, Telegram y Facebook';
     const catCanon = catPath || ((categoriaQuery && calificaCat(categoriaQuery)) ? categoriaQuery : null);
     const canonicalUrl = `https://www.qigruposbo.online/grupos-whatsapp/${slug}${catCanon ? '/' + catCanon : ''}`;
-    const titulo = catNombre ? `Grupos de WhatsApp de ${catNombre} en ${nombreCiudad} | Qigrupos` : `Grupos de WhatsApp en ${nombreCiudad}, Bolivia | Qigrupos`;
+    const tituloBase = catNombre ? `Grupos de WhatsApp de ${catNombre} en ${nombreCiudad}` : `Grupos de WhatsApp en ${nombreCiudad}, Bolivia`;
+    const titulo = (tituloBase + ' | Qigrupos').length <= 60 ? tituloBase + ' | Qigrupos' : tituloBase;
     const descripcion = catNombre ? `Únete a grupos de WhatsApp de ${catNombre.toLowerCase()} en ${nombreCiudad}, Bolivia: ${conteoTodos[catPath]} grupos activos. También Telegram y Facebook.` : `Únete a grupos de WhatsApp en ${nombreCiudad}, Bolivia: compra y venta, empleos, inmuebles y más. También Telegram y Facebook.${totalGrupos ? ` ${totalGrupos} grupos activos.` : ''}`;
 
     const CAT_TXT = { 'compra-venta': 'compra y venta', empleos: 'empleos', inmuebles: 'inmuebles', ropa: 'ropa', citas: 'citas y amigos', futbol: 'fútbol', otro: 'otros' };
@@ -163,6 +164,27 @@ export default async function handler(req, res) {
     const enlacesCats = ((!categoriaFiltro || catNombre) && !plataformaFiltro && (otrasCats.length || catNombre))
       ? `<nav aria-label="Categorías en ${escapeHtml(nombreCiudad)}" style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 1rem;">${catNombre ? `<a href="/grupos-whatsapp/${slug}" style="background:#e9f9ef;color:#075E54;padding:6px 14px;border-radius:20px;font-size:.85rem;text-decoration:none;">Todos (${localesRaw.length})</a>` : ''}${otrasCats.map(c => `<a href="/grupos-whatsapp/${slug}/${c}" style="background:#f0f4f8;color:#1a2c3e;padding:6px 14px;border-radius:20px;font-size:.85rem;text-decoration:none;">${escapeHtml(CAT_NOMBRE_URL[c])} (${conteoTodos[c]})</a>`).join('')}</nav>`
       : '';
+
+    const nombreItem = (n) => (String(n || '').replace(/[^\p{L}\p{N}\s.,&'()-]/gu, '').replace(/\s+/g, ' ').trim() || 'Grupo');
+    const jsonLdLista = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: titulo,
+      url: canonicalUrl,
+      description: descripcion,
+      inLanguage: 'es-BO',
+      isPartOf: { '@type': 'WebSite', name: 'Qigrupos Bolivia', url: 'https://www.qigruposbo.online/' },
+      mainEntity: {
+        '@type': 'ItemList',
+        numberOfItems: locales.length,
+        itemListElement: locales.slice(0, 20).map((g, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: nombreItem(g.nombre),
+          url: 'https://www.qigruposbo.online/grupo/' + slugGrupo(g)
+        }))
+      }
+    }).replace(/</g, '\\u003c');
 
     const html = `<!DOCTYPE html>
 <html lang="es">
@@ -193,6 +215,7 @@ export default async function handler(req, res) {
     ]
   }
   </script>
+  <script type="application/ld+json">${jsonLdLista}</script>
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
