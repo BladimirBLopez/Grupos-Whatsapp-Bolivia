@@ -106,16 +106,20 @@
 <div class="container">
 
   <!-- ===== HERO ===== -->
-  <div class="hero" id="logoResetBtn" style="cursor:pointer;">
+  <div class="hero hero-v2" id="logoResetBtn" style="cursor:pointer;">
+    <div class="hero-brand">Qigrupos Bolivia</div>
     <div class="hero-counter">
       <span class="dot"></span>
-      <span id="heroCount">0</span> grupos activos ahora
+      <span id="heroCount">0</span> grupos en el directorio
     </div>
     <h1>Grupos de WhatsApp en <span>Bolivia.</span></h1>
-    <p>Encuentra y únete a los mejores grupos de WhatsApp, Telegram y Facebook en Bolivia</p>
+    <p>Encuentra y únete a grupos de WhatsApp, Telegram y Facebook de tu ciudad. Gratis y sin registro.</p>
+    <button type="button" class="hero-search" onclick="event.stopPropagation();abrirBuscador();">
+      <i class="fas fa-search" aria-hidden="true"></i> Busca grupos de Bolivia...
+    </button>
   </div>
   <!-- ===== GRUPO DESTACADO ===== -->
-  <div id="grupoDestacadoFijo" style="min-height:280px;"></div>
+  <div id="grupoDestacadoFijo" style="min-height:240px;"></div>
 
   <!-- ===== BOTON FILTROS UNIFICADO (nuevo) ===== -->
   <div class="filtros-btn-wrap">

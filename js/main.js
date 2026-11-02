@@ -299,67 +299,29 @@ function mostrarGrupoDestacado() {
   const tieneImg = d.imagen && d.imagen.trim() && !d.imagen.includes('undefined');
 
   banner.innerHTML = `
-    <div style="border-radius:20px;overflow:hidden;margin-bottom:1rem;background:#fff;border:2px solid #E8B923;box-shadow:0 4px 20px rgba(232,185,35,0.25);">
-
-      <!-- Ribbon -->
-      <div style="background:linear-gradient(90deg,#B8860B,#FFD700,#F5A623,#FFD700,#B8860B);padding:6px;display:flex;align-items:center;justify-content:center;gap:6px;">
-        <i class="fas fa-crown" style="color:#fff;font-size:0.7rem;"></i>
-        <span style="font-size:0.6rem;font-weight:900;letter-spacing:2px;color:#fff;text-transform:uppercase;">Grupo destacado de la semana</span>
-        <i class="fas fa-crown" style="color:#fff;font-size:0.7rem;"></i>
-      </div>
-
-      <!-- Contenido -->
-      <div style="padding:0.9rem 1rem;">
-
-        <!-- Header con foto -->
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:0.7rem;">
-          ${tieneImg ? `
-          <img src="${escapeHtml(optimizarImg(d.imagen))}" alt="${escapeHtml(d.nombre||'')}"
-            style="width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid #FFD700;flex-shrink:0;"
-            onerror="this.style.display='none'">
-          ` : `
-          <div style="width:52px;height:52px;border-radius:50%;background:${color}22;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:2px solid #FFD700;">
-            <i class="${icono}" style="color:${color};font-size:1.3rem;"></i>
-          </div>
-          `}
-          <div style="flex:1;min-width:0;">
-            <h3 style="margin:0 0 4px;font-size:0.95rem;font-weight:800;color:#0f1f2e;line-height:1.2;">${d.nombre||''}</h3>
-            <div style="display:flex;gap:5px;flex-wrap:wrap;">
-              <span style="background:linear-gradient(135deg,#B8860B,#FFD700);color:#fff;font-size:0.6rem;font-weight:800;padding:2px 8px;border-radius:20px;display:inline-flex;align-items:center;gap:3px;">
-                <i class="fas fa-star"></i> DESTACADO
-              </span>
-              <span style="background:${color}18;color:${color};border:1px solid ${color}44;font-size:0.6rem;font-weight:700;padding:2px 8px;border-radius:20px;display:inline-flex;align-items:center;gap:3px;">
-                <i class="${icono}"></i> ${label}
-              </span>
-            </div>
+    <article class="grupo-card grupo-destacado">
+      <div class="destacado-banda"><i class="fas fa-star" aria-hidden="true"></i> Grupo destacado</div>
+      <div class="card-header">
+        ${tieneImg
+          ? `<img src="${escapeHtml(optimizarImg(d.imagen))}" alt="${escapeHtml(d.nombre||'')}" class="grupo-foto" width="52" height="52" loading="lazy" onerror="this.style.display='none'">`
+          : `<div class="grupo-foto-placeholder" aria-hidden="true">${escapeHtml((String(d.nombre||'').match(/[\p{L}\p{N}]/u)||['G'])[0].toUpperCase())}</div>`}
+        <div class="card-info">
+          <h3><a href="/grupo/${slugGrupo(d)}">${escapeHtml(d.nombre||'')}</a></h3>
+          <div class="card-meta">
+            <span><i class="fas fa-map-marker-alt" aria-hidden="true"></i> ${escapeHtml(d.ubicacion||'Bolivia')}</span>
+            <span><i class="fas fa-users" aria-hidden="true"></i> ${d.miembros||0} miembros</span>
           </div>
         </div>
-
-        ${d.descripcion ? `<p style="margin:0 0 0.6rem;font-size:0.78rem;color:#5a7080;line-height:1.4;">${d.descripcion}</p>` : ''}
-
-        <!-- Info -->
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.7rem;flex-wrap:wrap;gap:4px;">
-          <span style="font-size:0.78rem;font-weight:600;color:#e65100;display:flex;align-items:center;gap:4px;">
-            <i class="fas fa-map-marker-alt"></i> ${d.ubicacion||'Bolivia'}
-          </span>
-          <span style="background:linear-gradient(135deg,#ff6b35,#f7931e);color:#fff;font-size:0.68rem;font-weight:700;padding:3px 10px;border-radius:20px;">
-            🔥 +50 miembros/semana
-          </span>
-        </div>
-
-        <!-- Stats -->
-        <div style="display:flex;gap:1rem;margin-bottom:0.8rem;font-size:0.72rem;color:#6b7f8e;">
-          <span><i class="fas fa-users" style="color:#25D366;"></i> ${d.miembros||0} miembros</span>
-          <span><i class="fas fa-eye" style="color:#3B82F6;"></i> ${d.visitas||0} visitas</span>
-        </div>
-
-        <!-- Botón -->
-        <a href="${redir}" rel="nofollow" onclick="registrarVisita('${d.id}')"
-          style="display:flex;align-items:center;justify-content:center;gap:7px;background:linear-gradient(135deg,${color},${color}cc);color:#fff;padding:11px;border-radius:50px;font-weight:800;font-size:0.9rem;text-decoration:none;box-shadow:0 4px 14px ${color}44;">
-          <i class="${icono}"></i> Unirme ahora
-        </a>
       </div>
-    </div>`;
+      <div class="card-tags">
+        <span class="pill">${labelCategoria(d.categoria||'compra-venta')}</span>
+        <span class="pill"><i class="${icono}" aria-hidden="true"></i> ${label}</span>
+      </div>
+      ${d.descripcion ? `<p class="descripcion">${escapeHtml(d.descripcion)}</p>` : ''}
+      <div class="card-actions">
+        <a href="${redir}" rel="nofollow" onclick="registrarVisita('${d.id}')" class="join-btn">Unirse al grupo</a>
+      </div>
+    </article>`;
 }
 
 

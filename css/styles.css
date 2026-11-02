@@ -910,3 +910,27 @@ body {
 .doc-page a { color: #075E54; font-weight: 600; }
 .doc-page .btn-wa { display: flex; align-items: center; justify-content: center; min-height: 44px; margin: 12px 0; background: #25D366; color: #052e26; border-radius: 12px; font-weight: 700; text-decoration: none; }
 .doc-page .fecha { font-size: 13px; color: #55706a; }
+
+/* ============================================ */
+/* HERO VERDE Y TARJETA DESTACADA (v2)          */
+/* ============================================ */
+.hero.hero-v2 {
+  background: #075E54; margin: 0 -1rem 1rem; padding: 18px 1rem 22px;
+  border-radius: 0 0 20px 20px; text-align: center;
+}
+.hero-v2 .hero-brand { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 14px; color: #cfe3dc; margin-bottom: 10px; }
+.hero-v2 .hero-counter { background: rgba(255,255,255,.14); color: #fff; font-size: 12px; margin-bottom: 8px; }
+.hero.hero-v2 h1 { color: #fff; font-size: 1.6rem; margin-bottom: 8px; }
+.hero.hero-v2 h1 span { color: #25D366; }
+.hero.hero-v2 p { color: #e3efe9; font-size: 14px; line-height: 1.5; margin-bottom: 14px; }
+.hero-search {
+  display: flex; align-items: center; gap: 10px; width: 100%; min-height: 48px;
+  background: #fff; border: 0; border-radius: 12px; padding: 0 16px; cursor: pointer;
+  font-family: 'Inter', sans-serif; font-size: 15px; color: #55706a; text-align: left;
+}
+.hero-search i { color: #075E54; }
+.grupo-card.grupo-destacado { border: 2px solid #25D366; box-shadow: 0 4px 16px rgba(37,211,102,.22); margin-bottom: 1rem; }
+.destacado-banda {
+  margin: -14px -14px 0; padding: 6px 14px; background: #25D366; color: #052e26;
+  font-size: 12px; font-weight: 700; letter-spacing: .3px; display: flex; align-items: center; gap: 6px;
+}
