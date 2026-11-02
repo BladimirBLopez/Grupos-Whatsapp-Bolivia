@@ -959,3 +959,15 @@ body {
   color: #fff; font-size: 14px; font-weight: 600; text-decoration: none;
 }
 .ciudad-chip span { background: #25D366; color: #052e26; border-radius: 999px; padding: 1px 8px; font-size: 12px; font-weight: 700; }
+
+/* ============================================ */
+/* HERO INTERIOR + MIGAS DE PAN (v2)            */
+/* ============================================ */
+.hero.hero-int { padding-top: 6px; }
+.hero.hero-int h1 { font-size: 1.35rem; margin-bottom: 6px; }
+.hero.hero-int p { margin-bottom: 4px; }
+.migas ol { list-style: none; display: flex; flex-wrap: wrap; margin: 0 0 6px; padding: 0; font-size: 13px; text-align: left; }
+.migas li { color: #fff; font-weight: 600; display: inline-flex; align-items: center; }
+.migas li + li::before { content: "\203A"; margin: 0 8px; color: #9fc4bb; }
+.migas a { color: #cfe3dc; text-decoration: none; font-weight: 500; display: inline-block; padding: 12px 0; }
+.migas a:hover { text-decoration: underline; }

@@ -159,13 +159,10 @@ export default async function handler(req, res) {
 </head>
 <body>
 <div class="container">
-  <div style="padding:1rem 0 0.5rem;">
-    <a href="/" style="color:#8ba0ae;font-size:0.8rem;text-decoration:none;"><i class="fas fa-arrow-left"></i> Volver al directorio</a>
-  </div>
-
-  <div class="hero" style="padding-top:0.5rem;">
-    <h1 style="font-size:1.3rem;">${categoria.emoji || '🗂️'} ${escapeHtml(h1Texto)}<span> en Bolivia</span></h1>
-    <p>${grupos.length} grupos activos de WhatsApp, Telegram y Facebook</p>
+  <div class="hero hero-v2 hero-int">
+    <nav class="migas" aria-label="Migas de pan"><ol><li><a href="/">Inicio</a></li><li aria-current="page">${escapeHtml(catLabel)}</li></ol></nav>
+    <h1>${escapeHtml(h1Texto)}<span> en Bolivia</span></h1>
+    <p>${grupos.length} grupos de WhatsApp, Telegram y Facebook</p>
   </div>
 
   <div class="plataforma-filtros" id="filtroPlataforma">
