@@ -1,5 +1,6 @@
 import { MongoClient, ObjectId } from 'mongodb';
 import crypto from 'crypto';
+import revisarEnlaces from '../lib/revisar-enlaces.js';
 
 export const config = { maxDuration: 60 };
 
@@ -87,6 +88,9 @@ async function fetchGrupoInfo(url) {
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).end();
+
+  // Revision de enlaces muertos (tiene su propia proteccion: token o CRON_SECRET)
+  if (req.query.modo === 'enlaces') return revisarEnlaces(req, res);
 
   // Proteger con token secreto
   const token  = req.query.token;

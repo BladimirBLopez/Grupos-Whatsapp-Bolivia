@@ -16,10 +16,6 @@
       "memory": 256,
       "maxDuration": 60
     },
-    "api/revisar-enlaces.js": {
-      "memory": 256,
-      "maxDuration": 60
-    },
     "api/preview.js": {
       "memory": 256,
       "maxDuration": 15
@@ -55,7 +51,7 @@
   },
   "crons": [
     {
-      "path": "/api/revisar-enlaces",
+      "path": "/api/sync-imagenes?modo=enlaces",
       "schedule": "0 9 * * *"
     }
   ],
@@ -91,10 +87,6 @@
     {
       "source": "/api/preview",
       "destination": "/api/preview.js"
-    },
-    {
-      "source": "/api/revisar-enlaces",
-      "destination": "/api/revisar-enlaces.js"
     },
     {
       "source": "/api/solicitudes",
