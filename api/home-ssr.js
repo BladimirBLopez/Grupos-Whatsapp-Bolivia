@@ -142,6 +142,22 @@ export default async function handler(req, res) {
       `<div id="exploraSeo">${exploraHtml}</div>`
     );
 
+    // Chips de ciudades con conteo (enlaces reales, solo ciudades con grupos)
+    const conteoCiudad = {};
+    grupos.forEach(g => {
+      const s = slugify(g.ubicacion);
+      conteoCiudad[s] = (conteoCiudad[s] || 0) + 1;
+    });
+    const chipsCiudades = CIUDADES_EXPLORA
+      .filter(([s]) => conteoCiudad[s])
+      .sort((a, b) => conteoCiudad[b[0]] - conteoCiudad[a[0]])
+      .map(([s, n]) => `<a href="/grupos-whatsapp/${s}" class="ciudad-chip">${n} <span>${conteoCiudad[s]}</span></a>`)
+      .join('');
+    html = html.replace(
+      '<nav class="ciudad-chips" id="ciudadChips" aria-label="Grupos por ciudad" onclick="event.stopPropagation();"></nav>',
+      chipsCiudades ? `<nav class="ciudad-chips" id="ciudadChips" aria-label="Grupos por ciudad">${chipsCiudades}</nav>` : ''
+    );
+
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     // Solo cacheamos si realmente trajimos grupos.
     // Si vino vacío (hiccup transitorio de Mongo), no lo guardamos en caché

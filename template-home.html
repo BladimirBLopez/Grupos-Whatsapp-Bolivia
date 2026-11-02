@@ -115,6 +115,7 @@
       <input type="text" id="searchInputNav" placeholder="Busca grupos de Bolivia..." aria-label="Buscar grupos" autocomplete="off" enterkeyhint="search">
       <button type="button" class="hero-clear" aria-label="Borrar búsqueda" onclick="var i=document.getElementById('searchInputNav');i.value='';i.dispatchEvent(new Event('input'));i.focus();">&times;</button>
     </div>
+    <nav class="ciudad-chips" id="ciudadChips" aria-label="Grupos por ciudad" onclick="event.stopPropagation();"></nav>
   </div>
   <!-- ===== GRUPO DESTACADO ===== -->
   <div id="grupoDestacadoFijo" style="min-height:240px;"></div>
