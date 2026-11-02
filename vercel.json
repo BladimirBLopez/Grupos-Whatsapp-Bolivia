@@ -16,6 +16,10 @@
       "memory": 256,
       "maxDuration": 60
     },
+    "api/revisar-enlaces.js": {
+      "memory": 256,
+      "maxDuration": 60
+    },
     "api/preview.js": {
       "memory": 256,
       "maxDuration": 15
@@ -49,6 +53,12 @@
       "maxDuration": 15
     }
   },
+  "crons": [
+    {
+      "path": "/api/revisar-enlaces",
+      "schedule": "0 9 * * *"
+    }
+  ],
   "redirects": [
     {
       "source": "/index.html",
@@ -81,6 +91,10 @@
     {
       "source": "/api/preview",
       "destination": "/api/preview.js"
+    },
+    {
+      "source": "/api/revisar-enlaces",
+      "destination": "/api/revisar-enlaces.js"
     },
     {
       "source": "/api/solicitudes",
