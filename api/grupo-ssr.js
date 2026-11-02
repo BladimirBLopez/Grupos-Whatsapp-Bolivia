@@ -98,7 +98,7 @@ function tarjetaRelacionada(grupo) {
   const inicial = (String(grupo.nombre || '').match(/[\p{L}\p{N}]/u) || ['G'])[0].toUpperCase();
   return `
   <a href="/grupo/${slugGrupo(grupo)}" class="grupo-card grupo-mini">
-    <div class="grupo-foto-placeholder" aria-hidden="true">${escapeHtml(inicial)}</div>
+    ${grupo.imagen ? `<img src="${escapeHtml(optimizarImg(grupo.imagen))}" alt="" class="grupo-foto" width="52" height="52" loading="lazy">` : `<div class="grupo-foto-placeholder" aria-hidden="true">${escapeHtml(inicial)}</div>`}
     <div class="card-info">
       <h3>${escapeHtml(grupo.nombre)}</h3>
       <div class="card-meta"><span><i class="fas fa-map-marker-alt" aria-hidden="true"></i> ${escapeHtml(grupo.ubicacion||'Bolivia')}</span></div>
@@ -275,16 +275,6 @@ export default async function handler(req, res) {
       <a href="${redir}" rel="nofollow" class="join-btn">Unirse al grupo</a>
     </div>
   </article>
-
-  <section class="consejos" aria-labelledby="consejos-titulo">
-    <h2 id="consejos-titulo">Consejos para tu seguridad</h2>
-    <ul>
-      <li>Reúnete en un lugar público y revisa el producto antes de pagar.</li>
-      <li>Desconfía de precios demasiado bajos o de quien te apura a pagar.</li>
-      <li>No envíes dinero por adelantado a desconocidos ni compartas códigos de verificación.</li>
-      <li>Si algo parece una estafa, <a href="/contacto.html#reportar">repórtalo aquí</a>.</li>
-    </ul>
-  </section>
 
   ${relacionadosHtml}
 
