@@ -111,6 +111,10 @@
       "destination": "/api/ciudad-ssr.js?slug=:slug"
     },
     {
+      "source": "/grupos-whatsapp/:slug/:cat",
+      "destination": "/api/ciudad-ssr.js?slug=:slug&cat=:cat"
+    },
+    {
       "source": "/sitemap.xml",
       "destination": "/api/sitemap-ssr.js"
     }

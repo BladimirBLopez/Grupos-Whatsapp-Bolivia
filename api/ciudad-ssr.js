@@ -106,7 +106,8 @@ function tarjetaHtml(grupo) {
 
 export default async function handler(req, res) {
   try {
-    const { slug, categoria: categoriaFiltro, plataforma: plataformaFiltro } = req.query;
+    const { slug, categoria: categoriaQuery, plataforma: plataformaFiltro, cat: catPath } = req.query;
+    const categoriaFiltro = catPath || categoriaQuery;
     const nombreCiudad = CIUDADES[slug];
     if (!nombreCiudad) {
       res.status(404).send('Ciudad no encontrada');
@@ -120,6 +121,18 @@ export default async function handler(req, res) {
     const localesRaw = await col.find({ ubicacion: nombreCiudad }).limit(50).toArray();
 
     let locales = localesRaw.map(g => ({ ...g, id: g._id.toString() }));
+
+    // Paginas ciudad + categoria: solo con 3+ grupos y max 70% de la ciudad
+    const CAT_NOMBRE_URL = { 'compra-venta': 'Compra y Venta', empleos: 'Empleos', inmuebles: 'Inmuebles', ropa: 'Ropa', citas: 'Citas y Amigos', futbol: 'Fútbol' };
+    const conteoTodos = {};
+    localesRaw.forEach(g => { const c = g.categoria || 'compra-venta'; conteoTodos[c] = (conteoTodos[c] || 0) + 1; });
+    const calificaCat = (c) => !!CAT_NOMBRE_URL[c] && (conteoTodos[c] || 0) >= 3 && conteoTodos[c] / localesRaw.length <= 0.7;
+    if (catPath && !calificaCat(catPath)) {
+      res.setHeader('Location', `/grupos-whatsapp/${slug}`);
+      return res.status(302).end();
+    }
+    const catsConPagina = Object.keys(conteoTodos).filter(calificaCat).sort((a, b) => conteoTodos[b] - conteoTodos[a]);
+    const catNombre = catPath ? CAT_NOMBRE_URL[catPath] : null;
 
     // Aplicar filtros que llegan desde el panel de Filtros del home (opcionales)
     if (categoriaFiltro) {
@@ -137,9 +150,10 @@ export default async function handler(req, res) {
 
     const totalGrupos = locales.length;
     const plataformaLabelH1 = plataformaFiltro ? (PLATAFORMA_LABEL[plataformaFiltro] || 'WhatsApp') : 'WhatsApp, Telegram y Facebook';
-    const canonicalUrl = `https://www.qigruposbo.online/grupos-whatsapp/${slug}`;
-    const titulo = `Grupos de WhatsApp en ${nombreCiudad}, Bolivia | Qigrupos`;
-    const descripcion = `Únete a grupos de WhatsApp en ${nombreCiudad}, Bolivia: compra y venta, empleos, inmuebles y más. También Telegram y Facebook.${totalGrupos ? ` ${totalGrupos} grupos activos.` : ''}`;
+    const catCanon = catPath || ((categoriaQuery && calificaCat(categoriaQuery)) ? categoriaQuery : null);
+    const canonicalUrl = `https://www.qigruposbo.online/grupos-whatsapp/${slug}${catCanon ? '/' + catCanon : ''}`;
+    const titulo = catNombre ? `Grupos de WhatsApp de ${catNombre} en ${nombreCiudad} | Qigrupos` : `Grupos de WhatsApp en ${nombreCiudad}, Bolivia | Qigrupos`;
+    const descripcion = catNombre ? `Únete a grupos de WhatsApp de ${catNombre.toLowerCase()} en ${nombreCiudad}, Bolivia: ${conteoTodos[catPath]} grupos activos. También Telegram y Facebook.` : `Únete a grupos de WhatsApp en ${nombreCiudad}, Bolivia: compra y venta, empleos, inmuebles y más. También Telegram y Facebook.${totalGrupos ? ` ${totalGrupos} grupos activos.` : ''}`;
 
     const CAT_TXT = { 'compra-venta': 'compra y venta', empleos: 'empleos', inmuebles: 'inmuebles', ropa: 'ropa', citas: 'citas y amigos', futbol: 'fútbol', otro: 'otros' };
     const conteoCat = {};
@@ -147,6 +161,15 @@ export default async function handler(req, res) {
     const resumenCat = Object.entries(conteoCat).filter(([c]) => c !== 'otro').sort((a, b) => b[1] - a[1]).slice(0, 4).map(([c, n]) => `${CAT_TXT[c] || c} (${n})`).join(', ');
     const introCiudad = (!categoriaFiltro && !plataformaFiltro && totalGrupos)
       ? `<p class="intro-ciudad" style="margin:0 0 1rem;font-size:.95rem;line-height:1.5;color:#4a5a6a;">Directorio de grupos de WhatsApp, Telegram y Facebook en ${escapeHtml(nombreCiudad)}${nombreCiudad === 'Santa Cruz' ? ' (Santa Cruz de la Sierra)' : ''}, Bolivia. ${totalGrupos} grupos publicados${resumenCat ? ': ' + resumenCat : ''}. Elige un grupo y únete con un solo toque.</p>`
+      : '';
+
+    const scTxt = nombreCiudad === 'Santa Cruz' ? ' (Santa Cruz de la Sierra)' : '';
+    const introCategoria = (catNombre && !plataformaFiltro && totalGrupos)
+      ? `<p class="intro-ciudad" style="margin:0 0 1rem;font-size:.95rem;line-height:1.5;color:#4a5a6a;">Directorio de grupos de WhatsApp de ${escapeHtml(catNombre.toLowerCase())} en ${escapeHtml(nombreCiudad)}${scTxt}, Bolivia. ${totalGrupos} grupos publicados. ¿Buscas otro tema? <a href="/grupos-whatsapp/${slug}" style="color:#075E54;">Ver todos los grupos de ${escapeHtml(nombreCiudad)}</a>.</p>`
+      : '';
+    const otrasCats = catsConPagina.filter(c => c !== catPath);
+    const enlacesCats = ((!categoriaFiltro || catNombre) && !plataformaFiltro && (otrasCats.length || catNombre))
+      ? `<nav aria-label="Categorías en ${escapeHtml(nombreCiudad)}" style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 1rem;">${catNombre ? `<a href="/grupos-whatsapp/${slug}" style="background:#e9f9ef;color:#075E54;padding:6px 14px;border-radius:20px;font-size:.85rem;text-decoration:none;">Todos (${localesRaw.length})</a>` : ''}${otrasCats.map(c => `<a href="/grupos-whatsapp/${slug}/${c}" style="background:#f0f4f8;color:#1a2c3e;padding:6px 14px;border-radius:20px;font-size:.85rem;text-decoration:none;">${escapeHtml(CAT_NOMBRE_URL[c])} (${conteoTodos[c]})</a>`).join('')}</nav>`
       : '';
 
     const html = `<!DOCTYPE html>
@@ -173,7 +196,8 @@ export default async function handler(req, res) {
     "@type": "BreadcrumbList",
     "itemListElement": [
       {"@type":"ListItem","position":1,"name":"Inicio","item":"https://www.qigruposbo.online/"},
-      {"@type":"ListItem","position":2,"name":"${escapeHtml(nombreCiudad)}","item":"${canonicalUrl}"}
+      {"@type":"ListItem","position":2,"name":"${escapeHtml(nombreCiudad)}","item":"https://www.qigruposbo.online/grupos-whatsapp/${slug}"}${catNombre ? `,
+      {"@type":"ListItem","position":3,"name":"${escapeHtml(catNombre)}","item":"${canonicalUrl}"}` : ''}
     ]
   }
   </script>
@@ -196,7 +220,7 @@ export default async function handler(req, res) {
   </div>
 
   <div class="hero" style="padding-top:0.5rem;">
-    <h1 style="font-size:1.3rem;">📍 Grupos de ${plataformaFiltro ? plataformaLabelH1 : 'WhatsApp'} en <span>${escapeHtml(nombreCiudad)}</span></h1>
+    <h1 style="font-size:1.3rem;">📍 Grupos de ${plataformaFiltro ? plataformaLabelH1 : 'WhatsApp'}${catNombre ? ' de ' + escapeHtml(catNombre) : ''} en <span>${escapeHtml(nombreCiudad)}</span></h1>
     <p>${totalGrupos} grupos activos de WhatsApp, Telegram y Facebook</p>
   </div>
 
@@ -208,12 +232,12 @@ export default async function handler(req, res) {
     <div class="filter-chip${plataformaFiltro === 'instagram' ? ' active' : ''}" data-platform="instagram"><i class="fab fa-instagram"></i> Instagram</div>
   </div>
 
-  ${categoriaFiltro ? `<div style="display:flex;align-items:center;gap:8px;background:#e9f9ef;border-radius:10px;padding:0.6rem 0.9rem;margin-bottom:1rem;font-size:0.85rem;color:#075E54;">
+  ${(categoriaFiltro && !catNombre) ? `<div style="display:flex;align-items:center;gap:8px;background:#e9f9ef;border-radius:10px;padding:0.6rem 0.9rem;margin-bottom:1rem;font-size:0.85rem;color:#075E54;">
     <i class="fas fa-filter"></i> Categoría: <strong>${escapeHtml(categoriaFiltro)}</strong>
     <a href="/grupos-whatsapp/${slug}${plataformaFiltro ? `?plataforma=${encodeURIComponent(plataformaFiltro)}` : ''}" style="margin-left:auto;color:#075E54;text-decoration:none;font-weight:600;">Quitar &times;</a>
   </div>` : ''}
 
-  ${introCiudad}
+  ${introCiudad}${introCategoria}${enlacesCats}
   <div id="gruposContainer" class="grupos-grid">${localesHtml}</div>
 
 

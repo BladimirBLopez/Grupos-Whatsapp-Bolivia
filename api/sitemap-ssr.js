@@ -83,6 +83,29 @@ export default async function handler(req, res) {
       entries.push(urlEntry(`${base}/grupos-whatsapp/${slug}`, 'daily', '0.8', fechaPorCiudad[slug]));
     });
 
+    // Paginas ciudad + categoria (mismo criterio que ciudad-ssr: 3+ grupos y max 70% de la ciudad)
+    const CAT_URL = ['compra-venta', 'empleos', 'inmuebles', 'ropa', 'citas', 'futbol'];
+    const porCiudad = {};
+    grupos.forEach(g => {
+      const cs = slugify(g.ubicacion);
+      if (!CIUDADES_SLUGS.includes(cs)) return;
+      const c = g.categoria || 'compra-venta';
+      porCiudad[cs] = porCiudad[cs] || { total: 0, cats: {}, fechas: {} };
+      porCiudad[cs].total++;
+      porCiudad[cs].cats[c] = (porCiudad[cs].cats[c] || 0) + 1;
+      porCiudad[cs].fechas[c] = masReciente(porCiudad[cs].fechas[c], fechaGrupo(g));
+    });
+    CIUDADES_SLUGS.forEach(cs => {
+      const info = porCiudad[cs];
+      if (!info) return;
+      CAT_URL.forEach(c => {
+        const n = info.cats[c] || 0;
+        if (n >= 3 && n / Math.min(info.total, 50) <= 0.7) {
+          entries.push(urlEntry(`${base}/grupos-whatsapp/${cs}/${c}`, 'daily', '0.7', info.fechas[c]));
+        }
+      });
+    });
+
     grupos.forEach(g => {
       const slug = `${slugify(g.nombre) || 'grupo'}-${g._id.toString()}`;
       entries.push(urlEntry(`${base}/grupo/${slug}`, 'weekly', '0.6', fechaGrupo(g)));
