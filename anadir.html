@@ -333,8 +333,8 @@ async function obtenerInfo() {
   let url = document.getElementById('fLink').value.trim();
   if (!url || !url.startsWith('http')) return;
 
-  // Limpiar parámetros extra del link de WhatsApp
-  if (url.includes('whatsapp.com')) {
+  // Limpiar parámetros extra del link (WhatsApp, Telegram, grupos de Facebook)
+  if (/whatsapp\.com|t\.me|telegram\.me|telegram\.dog|facebook\.com\/groups/i.test(url)) {
     url = url.split('?')[0];
     document.getElementById('fLink').value = url;
   }
@@ -342,8 +342,8 @@ async function obtenerInfo() {
   const plat = document.querySelector('input[name="plataforma"]:checked')?.value;
   const status = document.getElementById('linkStatus');
 
-  // Para WhatsApp intentar preview
-  if (url.includes('whatsapp.com')) {
+  // Preview para WhatsApp, Telegram y Facebook
+  if (/whatsapp\.com|t\.me|telegram\.me|telegram\.dog|facebook\.com|fb\.com|fb\.me/i.test(url)) {
     status.className = 'link-status loading';
     status.textContent = '⏳ Obteniendo información...';
 
@@ -362,6 +362,14 @@ async function obtenerInfo() {
         const fDesc = document.getElementById('fDescripcion');
         if (!fDesc.value.trim() && data.descripcion) fDesc.value = data.descripcion;
 
+        const fMiem = document.getElementById('fMiembros');
+        if (fMiem && data.miembros && !(parseInt(fMiem.value) > 0)) fMiem.value = data.miembros;
+
+        if (data.plataforma) {
+          const radio = document.querySelector('input[name="plataforma"][value="' + data.plataforma + '"]');
+          if (radio) radio.checked = true;
+        }
+
         if (data.imagen) {
           imagenUrl = data.imagen;
           document.getElementById('previewImg').src = data.imagen;
@@ -372,7 +380,7 @@ async function obtenerInfo() {
         status.textContent = '✅ Enlace válido';
       } else {
         status.className = 'link-status ok';
-        status.textContent = '✅ Enlace agregado';
+        status.textContent = (data.error && /Telegram|Facebook/.test(data.error)) ? '⚠️ ' + data.error : '✅ Enlace agregado';
       }
     } catch(e) {
       status.className = 'link-status ok';

@@ -406,6 +406,8 @@ async function fetchPreview(url) {
       if (fNombre && !fNombre.value.trim() && data.nombre) { fNombre.value = data.nombre; formModificado = true; }
       const fDesc = document.getElementById('fDescripcion');
       if (fDesc && !fDesc.value.trim() && data.descripcion) { fDesc.value = data.descripcion; formModificado = true; }
+      const fMiem = document.getElementById('fMiembros');
+      if (fMiem && data.miembros && !(parseInt(fMiem.value) > 0)) { fMiem.value = data.miembros; formModificado = true; }
       if (data.imagen) mostrarImagenPreview(data.imagen);
       mostrarNotificacion('✅ Información obtenida');
     } else {
