@@ -153,20 +153,33 @@ export default async function handler(req, res) {
     const crumb2Name = ciudadUrl ? escapeHtml(grupo.ubicacion) : catLabel;
     const crumb2Url = ciudadUrl ? `https://www.qigruposbo.online${ciudadUrl}` : `https://www.qigruposbo.online/categoria/${cat}`;
 
-    // Grupos relacionados: misma categoría, excluyendo este, máx 6
-    let relacionadosDocs = await col.find({ categoria: cat, ubicacion: grupo.ubicacion, _id: { $ne: doc._id } }).limit(6).toArray();
-    if (relacionadosDocs.length < 6) {
-      const yaIds = [doc._id, ...relacionadosDocs.map(g => g._id)];
-      const mas = await col.find({ categoria: cat, _id: { $nin: yaIds } }).limit(6 - relacionadosDocs.length).toArray();
-      relacionadosDocs = relacionadosDocs.concat(mas);
+    // Más grupos: de la misma ciudad (misma categoría primero); si no hay, de la misma categoría
+    let relacionadosDocs = [];
+    let tituloRel = `Más grupos de ${catLabel} en Bolivia`;
+    let relEsCiudad = false;
+    if (ciudadUrl) {
+      relacionadosDocs = await col.find({ categoria: cat, ubicacion: grupo.ubicacion, _id: { $ne: doc._id } }).limit(6).toArray();
+      if (relacionadosDocs.length < 6) {
+        const yaIds = [doc._id, ...relacionadosDocs.map(g => g._id)];
+        const mas = await col.find({ ubicacion: grupo.ubicacion, _id: { $nin: yaIds } }).limit(6 - relacionadosDocs.length).toArray();
+        relacionadosDocs = relacionadosDocs.concat(mas);
+      }
+      if (relacionadosDocs.length) {
+        tituloRel = `Más grupos en ${grupo.ubicacion}`;
+        relEsCiudad = true;
+      }
+    }
+    if (!relacionadosDocs.length) {
+      relacionadosDocs = await col.find({ categoria: cat, _id: { $ne: doc._id } }).limit(6).toArray();
     }
     const relacionados = relacionadosDocs.map(g => ({ ...g, id: g._id.toString() }));
 
     const relacionadosHtml = relacionados.length
-      ? `<div style="margin-top:2rem;">
-          <h2 style="font-size:1rem;margin-bottom:0.8rem;">Más grupos de ${catLabel} en Bolivia</h2>
+      ? `<section class="relacionados" aria-labelledby="rel-titulo">
+          <h2 id="rel-titulo">${escapeHtml(tituloRel)}</h2>
           <div class="grupos-grid">${relacionados.map(tarjetaRelacionada).join('')}</div>
-        </div>`
+          ${relEsCiudad ? `<a class="ver-todos" href="${ciudadUrl}">Ver todos los grupos de ${escapeHtml(grupo.ubicacion)}</a>` : ''}
+        </section>`
       : '';
 
     const html = `<!DOCTYPE html>
