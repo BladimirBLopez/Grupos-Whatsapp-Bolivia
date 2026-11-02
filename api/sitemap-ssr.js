@@ -70,6 +70,10 @@ export default async function handler(req, res) {
     entries.push(urlEntry(`${base}/`, 'daily', '1.0', fechaSitio));
     entries.push(urlEntry(`${base}/anadir.html`, 'monthly', '0.6', null));
     entries.push(urlEntry(`${base}/destacar.html`, 'monthly', '0.5', null));
+    entries.push(urlEntry(`${base}/quienes-somos.html`, 'yearly', '0.3', null));
+    entries.push(urlEntry(`${base}/contacto.html`, 'yearly', '0.3', null));
+    entries.push(urlEntry(`${base}/privacidad.html`, 'yearly', '0.3', null));
+    entries.push(urlEntry(`${base}/terminos.html`, 'yearly', '0.3', null));
 
     // Solo categorias con al menos 1 grupo (mismo criterio que el noindex de categoria-ssr)
     categorias.forEach(c => {

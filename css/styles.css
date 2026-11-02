@@ -888,3 +888,25 @@ body {
 }
 .card-warn { background: #fff3f3; border-radius: 8px; padding: 6px 10px; font-size: 12px; color: #b42318; font-weight: 600; }
 .grupo-mini { flex-direction: row; align-items: center; gap: 12px; }
+
+/* ============================================ */
+/* PIE DE PÁGINA Y PÁGINAS DE CONFIANZA (v2)    */
+/* ============================================ */
+.site-footer {
+  background: #0d2b26; color: #cfe3dc; margin: 2rem -1rem -1rem;
+  padding: 24px 1rem 28px; border-radius: 16px 16px 0 0; font-size: 13px; line-height: 1.5;
+}
+.site-footer h2 { font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 600; color: #fff; margin: 14px 0 2px; }
+.site-footer .footer-brand { font-size: 14px; color: #fff; }
+.footer-links { list-style: none; display: flex; flex-wrap: wrap; gap: 0 16px; margin: 0; padding: 0; }
+.footer-links a { display: inline-block; padding: 11px 0; color: #fff; text-decoration: none; font-size: 13px; }
+.footer-links a:hover { text-decoration: underline; }
+.site-footer .footer-aviso { margin-top: 14px; padding-top: 14px; border-top: 1px solid #24463f; color: #cfe3dc; font-size: 12px; }
+.doc-page { background: #fff; border: 1px solid #dbe6e1; border-radius: 16px; padding: 20px 16px; color: #16302b; line-height: 1.6; font-size: 15px; }
+.doc-page h1 { font-family: 'Poppins', sans-serif; font-size: 1.5rem; font-weight: 700; line-height: 1.25; margin-bottom: 12px; color: #075E54; }
+.doc-page h2 { font-family: 'Poppins', sans-serif; font-size: 1.05rem; font-weight: 600; margin: 20px 0 6px; color: #16302b; }
+.doc-page p, .doc-page ul { margin-bottom: 10px; color: #16302b; }
+.doc-page ul { padding-left: 20px; }
+.doc-page a { color: #075E54; font-weight: 600; }
+.doc-page .btn-wa { display: flex; align-items: center; justify-content: center; min-height: 44px; margin: 12px 0; background: #25D366; color: #052e26; border-radius: 12px; font-weight: 700; text-decoration: none; }
+.doc-page .fecha { font-size: 13px; color: #55706a; }
